@@ -1,43 +1,97 @@
 
 # All ALIASES should go here
-alias subl='"/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl"'
 alias pyserv="python2.7 -m SimpleHTTPServer"
-alias ven2="virtualenv --no-site-packages venv"
-alias ven3="virtualenv --no-site-packages -p python3 venv"
-alias venv="ven3"
-alias act="source venv/bin/activate"
-alias deact="deactivate"
 alias pyrm='find . -name "*.pyc" -exec rm -rf {} \;'
-alias worktabs="osascript ~/Programming/scripts/openworktabs.scpt"
-alias pt="py.test -s -v "
-alias vprof="vim ~/.profile"
-alias sprof="source ~/.profile"
-alias hprof="head -30 ~/.profile"
+alias vprof="vim ~/.zprofile"
+alias sprof="source ~/.zprofile"
+alias hprof="cat ~/.zprofile | peco"
 alias vvim="vim ~/.vimrc"
 alias vzsh="vim ~/.zshrc"
 alias szsh="source ~/.zshrc"
-alias c="clear"
-alias r3="rebar3"
 alias yd="youtube-dl"
+alias lss="l | peco"
 # Download MP3 From Youtube
-alias ym="youtube-dl --extract-audio --audio-format mp3 --audio-quality 0" 
-alias spoof="sudo spoof-mac randomize en0; spoof-mac.py list"
-alias scripts="ls ~/Programming/scripts"
+alias ym="youtube-dl --extract-audio --audio-format mp3 --audio-quality 0 --prefer-ffmpeg" 
 alias cdp="cd ~/Programming"
-alias p="python3"
-alias python="python3"
+alias p="python"
 alias vtmux="vim ~/.tmux.conf"
 alias ctagsm="ctags -R --exclude=.git --exclude=log --exclude=node_modules *"
+# Using asana from: https://github.com/thash/asana
+alias asana="~/go/bin/asana" # Brew install asana
+alias asana-list="asana tasks | peco"
+# Gem install asana-client
+alias asana-client="/var/lib/gems/2.5.0/gems/asana-client-1.0.0/bin/asana" 
+alias asana-add="asana-client letsdothis " 
+# Open like in mac
+alias open="xdg-open"
+# Music
+alias sconsify='sconsify -playlists="Deep House Relax"'
+alias mt='mpc toggle' # Toggle play/pause
+alias mn='mpc next'
+alias mp="mpc prev"
+alias m='ncmpcpp'
+alias mconf='vim ~/.config/ncmpcpp/config'
+# Enable Flux
+alias fu='xflux11 -l 51.5074, -g -0.1278 -r 0'
+alias fd='killall xflux11'
+alias fl='pidof xflux11'
+function ft () { # Toggle flux
+    local flux_pid=$(pidof xflux11)
+    if [ "x$flux_pid" != "x" ]; then
+        
+        killall xflux11
+    else
+        xflux11 -l 51.5074, -g -0.1278 -r 0
+    fi
+}
+
+
+# Mac Specific
 alias mergepdf='"/System/Library/Automator/Combine PDF Pages.action/Contents/Resources/join.py" -o ./merged.pdf'
-alias asana="/usr/local/bin/asana" # Brew install asana
-alias asana-list="/usr/local/bin/asana tasks | peco"
-alias asana-add="/Users/alejandro.saucedo/.rvm/gems/ruby-2.4.1/bin/asana letsdothis " # Gem install asana-client
+alias spoof="sudo spoof-mac randomize en0; spoof-mac.py list"
 
 # Geeknote Shortcuts
 alias en="vim -c Geeknote"
 function ec() {
     vim +"GeeknoteCreateNote $1"
 }
+
+# Express VPN
+alias x="expressvpn"
+alias xl="x list | peco"
+alias xc="x connect"
+alias xcs="x connect ch2"
+alias xs="x status"
+alias xh="x --help | peco"
+alias xd="x disconnect"
+
+# Wifi from terminal
+alias ws="nmcli general && nmcli device wifi | head"
+alias wl="nmcli device wifi"
+alias wd="nmcli radio wifi off"
+alias wu="nmcli radio wifi on"
+wcc() {
+  local ssid
+  echo "Re-scanning wifi (If none appear, rerun...)"
+  nmcli device wifi rescan
+  sleep 1
+  ssid=$(nmcli dev wifi | sed 1d | fzf -m | awk -F'  +' '{print $2}')
+
+  if [ "x$ssid" != "x" ]
+  then
+    echo "Connecting to $ssid"
+    echo $ssid | nmcli device wifi connect "$ssid"
+  fi
+}
+wcn() { 
+    echo "Re-scanning wifi (If none appear, rerun...)"
+    device wifi rescan
+    sleep 1
+    echo "Connecting to $DEFAULT_WIFI_SSID"
+    nmcli device wifi connect "$DEFAULT_WIFI_SSID" password "$DEFAULT_WIFI_PASSWORD" 
+    nmcli general status
+}
+
 
 # Custom Scripts
 alias ydall="download_youtube.sh"
@@ -50,46 +104,14 @@ alias ga='git add '
 alias gb='git branch '
 alias gc='git commit '
 alias gd='git diff'
-alias go='git checkout '
 alias gk='gitk --all&'
 alias gx='gitx --all'
 alias gga='git add .; git commit -m "added"; git push '
 alias gi='cp ~/Programming/lib/git/global_gitignore .gitignore'
 
-# ALL VARIABLES
+# TODO, need to make sure helper keys are automatically loaded
+alias xx="sudo bash /etc/init.d/keyremap && xmodmap ~/.Xmodmap"
 
-export GOOGLE_APPLICATION_CREDENTIALS="~/.ssh/ticket_credentials.json"
-
-export PATH="$HOME/Library/Android/sdk/tools:$PATH"
-export PATH="/Applications/Postgres.app/Contents/Versions/9.5/bin:$PATH"
-export PATH="$HOME/Programming/scripts/:$PATH"
-export PATH="$HOME/bin/:$PATH"
-export PATH="$HOME/anaconda3/bin:$PATH"
-
-# Adding svim
-export PATH=/usr/local/sbin:$PATH
-
-# Adding erlang to path
-export PATH=$PATH:~/.cache/rebar3/bin
-
-# Adding LIB
-export PATH=$PATH:~/Programming/lib
-
-# Setting RVM
-
-# Setting up nvm
-export NVM_DIR="$HOME/.nvm"
-#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-# alias node='unalias node ; unalias npm ; nvm use --delete-prefix v7.4.0 ; node $@'
-# alias npm='unalias node ; unalias npm ; nvm use --delete-prefix v7.4.0 ; npm $@'
-
-# Exporting SPARK dependencies
-export SPARK_HOME=/usr/local/Cellar/apache-spark/2.1.1/libexec
-export PYTHONPATH=/usr/local/Cellar/apache-spark/2.1.1/libexec/python/:$PYTHONP$
-
-# SETTING JAVA HOME
-export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_91.jdk/Contents/Home"
 
 lazy_load() {
     # Act as a stub to another shell function/command. When first run, it will load the actual function/command then execute it.
@@ -131,8 +153,10 @@ group_lazy_load $HOME/.nvm/nvm.sh nvm node npm truffle grunt gulp
 source ~/.all_secret_keys
 
 # Setting PATH
-export PATH="/Applications/Postgres.app/Contents/Versions/9.5/bin:${PATH}"
-export PATH=/opt/local/bin:/opt/local/sbin:$PATH
+export PATH=$PATH:~/anaconda3/bin
+export PATH=$PATH:~/go/bin
+export PATH=$PATH:~/Programming/bin
+
 
 # Set VIM as default PROMPT interface
 set -o vi
@@ -148,15 +172,6 @@ zle -N down-line-or-beginning-search
 bindkey "$terminfo[kcuu1]" up-line-or-beginning-search
 bindkey "$terminfo[kcud1]" down-line-or-beginning-search
 
-echo ".profile ran"
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-
-# EIGEN SPECIFIC
-export FRONTEND_DEV=True
-
-export LC_CTYPE=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
 
 export TERM="xterm-256color"
 
@@ -223,29 +238,26 @@ bip() {
   fi
 }
 
-# Search on chrome history
-# c - browse chrome history
-c() {
-  local cols sep google_history open
-  cols=$(( COLUMNS / 3 ))
-  sep='{::}'
+# # Search on chrome history
+# # c - browse chrome history
+# c() {
+#   local cols sep google_history open
+#   cols=$(( COLUMNS / 3 ))
+#   sep='{::}'
+# 
+#   if [ "$(uname)" = "Darwin" ]; then
+#     google_history="$HOME/Library/Application Support/Google/Chrome/Default/History"
+#     open=open
+#   else
+#     google_history="$HOME/.config/google-chrome/Default/History"
+#     open=xdg-open
+#   fi
+#   cp -f "$google_history" /tmp/h
+#   sqlite3 -separator $sep /tmp/h \
+#     "select substr(title, 1, $cols), url
+#      from urls order by last_visit_time desc" |
+#   awk -F $sep '{printf "%-'$cols's  \x1b[36m%s\x1b[m\n", $1, $2}' |
+#   fzf --ansi --multi | sed 's#.*\(https*://\)#\1#' | xargs $open > /dev/null 2> /dev/null
+# }
 
-  if [ "$(uname)" = "Darwin" ]; then
-    google_history="$HOME/Library/Application Support/Google/Chrome/Default/History"
-    open=open
-  else
-    google_history="$HOME/.config/google-chrome/Default/History"
-    open=xdg-open
-  fi
-  cp -f "$google_history" /tmp/h
-  sqlite3 -separator $sep /tmp/h \
-    "select substr(title, 1, $cols), url
-     from urls order by last_visit_time desc" |
-  awk -F $sep '{printf "%-'$cols's  \x1b[36m%s\x1b[m\n", $1, $2}' |
-  fzf --ansi --multi | sed 's#.*\(https*://\)#\1#' | xargs $open > /dev/null 2> /dev/null
-}
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
-
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+echo ".zprofile ran"
