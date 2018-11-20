@@ -2,6 +2,7 @@
 # Installing dependencies
 sudo apt install git -y
 sudo apt install curl -y
+sudo apt install ubuntu-restricted-extras
 
 
 # Installing NVIDIA card
