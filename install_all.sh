@@ -92,11 +92,28 @@ xdg-open Meslo*
 # Installing apps
 sudo apt install autokey-gtk -y
 sudo apt install chromium-browser -y
+## Signal App
+curl -s https://updates.signal.org/desktop/apt/keys.asc | sudo apt-key add -
+echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main" | sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
+sudo apt update && sudo apt install signal-desktop
 
 # Adding config
 git clone https://github.com/axsauze/alejandro-profile-config
 cd alejandro-profile-config
 cp .* ~/
+
+
+# POST CONFIG STUFF
+## Install fzf and other plugins
+#### Go to VIM and type :PlugInstall
+
+## Install silver surfer
+sudo apt install siversurfer-ag
+## Install ripgrep
+curl -LO https://github.com/BurntSushi/ripgrep/releases/download/0.10.0/ripgrep_0.10.0_amd64.deb
+sudo dpkg -i ripgrep_0.10.0_amd64.deb
+
+
 
 
 
