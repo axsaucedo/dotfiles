@@ -66,9 +66,9 @@
     " NERD Commenter
     Plug 'scrooloose/nerdcommenter'
     " Universal ctags
-    Plug 'universal-ctags/ctags'
+    " Plug 'universal-ctags/ctags'
     " Gutentags (tagking care of tag managemenet)
-    "Plug 'ludovicchabant/vim-gutentags'
+    " Plug 'ludovicchabant/vim-gutentags'
     " Bulletpoint plug
     Plug 'dkarter/bullets.vim'
     " Async Linter Engine (ALE)
@@ -83,10 +83,25 @@
     Plug 'tpope/vim-repeat'
     " Vim Easyclip
     Plug 'svermeulen/vim-easyclip'
-    " Previm (Preview markup)
-    Plug 'previm/previm'
     " Markdown preview
     Plug 'MikeCoder/markdown-preview.vim'
+    " Syntastic
+    Plug 'vim-syntastic/syntastic'
+    " Vimtex
+    Plug 'lervag/vimtex'
+
+    " Vimtex
+    " if empty(v:servername) && exists('*remote_startserver')
+    "   call remote_startserver('VIM')
+    " endif
+
+
+    " Guten Tags
+    set tags=./.tags,.tags;
+
+    let g:gutentags_ctags_tagfile = '.tags'
+    let g:gutentags_file_list_command = 'rg --files . $CONDA_PREFIX'
+    let g:gutentags_generate_on_new = 1
 
     " Previm
     let g:previm_open_cmd = "open -a 'Google Chrome'"
@@ -157,8 +172,9 @@
     endfun
     noremap <C-p><C-p> :call FzfOmniFiles()<CR> 
     noremap <C-p><C-b> :Buffers<CR>
-    noremap <C-p><C-f> :GGrep<CR>
-    noremap <C-p><C-g> :GFiles?<CR>
+    noremap <C-p><C-f> :Ag<CR>
+    noremap <C-p><C-g> :GGrep<CR>
+    " noremap <C-p><C-g> :GFiles?<CR>
     noremap <C-p><C-l> :BLines<CR>
     noremap <C-p><C-c> :Commits<CR>
 
@@ -195,6 +211,36 @@
     let g:ycm_key_list_select_completion = ['<C-j>', '<Down>']
     let g:ycm_key_list_previous_completion = ['<C-k>', '<Up>']
     let g:ycm_key_list_accept_completion = '<C-y>'
+    " let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
+    let g:ycm_path_to_python_interpreter = '/usr/bin/python3'
+
+    let g:ycm_register_as_syntastic_checker = 1 "default 1
+    let g:Show_diagnostics_ui = 1 "default 1
+
+    let g:ycm_enable_diagnostic_signs = 1
+    let g:ycm_enable_diagnostic_highlighting = 0
+    let g:ycm_always_populate_location_list = 1 "default 0
+    let g:ycm_open_loclist_on_ycm_diags = 1 "default 1
+
+    let g:ycm_complete_in_strings = 1 "default 1
+    let g:ycm_collect_identifiers_from_tags_files = 0 "default 0
+    let g:ycm_path_to_python_interpreter = '' "default ''
+
+    let g:ycm_server_use_vim_stdout = 0 "default 0 (logging to console)
+    let g:ycm_server_log_level = 'info' "default info
+
+    let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'  "where to search for .ycm_extra_conf.py if not found
+    let g:ycm_confirm_extra_conf = 1
+
+    let g:ycm_goto_buffer_command = 'same-buffer' "[ 'same-buffer', 'horizontal-split', 'vertical-split', 'new-tab' ]
+    let g:ycm_filetype_whitelist = { '*': 1 }
+    let g:ycm_key_invoke_completion = '<C-Space>'
+
+    nnoremap <F11> :YcmForceCompileAndDiagnostics <CR>
+
+    " Syntastic
+    let g:syntastic_python_checkers = ["mypy"]
+
 
     " Commenting
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

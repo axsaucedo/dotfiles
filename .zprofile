@@ -8,11 +8,15 @@ alias hprof="cat ~/.zprofile | peco"
 alias vvim="vim ~/.vimrc"
 alias vzsh="vim ~/.zshrc"
 alias szsh="source ~/.zshrc"
-alias yd="youtube-dl"
+alias yd="youtube-dl --add-metadata --write-all-thumbnails --embed-thumbnail --write-info-json --embed-subs --all-subs --external-downloader aria2c --external-downloader-args '-c -j 3 -x 3 -s 3 -k 1M'"
+alias ydm="youtube-dl --extract-audio --audio-format mp3 --prefer-ffmpeg "
 alias lss="l | peco"
 # Download MP3 From Youtube
 alias ym="youtube-dl --extract-audio --audio-format mp3 --audio-quality 0 --prefer-ffmpeg" 
 alias cdp="cd ~/Programming"
+alias cde="cd ~/Programming/ethical"
+alias cdee="cd ~/Programming/ethical/ethical"
+alias cdd="cd ~/Programming/devnull"
 alias p="python"
 alias vtmux="vim ~/.tmux.conf"
 alias ctagsm="ctags -R --exclude=.git --exclude=log --exclude=node_modules *"
@@ -25,12 +29,14 @@ alias asana-add="asana-client letsdothis "
 # Open like in mac
 alias open="xdg-open"
 # Music
-alias sconsify='sconsify -playlists="Deep House Relax"'
+alias sconsify='sconsify -username=1156282187 -playlists="Deep House Relax"'
 alias mt='mpc toggle' # Toggle play/pause
 alias mn='mpc next'
 alias mp="mpc prev"
 alias m='ncmpcpp'
 alias mconf='vim ~/.config/ncmpcpp/config'
+# Get size of directory sorted
+alias duh="du -hs .* * | sort -h"
 # Enable Flux
 alias fu='xflux11 -l 51.5074, -g -0.1278 -r 0'
 alias fd='killall xflux11'
@@ -44,6 +50,11 @@ function ft () { # Toggle flux
         xflux11 -l 51.5074, -g -0.1278 -r 0
     fi
 }
+# Change jupyer notebook theme 
+alias jtm="jt -t monokai -altp -nfs 115 -cellw 98% -T -N -kl -ofs 11 -altmd"
+
+# To use when audio not working and dummy output displayed
+alias audioreset="pulseaudio -k && sudo alsa force-reload"
 
 
 # Mac Specific
@@ -65,23 +76,49 @@ alias xs="x status"
 alias xh="x --help | peco"
 alias xd="x disconnect"
 
+# Brightness
+alias b="xrandr --output DP-0 --brightness"
+alias bu="xrandr --output DP-0 --brightness 1"
+alias bd="xrandr --output DP-0 --brightness 0.25"
+
+# Tor
+alias torb="(cd ~/Programming/lib/tor-browser_en-US/ && ./start-tor-browser.desktop)"
+
 # Wifi from terminal
 alias ws="nmcli general && nmcli device wifi | head"
 alias wl="nmcli device wifi"
 alias wd="nmcli radio wifi off"
 alias wu="nmcli radio wifi on"
+declare -f fzf
 wcc() {
-  local ssid
-  echo "Re-scanning wifi (If none appear, rerun...)"
-  nmcli device wifi rescan
-  sleep 1
-  ssid=$(nmcli dev wifi | sed 1d | fzf -m | awk -F'  +' '{print $2}')
+    local ssid
+    local tmpfile
+    nmcltmp="/tmp/nmcltmp.tmp"
+    nmclout="/tmp/nmclout.tmp"
 
-  if [ "x$ssid" != "x" ]
-  then
-    echo "Connecting to $ssid"
-    echo $ssid | nmcli device wifi connect "$ssid"
-  fi
+    while [ "x$ssid" = "x" ]; do
+        rm $nmcltmp $rmclout
+        # Scan for networks and wait 1 sec
+        echo "Scanning for networks "
+        nmcli device wifi rescan
+        # Save all the current connections into tmp file 
+        nmcli dev wifi | sed 1d > $nmcltmp
+        # Run the fzf command with the connections found 
+        # and store output in tmp file
+        timeout 10 fzf < $nmcltmp > $nmclout
+        # Get the SSID name from the file found
+        ssid=$(awk -F'  +' '{print $2}' < $nmclout)
+        sleep 0.3
+    done
+
+    if [ "x$ssid" != "x" ]
+    then
+        echo "Connecting to $ssid"
+        echo $ssid | nmcli device wifi connect "$ssid"
+    fi
+
+    # Clean
+    rm $nmclout $nmcltmp
 }
 wcn() { 
     echo "Re-scanning wifi (If none appear, rerun...)"
@@ -93,8 +130,13 @@ wcn() {
 }
 
 
+# Compress pdf
+cpdf() {
+    /usr/bin/gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile=SMALL-$1 $1
+}
+
+
 # Custom Scripts
-alias ydall="download_youtube.sh"
 alias gdeploy='push-git-subtree.sh'
 alias gcreate='create-git-repo.sh'
 
