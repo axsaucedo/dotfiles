@@ -30,7 +30,7 @@ cd vim
 make VIMRUNTIMEDIR=/usr/local/share/vim/vim81 
 
 sudo apt install checkinstall -y
-sudo checkinstall
+yes '' | sudo checkinstall
 
 cd ..
 rm -rf vim

@@ -51,7 +51,14 @@ rm ~/.gitignore
 # Install all vim pluggins
 vim +'PlugInstall --sync' +qa
 # Compile YCM
-.vim/plugged/YouCompleteMe 
+cd ~/.vim/plugged/YouCompleteMe 
+python3 install.py
+
+
+# Install tmux plugins
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+source ~/.tmux.conf
+~/.tmux/plugins/tpm/scripts/install_plugins.sh
 
 # CHanging ownership for all users created under root
 sudo chown -R alejandro:alejandro ~ 
