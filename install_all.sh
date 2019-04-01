@@ -29,10 +29,11 @@ libgtk2.0-dev libatk1.0-dev libbonoboui2-dev \
 libcairo2-dev libx11-dev libxpm-dev libxt-dev python-dev \
 python3-dev ruby-dev lua5.1 liblua5.1-dev libperl-dev git
 
+# INSTALL VIM WITH PYTHON2 SUPPORT
 ## clone the git repo
 git clone https://github.com/vim/vim.git
-
 ## Then run the configure command with the right params
+cd vim
 
 ./configure \
 --enable-multibyte \
@@ -43,19 +44,20 @@ git clone https://github.com/vim/vim.git
 --enable-cscope \
 --enable-gui=auto \
 --with-features=huge \
---with-x \
 --enable-fontset \
 --enable-largefile \
---enable-fail-if-missing
+--enable-fail-if-missing \
+--with-x \
 ## Then run make with runtime vim dir
 make VIMRUNTIMEDIR=/usr/local/share/vim/vim81
 
 ## Finally install with checkinstall
 sudo apt install checkinstall -y
 sudo checkinstall
+# You can remove with dpkg -r vim
 
 
-# Install geeknote
+# Install geeknote (REQUIRES VIM with 2.0 support)
 ## clone variation of github
 git clone https://github.com/jeffkowalski/geeknote 
 cd geeknote
@@ -87,6 +89,7 @@ git clone https://github.com/bhilburn/powerlevel9k.git ~/.oh-my-zsh/custom/theme
 
 ## Install powerline fonts
 curl -O https://github.com/powerline/fonts/blob/master/Meslo%20Slashed/Meslo%20LG%20M%20Regular%20for%20Powerline.ttf?raw=true
+# for the WSL download: https://github.com/powerline/fonts/blob/master/DejaVuSansMono/DejaVu%20Sans%20Mono%20for%20Powerline.ttf
 xdg-open Meslo*
 
 # Installing apps
@@ -101,10 +104,16 @@ sudo apt update && sudo apt install signal-desktop
 git clone https://github.com/axsauze/alejandro-profile-config
 cd alejandro-profile-config
 cp .* ~/
+cp -r .vim ~/
+cp -r .config ~/
+rm ~/.gitignore
 
 
 # POST CONFIG STUFF
 ## Install fzf and other plugins
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install
+
 #### Go to VIM and type :PlugInstall
 
 ## Install silver surfer
@@ -113,9 +122,9 @@ sudo apt install siversurfer-ag
 curl -LO https://github.com/BurntSushi/ripgrep/releases/download/0.10.0/ripgrep_0.10.0_amd64.deb
 sudo dpkg -i ripgrep_0.10.0_amd64.deb
 
-
-
-
+# Downloda Anaconda
+curl -O https://repo.anaconda.com/archive/Anaconda3-5.2.0-Linux-x86_64.sh
+bash Anaconda3-5.2.0-Linux-x86_64.sh
 
 
 # Misc install
