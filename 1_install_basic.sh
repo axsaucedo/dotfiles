@@ -5,7 +5,12 @@ if [ "$EUID" -ne 0 ]
     exit
 fi
 
-sudo apt install -y git curl 
+sudo apt update -y
+sudo apt upgrade -y
+
+# Installign dependencies
+sudo apt install -y git curl build-essential cmake python-dev python3-dev
+
 # Working from personal laptop so cache git password
 git config --global user.name "Alejandro Saucedo"
 git config --global user.email "axsauze@gmail.com"
@@ -36,4 +41,18 @@ sudo dpkg -i ripgrep_0.10.0_amd64.deb
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf 
 yes | ~/.fzf/install
 
+
+# Adding all config into home
+cp .* ~/
+cp -r .vim ~/
+cp -r .config ~/
+rm ~/.gitignore
+
+# Install all vim pluggins
+vim +'PlugInstall --sync' +qa
+# Compile YCM
+.vim/plugged/YouCompleteMe 
+
+# CHanging ownership for all users created under root
+sudo chown -R alejandro:alejandro ~ 
 
