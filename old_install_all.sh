@@ -14,11 +14,6 @@ chmod +x cuda_9.2.148_396.37_linux
 ./cuda_9.2.148_396.37_linux --extract=$HOME
 
 
-# Installing anaconda
-### Download 
-curl -O https://repo.anaconda.com/archive/Anaconda3-5.2.0-Linux-x86_64.sh
-bash Anaconda3-5.2*
-
 # Install VIM
 ## Remove previous configurations of vim
 sudo apt remove -y vim vim-runtime gvim vim-tiny vim-common vim-gui-common vim-nox
@@ -117,7 +112,7 @@ git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 #### Go to VIM and type :PlugInstall
 
 ## Install silver surfer
-sudo apt install siversurfer-ag
+sudo apt install silversearcher-ag
 ## Install ripgrep
 curl -LO https://github.com/BurntSushi/ripgrep/releases/download/0.10.0/ripgrep_0.10.0_amd64.deb
 sudo dpkg -i ripgrep_0.10.0_amd64.deb
