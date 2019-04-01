@@ -26,8 +26,11 @@ alias asana-list="asana tasks | peco"
 # Gem install asana-client
 alias asana-client="/var/lib/gems/2.5.0/gems/asana-client-1.0.0/bin/asana" 
 alias asana-add="asana-client letsdothis " 
-# Open like in mac
-alias open="xdg-open"
+# OPEN FILE
+# Open file in Linux:
+# alias open="xdg-open"
+# Open file in widnows
+alias open="explorer.exe"
 # Music
 alias sconsify='sconsify -username=1156282187 -playlists="Deep House Relax"'
 alias mt='mpc toggle' # Toggle play/pause
@@ -80,6 +83,10 @@ alias xd="x disconnect"
 alias b="xrandr --output DP-0 --brightness"
 alias bu="xrandr --output DP-0 --brightness 1"
 alias bd="xrandr --output DP-0 --brightness 0.25"
+
+# Windows Subsystem for Linux (wsl)
+alias cdw="cd /mnt/c/Users/alejandro"
+alias cdwm="cd /mnt/c/Users/alejandro/Music"
 
 # Tor
 alias torb="(cd ~/Programming/lib/tor-browser_en-US/ && ./start-tor-browser.desktop)"
@@ -202,6 +209,17 @@ export PATH=$PATH:~/Programming/bin
 
 # Set VIM as default PROMPT interface
 set -o vi
+bindkey -v
+
+# Show prompt type vim mode (insert/visual)
+function zle-line-init zle-keymap-select {
+    RPS1="${${KEYMAP/vicmd/-- NORMAL --}/(main|viins)/-- INSERT --}"
+    RPS2=$RPS1
+    zle reset-prompt
+}
+zle -N zle-line-init
+zle -N zle-keymap-select
+
 
 # Set folder colours for Solarized theme
 export LSCOLORS="gxfxbEaEBxxEhEhBaDaCaD"
@@ -301,5 +319,8 @@ bip() {
 #   awk -F $sep '{printf "%-'$cols's  \x1b[36m%s\x1b[m\n", $1, $2}' |
 #   fzf --ansi --multi | sed 's#.*\(https*://\)#\1#' | xargs $open > /dev/null 2> /dev/null
 # }
+
+# Quickfixes for WSL
+umask 002
 
 echo ".zprofile ran"

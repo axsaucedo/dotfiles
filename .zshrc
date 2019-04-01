@@ -13,9 +13,10 @@ ZSH_THEME="powerlevel9k/powerlevel9k"
 # Theme specific options
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
 POWERLEVEL9K_SHORTEN_STRATEGY="truncate_from_right"
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs )
+# POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs )
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir)
 # POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status virtualenv anaconda root_indicator background_jobs time battery)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status virtualenv anaconda root_indicator background_jobs)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status)
 POWERLEVEL9K_ANACONDA_LEFT_DELIMITER=""
 POWERLEVEL9K_ANACONDA_RIGHT_DELIMITER=""
 POWERLEVEL9K_PYTHON_ICON="\U1F608 "
@@ -113,6 +114,12 @@ source $ZSH/oh-my-zsh.sh
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
+
+# Base16 Shell
+BASE16_SHELL="$HOME/.config/base16-shell/"
+[ -n "$PS1"  ] && \
+    [ -s "$BASE16_SHELL/profile_helper.sh"  ] && \
+            eval "$("$BASE16_SHELL/profile_helper.sh")"
 
 echo ".zshrc ran"
 

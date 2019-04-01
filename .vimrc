@@ -90,6 +90,7 @@
     " Vimtex
     Plug 'lervag/vimtex'
 
+
     " Vimtex
     " if empty(v:servername) && exists('*remote_startserver')
     "   call remote_startserver('VIM')
@@ -107,8 +108,19 @@
     let g:previm_open_cmd = "open -a 'Google Chrome'"
 
     " Easyclip
-    set clipboard=unnamed
-    let g:EasyClipShareYanks=1
+    " set clipboard=unnamed
+    " let g:EasyClipShareYanks=1
+
+	" Enable for WSL clipboard
+    let s:clip = '/mnt/c/Windows/System32/clip.exe'  " default location
+	if executable(s:clip)
+		augroup WSLYank
+			autocmd!
+			autocmd TextYankPost * call system('echo '.shellescape(join(v:event.regcontents, "\<CR>")).' | '.s:clip)
+		augroup END
+	end
+    noremap <C-C> :call system('/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command Get-Clipboard')<CR> 
+
 
     " Airline status line
     let g:airline#extensions#tabline#enabled = 1
