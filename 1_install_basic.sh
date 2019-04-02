@@ -14,7 +14,7 @@ sudo apt install -y git curl build-essential cmake python-dev python3-dev
 # Working from personal laptop so cache git password
 git config --global user.name "Alejandro Saucedo"
 git config --global user.email "axsauze@gmail.com"
-git config --global credential.helper cache
+git config --global credential.helper store
 
 # Install node
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
