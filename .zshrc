@@ -14,9 +14,17 @@ ZSH_THEME="powerlevel9k/powerlevel9k"
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
 POWERLEVEL9K_SHORTEN_STRATEGY="truncate_from_right"
 # POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs )
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir)
-# POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status virtualenv anaconda root_indicator background_jobs time battery)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status)
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs )
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status virtualenv anaconda root_indicator background_jobs time vi_mode)
+# POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status vi_mode)
+POWERLEVEL9K_DIR_DEFAULT_BACKGROUND="white"
+POWERLEVEL9K_DIR_ETC_BACKGROUND="white"
+POWERLEVEL9K_DIR_HOME_FOREGROUND="white"
+POWERLEVEL9K_VI_MODE_INSERT_FOREGROUND="white"
+POWERLEVEL9K_VI_MODE_INSERT_BACKGROUND="blue"
+POWERLEVEL9K_VI_MODE_NORMAL_FOREGROUND="black"
+POWERLEVEL9K_VI_MODE_NORMAL_BACKGROUND="yellow"
+POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND="white"
 POWERLEVEL9K_ANACONDA_LEFT_DELIMITER=""
 POWERLEVEL9K_ANACONDA_RIGHT_DELIMITER=""
 POWERLEVEL9K_PYTHON_ICON="\U1F608 "
@@ -115,11 +123,21 @@ source $ZSH/oh-my-zsh.sh
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
 
-# Base16 Shell
-BASE16_SHELL="$HOME/.config/base16-shell/"
-[ -n "$PS1"  ] && \
-    [ -s "$BASE16_SHELL/profile_helper.sh"  ] && \
-            eval "$("$BASE16_SHELL/profile_helper.sh")"
+
+# Set VIM as default PROMPT interface
+bindkey -v
+set -o vi
+
+# Ensure up down arrow completion is enabled 
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "$terminfo[kcuu1]" up-line-or-beginning-search
+bindkey "$terminfo[kcud1]" down-line-or-beginning-search
+
+# Create and attach tmux session if none exist
+tmux ls || tmux new
 
 echo ".zshrc ran"
 

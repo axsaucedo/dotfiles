@@ -1,3 +1,9 @@
+#
+# This ZPROFILE file will execute before loading oh-my-zsh and before
+# loading ZSHRC. If you would like to add commands that load after 
+# loading oh-my-zsh please add them at the end off the ZSHRC.
+# Examples of this are commands like `bindkey -v`.
+
 
 # All ALIASES should go here
 alias pyserv="python2.7 -m SimpleHTTPServer"
@@ -85,7 +91,8 @@ alias bu="xrandr --output DP-0 --brightness 1"
 alias bd="xrandr --output DP-0 --brightness 0.25"
 
 # Windows Subsystem for Linux (wsl)
-alias cdw="cd /mnt/c/Users/alejandro"
+alias cdw="cd /mnt/c/"
+alias cdwa="cd /mnt/c/Users/alejandro/Music"
 alias cdwm="cd /mnt/c/Users/alejandro/Music"
 
 # Tor
@@ -207,10 +214,6 @@ export PATH=$PATH:~/go/bin
 export PATH=$PATH:~/Programming/bin
 
 
-# Set VIM as default PROMPT interface
-set -o vi
-bindkey -v
-
 # Show prompt type vim mode (insert/visual)
 function zle-line-init zle-keymap-select {
     RPS1="${${KEYMAP/vicmd/-- NORMAL --}/(main|viins)/-- INSERT --}"
@@ -223,15 +226,6 @@ zle -N zle-keymap-select
 
 # Set folder colours for Solarized theme
 export LSCOLORS="gxfxbEaEBxxEhEhBaDaCaD"
-
-# Cycle through history based on characters already typed on the line
-autoload -U up-line-or-beginning-search
-autoload -U down-line-or-beginning-search
-zle -N up-line-or-beginning-search
-zle -N down-line-or-beginning-search
-bindkey "$terminfo[kcuu1]" up-line-or-beginning-search
-bindkey "$terminfo[kcud1]" down-line-or-beginning-search
-
 
 export TERM="xterm-256color"
 
@@ -319,6 +313,7 @@ bip() {
 #   awk -F $sep '{printf "%-'$cols's  \x1b[36m%s\x1b[m\n", $1, $2}' |
 #   fzf --ansi --multi | sed 's#.*\(https*://\)#\1#' | xargs $open > /dev/null 2> /dev/null
 # }
+
 
 # Quickfixes for WSL
 umask 002
