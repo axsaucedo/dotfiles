@@ -42,6 +42,12 @@ git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 yes | ~/.fzf/install
 
 
+# INSTALLING VIM
+# Removing vim and all depdencies
+sudo apt remove -y vim vim-runtime gvim vim-tiny vim-common vim-gui-common vim-nox 
+# Install neovim with python support
+sudo apt-get -y install neovim python-neovim python3-neovim
+
 # Adding all config into home
 cp .* ~/
 cp -r .vim ~/
