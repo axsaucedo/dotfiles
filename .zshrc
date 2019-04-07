@@ -87,7 +87,12 @@ POWERLEVEL9K_BACKGROUND_JOBS_BACKGROUND='178'
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
+  you-should-use # git clone https://github.com/MichaelAquilina/zsh-you-should-use.git $ZSH_CUSTOM/plugins/you-should-use
+  $plugins
 )
+
+# Ensuring the you-should-use message is at the end
+export YSU_MESSAGE_POSITION="after"
 
 source $ZSH/oh-my-zsh.sh
 

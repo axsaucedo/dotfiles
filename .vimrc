@@ -49,8 +49,8 @@
     " Python syntax
     Plug 'hdima/python-syntax'
     " Snippets
-    Plug 'SirVer/ultisnips'
-    Plug 'honza/vim-snippets'
+    " Plug 'SirVer/ultisnips'
+    " Plug 'honza/vim-snippets'
     " Markdown preview
     Plug 'junegunn/vim-xmark', { 'do': 'make' }
     " Adding support for YCM
@@ -89,7 +89,16 @@
     Plug 'vim-syntastic/syntastic'
     " Vimtex
     Plug 'lervag/vimtex'
-
+    " Dim inactive (First plugin is to listen to events, other to dim)
+    " CURRENTLY DEACTIVATED as doesn't work with WSL Bash
+    Plug 'tmux-plugins/vim-tmux-focus-events'
+    Plug 'blueyed/vim-diminactive'
+    " Syntax highlighting for log files
+    Plug 'mtdl9/vim-log-highlighting'
+    " Python black formatter (for concistent format)
+    Plug 'ambv/black'
+    " Add colours to hex
+    Plug 'https://github.com/etdev/vim-hexcolor.git'
 
     " Vimtex
     " if empty(v:servername) && exists('*remote_startserver')
@@ -200,7 +209,7 @@
 
     " Enabling snippets
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    let g:UltiSnipsExpandTrigger="<c-s>"
+    " let g:UltiSnipsExpandTrigger="<c-s>"
     "let g:UltiSnipsJumpForwardTrigger="<c-b>"
     "let g:UltiSnipsJumpBackwardTrigger="<c-z>"
     
@@ -213,10 +222,10 @@
 
     " Snippets
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    let g:UltiSnipsExpandTrigger = "<Tab>"
-    let g:UltiSnipsJumpForwardTrigger = "<Tab>"
-    let g:UltiSnipsJumpBackwardTrigger = "<S-Tab>"
-    let g:UltiSnipsMappingsToIgnore = ['autocomplete']
+    " let g:UltiSnipsExpandTrigger = "<Tab>"
+    " let g:UltiSnipsJumpForwardTrigger = "<Tab>"
+    " let g:UltiSnipsJumpBackwardTrigger = "<S-Tab>"
+    " let g:UltiSnipsMappingsToIgnore = ['autocomplete']
 
     " YouCompleteMe
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -348,7 +357,8 @@
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     " Enable syntax highlighting
     syntax enable
-    colorscheme molokai
+    colorscheme molokai_custom
+    "let g:molokai_original = 0
     " colorscheme desert
     set background=dark
 

@@ -91,9 +91,10 @@ alias bu="xrandr --output DP-0 --brightness 1"
 alias bd="xrandr --output DP-0 --brightness 0.25"
 
 # Windows Subsystem for Linux (wsl)
-alias cdw="cd /mnt/c/"
-alias cdwa="cd /mnt/c/Users/alejandro/Music"
-alias cdwm="cd /mnt/c/Users/alejandro/Music"
+alias cdw="cd /c/"
+alias cdwa="cd /c/Users/alejandro/Music"
+alias cdwm="cd /c/Users/alejandro/Music"
+alias cdwp="cd /c/Users/alejandro/Programming"
 
 # Tor
 alias torb="(cd ~/Programming/lib/tor-browser_en-US/ && ./start-tor-browser.desktop)"
@@ -165,6 +166,25 @@ alias gx='gitx --all'
 alias gga='git add .; git commit -m "added"; git push '
 alias gi='cp ~/Programming/lib/git/global_gitignore .gitignore'
 
+# View file
+alias view='vim -c '
+alias viewl="vim -c 'set syntax=log' -c 'set nowrap' - "
+
+# DOCKER ALIASES
+alias dk='docker'
+dkl() {  docker logs -f -t $1 | viewl }
+alias dki='docker images'
+alias dks='docker service'
+alias dkr='docker rm'
+alias dkm='docker-machine'
+alias dkp='docker ps'
+alias dkpl="docker ps --format '{{.ID}}\t~ {{.Names}}\t~ {{.Status}}\t~ {{.Image}}'"
+alias dkip='docker inspect -f "{{.NetworkSettings.IPAddress}}" $(docker ps -l -q)'  # Get IP of last container
+alias dkra='docker rm $(docker ps -a -q)' # Delete all Docker containers
+dke() { docker exec -it $1 /bin/bash -s }
+
+
+
 # TODO, need to make sure helper keys are automatically loaded
 alias xx="sudo bash /etc/init.d/keyremap && xmodmap ~/.Xmodmap"
 
@@ -212,6 +232,10 @@ source ~/.all_secret_keys
 export PATH=$PATH:~/anaconda3/bin
 export PATH=$PATH:~/go/bin
 export PATH=$PATH:~/Programming/bin
+export PATH=$PATH:~/.local/bin/
+
+# Ensure that WSL Docker is reachable from linux
+export DOCKER_HOST=tcp://localhost:2375
 
 
 # Show prompt type vim mode (insert/visual)
