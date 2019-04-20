@@ -84,7 +84,7 @@
     " Vim Easyclip
     Plug 'svermeulen/vim-easyclip'
     " Markdown preview
-    Plug 'MikeCoder/markdown-preview.vim'
+    Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install()  }  }
     " Syntastic
     Plug 'vim-syntastic/syntastic'
     " Vimtex
@@ -117,11 +117,11 @@
     let g:previm_open_cmd = "open -a 'Google Chrome'"
 
     " Easyclip
-    " set clipboard=unnamed
-    " let g:EasyClipShareYanks=1
+    "set clipboard=unnamed
+    "let g:EasyClipShareYanks=1
 
 	" Enable for WSL clipboard
-    let s:clip = '/mnt/c/Windows/System32/clip.exe'  " default location
+    let s:clip = '/c/Windows/System32/clip.exe'  " default location
 	if executable(s:clip)
 		augroup WSLYank
 			autocmd!
@@ -376,7 +376,6 @@
     " Use Unix as the standard file type
     set ffs=unix,dos,mac
 
-
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     " => Files, backups and undo
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -412,14 +411,19 @@
     set shiftwidth=4
     set tabstop=4
 
-    " Ensure line breaks don't get forced
-    set nolist
-
+    " Make tabs displayed explicitly
+    set list
+    set listchars=tab:>-
+    
     set ai "Auto indent
     set si "Smart indent
     set wrap "Wrap lines
     " set nowrap "I don't want wrapping
 
+    " Fix for yaml file
+    autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+    autocmd FileType yml setlocal ts=2 sts=2 sw=2 expandtab
+    
 
     """"""""""""""""""""""""""""""
     " => Visual mode related

@@ -15,7 +15,7 @@ alias vvim="vim ~/.vimrc"
 alias vzsh="vim ~/.zshrc"
 alias szsh="source ~/.zshrc"
 alias yd="youtube-dl --add-metadata --write-all-thumbnails --embed-thumbnail --write-info-json --embed-subs --all-subs --external-downloader aria2c --external-downloader-args '-c -j 3 -x 3 -s 3 -k 1M'"
-alias ydm="youtube-dl --extract-audio --audio-format mp3 --prefer-ffmpeg "
+alias ydm='youtube-dl --extract-audio --audio-format mp3 --prefer-ffmpeg -o "%(title)s.%(ext)s" --ignore-errors ' 
 alias lss="l | peco"
 # Download MP3 From Youtube
 alias ym="youtube-dl --extract-audio --audio-format mp3 --audio-quality 0 --prefer-ffmpeg" 
@@ -50,6 +50,7 @@ alias duh="du -hs .* * | sort -h"
 alias fu='xflux11 -l 51.5074, -g -0.1278 -r 0'
 alias fd='killall xflux11'
 alias fl='pidof xflux11'
+alias p='python3'
 function ft () { # Toggle flux
     local flux_pid=$(pidof xflux11)
     if [ "x$flux_pid" != "x" ]; then
@@ -60,7 +61,7 @@ function ft () { # Toggle flux
     fi
 }
 # Change jupyer notebook theme 
-alias jtm="jt -t monokai -altp -nfs 115 -cellw 98% -T -N -kl -ofs 11 -altmd"
+alias jtm="jt -t monokai -T -nfs 115 -cellw 98% -N -kl -ofs 11 -altmd"
 
 # To use when audio not working and dummy output displayed
 alias audioreset="pulseaudio -k && sudo alsa force-reload"
@@ -172,17 +173,130 @@ alias viewl="vim -c 'set syntax=log' -c 'set nowrap' - "
 
 # DOCKER ALIASES
 alias dk='docker'
-dkl() {  docker logs -f -t $1 | viewl }
+alias dc='docker-compose'
+alias dcu='docker-compose up'
+alias dcd='docker-compose down'
+dkl() {  docker logs -t $1 | less }
+dcl() {  docker-compose logs -t | less }
 alias dki='docker images'
 alias dks='docker service'
 alias dkr='docker rm'
 alias dkm='docker-machine'
 alias dkp='docker ps'
+alias dkpa='docker ps -a'
 alias dkpl="docker ps --format '{{.ID}}\t~ {{.Names}}\t~ {{.Status}}\t~ {{.Image}}'"
 alias dkip='docker inspect -f "{{.NetworkSettings.IPAddress}}" $(docker ps -l -q)'  # Get IP of last container
 alias dkra='docker rm $(docker ps -a -q)' # Delete all Docker containers
+alias dksa='docker stop $(docker ps -a -q)' # Delete all Docker containers
 dke() { docker exec -it $1 /bin/bash -s }
+alias dks='docker ps -q | xargs  docker stats --no-stream'
+alias dkv='docker volume'
+alias dkvl='docker volume ls'
+alias dkvra='docker volume prune '
 
+# CONDA ALIASES
+alias cl="conda list"
+alias ci="conda install"
+alias cr="conda remove"
+# This function allows for the following commands:
+# cenv <COMMAND> <OPTIONAL_YML_FILE>
+#       Commands are:
+#           activate, delete and update
+unset -f cenv;
+
+function cenv() {
+
+    # Usage and help message
+    read -r -d '' CENV_HELP <<-'EOF'
+Usage: cenv [COMMAND] [FILE]
+
+Detect, activate, delete, and update conda environments.
+FILE should be a conda .yml environment file.
+If FILE is not given, assumes it is environment.yml.
+Automatically finds the environment name from FILE.
+
+Commands:
+
+  None     Activates the environment
+  rm       Delete the environment
+  up       Update the environment
+  list     List all environments
+  register Register environment as jupyter kernel
+
+EOF
+
+        envfile="env.yml"
+
+        # Parse the command line arguments
+        if [[ $# -gt 2 ]]; then
+            echo "Invalid argument(s): $@";
+            return 1;
+        elif [[ $# == 0 ]]; then
+            cmd="activate"
+        elif [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
+            echo "$CENV_HELP";
+            return 0;
+        elif [[ "$1" == "rm" ]]; then
+            cmd="delete"
+            if [[ $# == 2 ]]; then
+                envfile="$2"
+            fi
+        elif [[ "$1" == "up" ]]; then
+            cmd="update"
+            if [[ $# == 2 ]]; then
+                envfile="$2"
+            fi
+        elif [[ "$1" == "create" ]]; then
+            cmd="create"
+            if [[ $# == 2 ]]; then
+                envfile="$2"
+            fi
+        elif [[ "$1" == "down" ]]; then
+            cmd="deactivate"
+        elif [[ "$1" == "list" ]]; then
+            cmd="list"
+        elif [[ $# == 1 ]]; then
+            envfile="$1"
+            cmd="activate"
+        elif [[ "$1" == "register" ]]; then
+            cmd="register"
+        else
+            echo "Invalid argument(s): $@";
+            return 1;
+        fi
+
+        # Check if the file exists
+        if [[ ! -e "$envfile" ]]; then
+            echo "Environment file not found:" $envfile;
+            return 1;
+        fi
+
+        # Get the environment name from the yaml file
+        envname=$(grep "name: *" $envfile | sed -n -e 's/name: //p')
+
+        # Execute one of these actions: activate, update, delete
+        if [[ $cmd == "activate" ]]; then
+            source activate "$envname";
+        elif [[ $cmd == "update" ]]; then
+            echo "Updating environment:" $envname;
+            source activate "$envname";
+            conda env update -f "$envfile"
+        elif [[ $cmd == "create" ]]; then
+            echo "Creating environment from env file";
+            conda env create --file "$envfile"
+            source activate "$envname";
+        elif [[ $cmd == "delete" ]]; then
+            echo "Removing environment:" $envname;
+            source deactivate;
+            conda env remove --name "$envname";
+        elif [[ $cmd == "list" ]]; then
+            conda env list;
+        elif [[ $cmd == "down" ]]; then
+            source deactivate;
+        elif [[ $cmd == "register" ]]; then
+            python -m ipykernel install --user --name $CONDA_DEFAULT_ENV --display-name "Python ($CONDA_DEFAULT_ENV)"
+        fi
+}
 
 
 # TODO, need to make sure helper keys are automatically loaded
@@ -233,6 +347,8 @@ export PATH=$PATH:~/anaconda3/bin
 export PATH=$PATH:~/go/bin
 export PATH=$PATH:~/Programming/bin
 export PATH=$PATH:~/.local/bin/
+export PATH=$PATH:~/Programming/bin/kafka/bin/
+
 
 # Ensure that WSL Docker is reachable from linux
 export DOCKER_HOST=tcp://localhost:2375
@@ -343,3 +459,4 @@ bip() {
 umask 002
 
 echo ".zprofile ran"
+

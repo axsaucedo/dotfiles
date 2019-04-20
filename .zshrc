@@ -10,25 +10,46 @@ export ZSH="/home/alejandro/.oh-my-zsh"
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 ZSH_THEME="powerlevel9k/powerlevel9k"
 
+function prompt_git_quick() {
+  if [ -e ".git" ]; then
+    branch_name=$(git symbolic-ref -q HEAD)
+    branch_name=${branch_name##refs/heads/}
+    branch_name=${branch_name:-HEAD}
+
+    echo -n "%{$bg[green]%}% %{$fg[black]%}%   "
+
+    if [[ $(git status 2> /dev/null | tail -n1) = *"nothing to commit"* ]]; then
+      echo -n "$branch_name"
+    elif [[ $(git status 2> /dev/null | head -n5) = *"Changes to be committed"* ]]; then
+      echo -n "$branch_name"
+    else
+      echo -n "$branch_name ●"
+    fi
+
+    echo -n " "
+  fi
+}
+
 # Theme specific options
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
 POWERLEVEL9K_SHORTEN_STRATEGY="truncate_from_right"
-# POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs )
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(vi_mode dir vcs)
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs)
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(git_quick dir )
 # POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=( virtualenv anaconda background_jobs time vi_mode)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status virtualenv background_jobs anaconda time)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status virtualenv anaconda)
 POWERLEVEL9K_DIR_DEFAULT_BACKGROUND="white"
 POWERLEVEL9K_DIR_ETC_BACKGROUND="white"
 POWERLEVEL9K_DIR_HOME_FOREGROUND="white"
-POWERLEVEL9K_VI_MODE_INSERT_FOREGROUND="black"
-POWERLEVEL9K_VI_MODE_INSERT_BACKGROUND="white"
-POWERLEVEL9K_VI_MODE_NORMAL_FOREGROUND="black"
-POWERLEVEL9K_VI_MODE_NORMAL_BACKGROUND="yellow"
+#POWERLEVEL9K_VI_MODE_INSERT_FOREGROUND="black"
+#POWERLEVEL9K_VI_MODE_INSERT_BACKGROUND="white"
+#POWERLEVEL9K_VI_MODE_NORMAL_FOREGROUND="black"
+#POWERLEVEL9K_VI_MODE_NORMAL_BACKGROUND="yellow"
 POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND="white"
 POWERLEVEL9K_ANACONDA_LEFT_DELIMITER=""
 POWERLEVEL9K_ANACONDA_RIGHT_DELIMITER=""
-POWERLEVEL9K_PYTHON_ICON="\U1F608 "
-POWERLEVEL9K_ANACONDA_BACKGROUND="blue"
+POWERLEVEL9K_PYTHON_ICON="❤ "
+POWERLEVEL9K_ANACONDA_BACKGROUND="cyan"
 POWERLEVEL9K_ANACONDA_FOREGROUND="black"
 POWERLEVEL9K_BACKGROUND_JOBS_FOREGROUND='black'
 POWERLEVEL9K_BACKGROUND_JOBS_BACKGROUND='178'
@@ -87,7 +108,10 @@ POWERLEVEL9K_BACKGROUND_JOBS_BACKGROUND='178'
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
+  #vi-mode
   you-should-use # git clone https://github.com/MichaelAquilina/zsh-you-should-use.git $ZSH_CUSTOM/plugins/you-should-use
+  zsh-autosuggestions # git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
+  zsh-syntax-highlighting # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
   $plugins
 )
 
@@ -132,8 +156,8 @@ export PATH="$PATH:$HOME/.rvm/bin"
 
 
 # Set VIM as default PROMPT interface
-bindkey -v
-set -o vi
+# bindkey -v
+# set -o vi
 
 # Ensure up down arrow completion is enabled 
 autoload -U up-line-or-beginning-search
@@ -147,4 +171,20 @@ bindkey "$terminfo[kcud1]" down-line-or-beginning-search
 tmux ls || tmux new
 
 echo ".zshrc ran"
+
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/alejandro/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/alejandro/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/alejandro/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/alejandro/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
 
