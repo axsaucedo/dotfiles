@@ -69,3 +69,22 @@ source ~/.tmux.conf
 # CHanging ownership for all users created under root
 sudo chown -R alejandro:alejandro ~ 
 
+
+# Install kubernetes (FOR WSL)
+# As per https://devkimchi.com/2018/06/05/running-kubernetes-on-wsl/
+curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl \
+&& chmod +x ./kubectl \
+&& sudo mv ./kubectl ~/Programming/bin
+
+# This should be configured depending on whether you path starts with /c/ or /mnt
+mkdir ~/.kube \
+&& cp /mnt/c/Users/[USERNAME]/.kube/config ~/.kube
+
+# Ensure that Kubectl uses the docker-for-desktop context
+kubectl config use-context docker-for-desktop
+
+### INSTALL HELM
+wget https://storage.googleapis.com/kubernetes-helm/helm-v2.5.0-linux-amd64.tar.gz
+tar -zxvf helm-v2.5.0-linux-amd64.tar.gz
+sudo mv linux-amd64/helm /usr/local/bin
+

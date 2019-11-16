@@ -30,14 +30,35 @@ function prompt_git_quick() {
   fi
 }
 
+# Build our prompt
+prompt_kustom_kube_ps1 () {
+  local reset_color="%f"
+  local blue="%F{blue}"
+  local red="%F{red}"
+  local cyan="%F{cyan}"
+
+  #KUBE_PS1="${reset_color}$KUBE_PS1_PREFIX"
+  #KUBE_PS1+="${blue}$(_kube_ps1_symbol)"
+  #KUBE_PS1+="${reset_color}$KUBE_PS1_SEPERATOR"
+  KUBE_PS1+="${blue}$KUBE_PS1_CONTEXT${reset_color}"
+  #KUBE_PS1+="$KUBE_PS1_DIVIDER"
+  KUBE_PS1+="${black} ~ ns:$KUBE_PS1_NAMESPACE ☯ ${reset_color}"
+  #KUBE_PS1+="$KUBE_PS1_SUFFIX"
+
+  echo -n "${KUBE_PS1}"
+}
+
+prompt_fast_pyenv () {
+    echo -n "${reset_color}${yellow} `which python |  rev | cut -d"/" -f3 | rev ` ❤ ${reset_color}"
+}
+
 # Theme specific options
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
 POWERLEVEL9K_SHORTEN_STRATEGY="truncate_from_right"
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs)
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(git_quick dir )
 # POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=( virtualenv anaconda background_jobs time vi_mode)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status virtualenv background_jobs anaconda time)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status virtualenv anaconda)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status virtualenv anaconda kustom_kube_ps1)
 POWERLEVEL9K_DIR_DEFAULT_BACKGROUND="white"
 POWERLEVEL9K_DIR_ETC_BACKGROUND="white"
 POWERLEVEL9K_DIR_HOME_FOREGROUND="white"
@@ -53,6 +74,10 @@ POWERLEVEL9K_ANACONDA_BACKGROUND="cyan"
 POWERLEVEL9K_ANACONDA_FOREGROUND="black"
 POWERLEVEL9K_BACKGROUND_JOBS_FOREGROUND='black'
 POWERLEVEL9K_BACKGROUND_JOBS_BACKGROUND='178'
+
+# This is for battery saver as it's slower
+#POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=() 
+#POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir) 
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -112,6 +137,7 @@ plugins=(
   you-should-use # git clone https://github.com/MichaelAquilina/zsh-you-should-use.git $ZSH_CUSTOM/plugins/you-should-use
   zsh-autosuggestions # git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
   zsh-syntax-highlighting # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
+  kube-ps1
   $plugins
 )
 
@@ -172,19 +198,31 @@ tmux ls || tmux new
 
 echo ".zshrc ran"
 
-
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/alejandro/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+__conda_setup="$('/home/alejandro/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/home/alejandro/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/alejandro/anaconda3/etc/profile.d/conda.sh"
+    if [ -f "/home/alejandro/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/alejandro/miniconda3/etc/profile.d/conda.sh"
     else
-        export PATH="/home/alejandro/anaconda3/bin:$PATH"
+        export PATH="/home/alejandro/miniconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
 # <<< conda initialize <<<
 
+# Kubectl autocomplete
+source <(kubectl completion zsh)
+# Jenkins X autocompletion
+source <(jx completion zsh)
+
+# source ~/.zshrc_kubectl
+
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/home/alejandro/google-cloud-sdk/path.zsh.inc' ]; then . '/home/alejandro/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/home/alejandro/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/alejandro/google-cloud-sdk/completion.zsh.inc'; fi

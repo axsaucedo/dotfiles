@@ -19,13 +19,11 @@ alias ydm='youtube-dl --extract-audio --audio-format mp3 --prefer-ffmpeg -o "%(t
 alias lss="l | peco"
 # Download MP3 From Youtube
 alias ym="youtube-dl --extract-audio --audio-format mp3 --audio-quality 0 --prefer-ffmpeg" 
-alias cdp="cd ~/Programming"
-alias cde="cd ~/Programming/ethical"
-alias cdee="cd ~/Programming/ethical/ethical"
-alias cdd="cd ~/Programming/devnull"
 alias p="python"
 alias vtmux="vim ~/.tmux.conf"
 alias ctagsm="ctags -R --exclude=.git --exclude=log --exclude=node_modules *"
+alias ctagsall='ctags -R --fields=+l --languages=python,java --python-kinds=-iv --exclude="*zip" -f ./.tags ./ $JAVA_HOME $CONDA_PREFIX/lib/python3.7/site-packages/'
+alias ctagspy='ctags -R --fields=+l --languages=python --python-kinds=-iv --exclude="*zip" -f ./.tags ./'
 # Using asana from: https://github.com/thash/asana
 alias asana="~/go/bin/asana" # Brew install asana
 alias asana-list="asana tasks | peco"
@@ -37,6 +35,7 @@ alias asana-add="asana-client letsdothis "
 # alias open="xdg-open"
 # Open file in widnows
 alias open="explorer.exe"
+#alias xdg-open="explorer.exe"
 # Music
 alias sconsify='sconsify -username=1156282187 -playlists="Deep House Relax"'
 alias mt='mpc toggle' # Toggle play/pause
@@ -45,7 +44,8 @@ alias mp="mpc prev"
 alias m='ncmpcpp'
 alias mconf='vim ~/.config/ncmpcpp/config'
 # Get size of directory sorted
-alias duh="du -hs .* * | sort -h"
+alias duh="du -hs * | sort -h"
+alias duhh="du -hs .* * | sort -h"
 # Enable Flux
 alias fu='xflux11 -l 51.5074, -g -0.1278 -r 0'
 alias fd='killall xflux11'
@@ -65,6 +65,15 @@ alias jtm="jt -t monokai -T -nfs 115 -cellw 98% -N -kl -ofs 11 -altmd"
 
 # To use when audio not working and dummy output displayed
 alias audioreset="pulseaudio -k && sudo alsa force-reload"
+
+# Change folders
+alias cdp="cd ~/Programming"
+alias cdk="cd ~/.keys"
+alias cde="cd ~/Programming/ethical"
+alias cdee="cd ~/Programming/ethical/ethical"
+alias cdd="cd ~/Programming/devnull"
+alias cds="cd ~/Programming/kubernetes/seldon"
+alias cdss="cd ~/Programming/kubernetes/seldon/seldon-core"
 
 
 # Mac Specific
@@ -96,9 +105,6 @@ alias cdw="cd /c/"
 alias cdwa="cd /c/Users/alejandro/Music"
 alias cdwm="cd /c/Users/alejandro/Music"
 alias cdwp="cd /c/Users/alejandro/Programming"
-
-# Tor
-alias torb="(cd ~/Programming/lib/tor-browser_en-US/ && ./start-tor-browser.desktop)"
 
 # Wifi from terminal
 alias ws="nmcli general && nmcli device wifi | head"
@@ -174,12 +180,12 @@ alias viewl="vim -c 'set syntax=log' -c 'set nowrap' - "
 # DOCKER ALIASES
 alias dk='docker'
 alias dc='docker-compose'
-alias dcu='docker-compose up'
+alias dcu='docker-compose up -d'
 alias dcd='docker-compose down'
 dkl() {  docker logs -t $1 | less }
-dcl() {  docker-compose logs -t | less }
+alias dcl='docker-compose logs -f -t --tail=10'
+alias dcll='docker-compose logs -t | less'
 alias dki='docker images'
-alias dks='docker service'
 alias dkr='docker rm'
 alias dkm='docker-machine'
 alias dkp='docker ps'
@@ -190,9 +196,114 @@ alias dkra='docker rm $(docker ps -a -q)' # Delete all Docker containers
 alias dksa='docker stop $(docker ps -a -q)' # Delete all Docker containers
 dke() { docker exec -it $1 /bin/bash -s }
 alias dks='docker ps -q | xargs  docker stats --no-stream'
+alias dkss='docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemPerc}}\t"'
 alias dkv='docker volume'
 alias dkvl='docker volume ls'
 alias dkvra='docker volume prune '
+
+
+#### KUBERNETES ALIAS
+
+alias kdash='kubectl -n kube-system describe secret default && echo "Website at http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/overview?namespace=default" && kubectl proxy'
+# This command is used a LOT both below and in daily life
+alias k=kubectl
+# Execute a kubectl command against all namespaces
+alias kca='f(){ kubectl "$@" --all-namespaces;  unset -f f; }; f'
+# Apply a YML file
+alias kaf='kubectl apply -f'
+alias ka='kubectl apply'
+# Drop into an interactive terminal on a container
+alias keti='kubectl exec -ti'
+# Manage configuration quickly to switch contexts between local, dev ad staging.
+alias kcuc='kubectl config use-context'
+alias kcsc='kubectl config set-context'
+alias kcdc='kubectl config delete-context'
+alias kccc='kubectl config current-context'
+# General aliases
+alias kd='kubectl describe'
+alias krf='kubectl delete -f'
+# Pod management.
+alias kg='kubectl get'
+alias kgp='kubectl get pods'
+alias kgpw='kgp --watch'
+alias kgpwide='kgp -o wide'
+alias kep='kubectl edit pods'
+alias kdp='kubectl describe pods'
+alias krp='kubectl delete pods'
+# get pod by label: kgpl "app=myapp" -n myns
+alias kgpl='kgp -l'
+# Service management.
+alias kgs='kubectl get svc'
+alias kgsw='kgs --watch'
+alias kgswide='kgs -o wide'
+alias kes='kubectl edit svc'
+alias kds='kubectl describe svc'
+alias krs='kubectl delete svc'
+# Ingress management
+alias kgi='kubectl get ingress'
+alias kei='kubectl edit ingress'
+alias kdi='kubectl describe ingress'
+alias kdeli='kubectl delete ingress'
+# Namespace management
+alias kgns='kubectl get namespaces'
+alias kens='kubectl edit namespace'
+alias kdns='kubectl describe namespace'
+alias krns='kubectl delete namespace'
+alias ksns='kubectl config set-context $(kubectl config current-context) --namespace'
+# ConfigMap management
+alias kgcm='kubectl get configmaps'
+alias kecm='kubectl edit configmap'
+alias kdcm='kubectl describe configmap'
+alias kdelcm='kubectl delete configmap'
+# Secret management
+alias kgsec='kubectl get secret'
+alias kdsec='kubectl describe secret'
+alias kdelsec='kubectl delete secret'
+# Deployment management.
+alias kgd='kubectl get deployment'
+alias kgdw='kgd --watch'
+alias kgdwide='kgd -o wide'
+alias ked='kubectl edit deployment'
+alias kdd='kubectl describe deployment'
+alias kdeld='kubectl delete deployment'
+alias ksd='kubectl scale deployment'
+alias krsd='kubectl rollout status deployment'
+kres(){
+    kubectl set env $@ REFRESHED_AT=$(date +%Y%m%d%H%M%S)
+}
+# Rollout management.
+alias kgrs='kubectl get rs'
+alias krh='kubectl rollout history'
+alias kru='kubectl rollout undo'
+# Port forwarding
+alias kpf="kubectl port-forward"
+# Tools for accessing all information
+alias kga='kubectl get all'
+alias kgaa='kubectl get all --all-namespaces'
+# Logs
+alias kl='kubectl logs'
+alias klf='kubectl logs -f'
+# File copy
+alias kcp='kubectl cp'
+# Node Management
+alias kgno='kubectl get nodes'
+alias keno='kubectl edit node'
+alias kdno='kubectl describe node'
+alias kdelno='kubectl delete node'
+# Top
+alias ktn='kubectl top node'
+alias ktp='kubectl top pod'
+### FULLY CLEAN NAMESPACE
+function kcleanns() {
+    kubectl api-resources --verbs=list --namespaced -o name | xargs -n 1 kubectl delete --all -n $1
+}
+### DELETE STUCK TERMINATING NAMESPACE
+function kdelns() {
+    kubectl proxy &
+    kubectl get namespace $1 -o json |jq '.spec = {"finalizers":[]}' >temp.json
+    curl -k -H "Content-Type: application/json" -X PUT --data-binary @temp.json 127.0.0.1:8001/api/v1/namespaces/$1/finalize 
+}
+
 
 # CONDA ALIASES
 alias cl="conda list"
@@ -202,8 +313,6 @@ alias cr="conda remove"
 # cenv <COMMAND> <OPTIONAL_YML_FILE>
 #       Commands are:
 #           activate, delete and update
-unset -f cenv;
-
 function cenv() {
 
     # Usage and help message
@@ -298,6 +407,38 @@ EOF
         fi
 }
 
+#######################################################################
+#               GPG Keys                                            #
+#######################################################################
+
+# List keys:
+# ----------
+alias gpglk="gpg --list-secret-keys"
+alias gpgl="gpg --list-keys"
+
+# Generate keys:
+# -------------
+alias gpggf="gpg --full-generate-key"
+#OR
+alias gpgg="gpg --gen-key"
+
+# Export/Import keys:
+# -------------------
+alias gpge="gpg --export -a Alejandro"
+alias gpgi="gpg --import " # Input file
+alias gpges="gpg --export-secret-keys Alejandro"
+
+# Encrypt 
+# -----------------
+alias gpge="gpg -e -r Alejandro " # Input File
+alias gpget="gpg --always-trust -e -r Alejandro " # Input file
+
+# Decrypt
+# -----------------
+gpgd () {
+    gpg -d $1 | vim -
+}
+
 
 # TODO, need to make sure helper keys are automatically loaded
 alias xx="sudo bash /etc/init.d/keyremap && xmodmap ~/.Xmodmap"
@@ -343,11 +484,36 @@ group_lazy_load $HOME/.nvm/nvm.sh nvm node npm truffle grunt gulp
 source ~/.all_secret_keys
 
 # Setting PATH
-export PATH=$PATH:~/anaconda3/bin
+#export PATH=$PATH:~/anaconda3/bin
+export PATH=$PATH:~/miniconda3/bin
 export PATH=$PATH:~/go/bin
 export PATH=$PATH:~/Programming/bin
 export PATH=$PATH:~/.local/bin/
 export PATH=$PATH:~/Programming/bin/kafka/bin/
+export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:/usr/local/kubebuilder/bin
+
+# GOLang
+export GOPATH=$HOME/go
+alias cdg=cd $GOPATH
+
+# JAVA
+export JAVA_HOME="/usr/lib/jvm/default-java"
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/alejandro/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/alejandro/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/alejandro/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/alejandro/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
 
 
 # Ensure that WSL Docker is reachable from linux

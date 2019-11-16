@@ -31,14 +31,12 @@
 
     " Enable plugins
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    " Using Supertab for compatibility between YCM and UltiSnips
-    Plug 'ervandew/supertab'
     " Nerd tree side directory
     Plug 'scrooloose/nerdtree'
     " NERDTree git plugin
     Plug 'Xuyuanp/nerdtree-git-plugin'
-    " Icons for NERDTree
-    Plug 'ryanoasis/vim-webdevicons'
+    " Icons for NERDTree - Disabling as WSL doesn't support
+    " Plug 'ryanoasis/vim-webdevicons'
     " fuzzy search
     Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
     Plug 'junegunn/fzf.vim'
@@ -47,20 +45,18 @@
     " Multiple cursros
     Plug 'terryma/vim-multiple-cursors'
     " Python syntax
-    Plug 'hdima/python-syntax'
-    " Snippets
-    " Plug 'SirVer/ultisnips'
+    "Plug 'hdima/python-syntax'
     " Plug 'honza/vim-snippets'
     " Markdown preview
     Plug 'junegunn/vim-xmark', { 'do': 'make' }
     " Adding support for YCM
-    Plug 'Valloric/YouCompleteMe'
+    " Plug 'Valloric/YouCompleteMe'
     " Navigation between tmux and vim
     Plug 'christoomey/vim-tmux-navigator'
     " Smooth scroll
     Plug 'terryma/vim-smooth-scroll'
-    " Complete closing parentheses
-    Plug 'jiangmiao/auto-pairs'
+    " Complete closing parentheses/brackets - Replaced with vanilla remap
+    " Plug 'jiangmiao/auto-pairs'
     " Fugitive plugin
     Plug 'tpope/vim-fugitive'
     " NERD Commenter
@@ -78,19 +74,18 @@
     " Vim airline status line
     Plug 'vim-airline/vim-airline'
     " Geeknote plugin - uses alternative: https://github.com/jeffkowalski/geeknote
-    Plug 'neilagabriel/vim-geeknote'
+    "Plug 'neilagabriel/vim-geeknote'
     " Vim Repeat
     Plug 'tpope/vim-repeat'
     " Vim Easyclip
     Plug 'svermeulen/vim-easyclip'
+    " Enhanced go
+    Plug 'fatih/vim-go'
     " Markdown preview
     Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install()  }  }
-    " Syntastic
-    Plug 'vim-syntastic/syntastic'
     " Vimtex
     Plug 'lervag/vimtex'
-    " Dim inactive (First plugin is to listen to events, other to dim)
-    " CURRENTLY DEACTIVATED as doesn't work with WSL Bash
+    " Dim inactive (First plugin is to listen to tmux events, other to dim)
     Plug 'tmux-plugins/vim-tmux-focus-events'
     Plug 'blueyed/vim-diminactive'
     " Syntax highlighting for log files
@@ -98,13 +93,35 @@
     " Python black formatter (for concistent format)
     Plug 'ambv/black'
     " Add colours to hex
-    Plug 'https://github.com/etdev/vim-hexcolor.git'
+    Plug 'etdev/vim-hexcolor'
+    " Sidebar minimap - COMMENTING OUT: Too slow
+    " Plug 'severin-lemaignan/vim-minimap'
+    Plug 'alvan/vim-closetag'
+    " Shortcuts to add/remove quotes/brances on selection
+    Plug 'tpope/vim-surround'
+    " Set paste automatically
+    Plug 'roxma/vim-paste-easy'
+    " Autocomplete (instead of supertab)
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+    Plug 'deoplete-plugins/deoplete-go', { 'do': 'make'}
+    " Snippets
+    Plug 'SirVer/ultisnips'
+    " Libsonnet file 
+    Plug 'google/vim-jsonnet'
+    " Multi-language rich syntax support Syntax
+    Plug 'sheerun/vim-polyglot'
 
-    " Vimtex
-    " if empty(v:servername) && exists('*remote_startserver')
-    "   call remote_startserver('VIM')
-    " endif
+    " Vanilla auto close parens and quotes
+    " inoremap " ""<left>
+    " inoremap ' ''<left>
+    " inoremap ( ()<left>
+    " inoremap [ []<left>
+    " inoremap { {}<left>
+    " inoremap {<CR> {<CR>}<ESC>O
+    " inoremap {;<CR> {<CR>};<ESC>O
 
+    " Setup NVIM
+    let g:python3_host_prog=$CONDA_PREFIX."/bin/python"
 
     " Guten Tags
     set tags=./.tags,.tags;
@@ -129,27 +146,19 @@
 		augroup END
 	end
     noremap <C-C> :call system('/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command Get-Clipboard')<CR> 
-
+	" For slowdown
+	"set eventignore=TextYankPost
+    
+    
 
     " Airline status line
     let g:airline#extensions#tabline#enabled = 1
-
-    " ALE Settings
-    " Only run linters defined in ale_linters
-    let g:ale_linters_explicit = 1
-    let b:ale_linters = ['pylint']
-    " Command to ignore all the warnings, comments and refactoring, to
-    " just show errors
-    let g:ale_python_pylint_options = ' --disable=W,C,R '
-    let g:ale_python_pylint_use_global = 0
-    nmap <silent> <C-Up> <Plug>(ale_previous_wrap)
-    nmap <silent> <C-Down> <Plug>(ale_next_wrap)
     
     " Geeknote 
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    let g:GeeknoteFormat="markdown"
+    " let g:GeeknoteFormat="markdown"
 
-    nnoremap <S-M> :Geeknote<CR>
+    " nnoremap <S-M> :Geeknote<CR>
 
     " Bullets.vim
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -174,10 +183,11 @@
     autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
     " Allow for Ctrl+n to be shortcut to open nerdtree in the working directory
-    nnoremap <C-m> :NERDTreeToggle<CR>
+    nnoremap <S-M> :NERDTreeToggle<CR>
 
     " Set width
     let g:NERDTreeWinSize=30
+    let NERDTreeShowHidden=1
 
     " FZF
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -195,6 +205,7 @@
     noremap <C-p><C-b> :Buffers<CR>
     noremap <C-p><C-f> :Ag<CR>
     noremap <C-p><C-g> :GGrep<CR>
+    noremap <C-p><C-t> :Tags<CR>
     " noremap <C-p><C-g> :GFiles?<CR>
     noremap <C-p><C-l> :BLines<CR>
     noremap <C-p><C-c> :Commits<CR>
@@ -226,41 +237,48 @@
     " let g:UltiSnipsJumpForwardTrigger = "<Tab>"
     " let g:UltiSnipsJumpBackwardTrigger = "<S-Tab>"
     " let g:UltiSnipsMappingsToIgnore = ['autocomplete']
+    
+    """"""""""""""""""""""""""""""
+    " => Status line
+    """"""""""""""""""""""""""""""
+    " Always show the status line
+    set laststatus=2
 
-    " YouCompleteMe
-    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    let g:ycm_key_list_select_completion = ['<C-j>', '<Down>']
-    let g:ycm_key_list_previous_completion = ['<C-k>', '<Up>']
-    let g:ycm_key_list_accept_completion = '<C-y>'
-    " let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
-    let g:ycm_path_to_python_interpreter = '/usr/bin/python3'
+    " " Format the status line
+    "set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
 
-    let g:ycm_register_as_syntastic_checker = 1 "default 1
-    let g:Show_diagnostics_ui = 1 "default 1
 
-    let g:ycm_enable_diagnostic_signs = 1
-    let g:ycm_enable_diagnostic_highlighting = 0
-    let g:ycm_always_populate_location_list = 1 "default 0
-    let g:ycm_open_loclist_on_ycm_diags = 1 "default 1
+    " Deoplete config
+    set omnifunc=syntaxcomplete#Complete
 
-    let g:ycm_complete_in_strings = 1 "default 1
-    let g:ycm_collect_identifiers_from_tags_files = 0 "default 0
-    let g:ycm_path_to_python_interpreter = '' "default ''
+    let g:deoplete#enable_at_startup = 1
+    let g:deoplete#enable_smart_case = 1
+    let g:deoplete#file#enable_buffer_path = 1
 
-    let g:ycm_server_use_vim_stdout = 0 "default 0 (logging to console)
-    let g:ycm_server_log_level = 'info' "default info
+    inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 
-    let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'  "where to search for .ycm_extra_conf.py if not found
-    let g:ycm_confirm_extra_conf = 1
+    let g:deoplete#sources={}
+    let g:deoplete#sources._=['ale', 'omni', 'buffer', 'member', 'tag', 'file']
+    call deoplete#custom#option('omni_patterns', {
+    \ 'go': '[^. *\t]\.\w*',
+    \ 'java': '[^. *\t]\.\w*',
+    \})
 
-    let g:ycm_goto_buffer_command = 'same-buffer' "[ 'same-buffer', 'horizontal-split', 'vertical-split', 'new-tab' ]
-    let g:ycm_filetype_whitelist = { '*': 1 }
-    let g:ycm_key_invoke_completion = '<C-Space>'
 
-    nnoremap <F11> :YcmForceCompileAndDiagnostics <CR>
+    " ALE Settings
+    " Only run linters defined in ale_linters
+    " Enable tab autocomplete with deoplete
+    let g:ale_completion_enabled = 1
+    let g:ale_linters_explicit = 1
+    let g:ale_linters = {'python':  ['flake8', 'mypy', 'pylint'], 'go': ['gofmt', 'goimports', 'golangci-lint', 'golint', 'govet', 'golangserver']}
+    let g:ale_python_pylint_options = ' --disable=line-too-long,bad-continuation '
+    let g:ale_python_flake8_options = '--ignore=E501,E302,E131,W503,E126,E124,E123'
+    let g:ale_python_pylint_use_global = 0
+    nmap <silent> <C-Up> <Plug>(ale_previous_wrap)
+    nmap <silent> <C-Down> <Plug>(ale_next_wrap)
 
-    " Syntastic
-    let g:syntastic_python_checkers = ["mypy"]
+
+    let g:go_fmt_fail_silently = 1 
 
 
     " Commenting
@@ -314,7 +332,7 @@
     set ruler
 
     " Height of the command bar
-    set cmdheight=2
+    set cmdheight=1
 
     " A buffer becomes hidden when it is abandoned
     set hid
@@ -376,6 +394,9 @@
     " Use Unix as the standard file type
     set ffs=unix,dos,mac
 
+    " Setting syntax for Jenkinsfile
+    au BufNewFile,BufRead Jenkinsfile setf groovy " < activate it with Jenkinsfile
+
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     " => Files, backups and undo
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -414,6 +435,10 @@
     " Make tabs displayed explicitly
     set list
     set listchars=tab:>-
+
+    augroup golang
+        autocmd BufRead *.go set nolist
+    augroup END
     
     set ai "Auto indent
     set si "Smart indent
@@ -492,19 +517,10 @@
     map <C-\> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
     " Resize the window with bindings
-    noremap <S-H> <C-W>10<
-    noremap <S-L> <C-W>10>
-    noremap <S-J> <C-W>10+
-    noremap <S-K> <C-W>10-
-
-    """"""""""""""""""""""""""""""
-    " => Status line
-    """"""""""""""""""""""""""""""
-    " Always show the status line
-    " set laststatus=2
-
-    " " Format the status line
-    " set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
+    noremap <S-H> <C-W>5<
+    noremap <S-L> <C-W>5>
+    noremap <S-J> <C-W>2+
+    noremap <S-K> <C-W>2-
 
 
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -687,8 +703,8 @@ endfunction
     "       - Rouge: https://github.com/jneen/rouge
     command! -bang -nargs=* Ag
       \ call fzf#vim#ag(<q-args>,
-      \                 <bang>0 ? fzf#vim#with_preview('up:60%')
-      \                         : fzf#vim#with_preview(),
+      \                 <bang>0 ? fzf#vim#with_preview({'options': '-i --delimiter : --nth 4..'}, 'up:60%')
+      \                         : fzf#vim#with_preview({'options': '-i --delimiter : --nth 4..'}),
       \                 <bang>0)
 
     " Likewise, Files command with preview window
@@ -699,11 +715,48 @@ endfunction
     command! -bang -nargs=? -complete=dir GFiles
       \ call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(), <bang>0)
 
+    function! s:tags_sink(line)
+              let parts = split(a:line, '\t\zs')
+              let excmd = matchstr(parts[2:], '^.*\ze;"\t')
+              execute 'silent e' parts[1][:-2]
+              let [magic, &magic] = [&magic, 0]
+              execute excmd
+              let &magic = magic
+            endfunction
 
-    " Reload vimrc file automatically
-    augroup myvimrc
-        au!
-        au BufWritePost .vimrc,_vimrc,vimrc,.gvimrc,_gvimrc,gvimrc so $MYVIMRC | if has('gui_running') | so $MYGVIMRC | endif
-    augroup END
+            function! s:tags()
+              if empty(tagfiles())
+                echohl WarningMsg
+                echom 'Preparing tags'
+                echohl None
+                call system('ctags -R')
+              endif
+
+              call fzf#run({
+              \ 'source':  'cat '.join(map(tagfiles(), 'fnamemodify(v:val, ":S")')).
+              \            '| grep -v -a ^!',
+              \ 'options': '+m -d "\t" --with-nth 1,4,2,3.. -n 1 --tiebreak=index',
+              \ 'down':    '40%',
+              \ 'sink':    function('s:tags_sink')})
+            endfunction
+
+            command! Tags call fzf#vim#tags(expand('<cword>'), {'options': '--exact --select-1'})
+
+    " " Reload vimrc file automatically
+    " augroup myvimrc
+    "     au!
+    "     au BufWritePost .vimrc,_vimrc,vimrc,.gvimrc,_gvimrc,gvimrc so $MYVIMRC | if has('gui_running') | so $MYVIMRC | endif
+    " augroup END
+     
+    " Set reload vimrc 
+    noremap <S-R> :source $MYVIMRC<CR>
+
+    " Set Scroll
+    set scrolloff=3
+    " Add space between end of file
+    " nnoremap j jzz
+    " nnoremap k kzz
+    nnoremap <C-d> <C-d>zz
+    nnoremap <C-u> <C-u>zz
 
 
