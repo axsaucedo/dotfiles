@@ -25,6 +25,11 @@
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     " => Vim-plug setup
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+    if empty(glob('~/.vim/autoload/plug.vim'))
+      silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+          \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    endif
 
     " Setup vim-plug
     call plug#begin('~/.vim/plugged')
@@ -277,9 +282,7 @@
     nmap <silent> <C-Up> <Plug>(ale_previous_wrap)
     nmap <silent> <C-Down> <Plug>(ale_next_wrap)
 
-
     let g:go_fmt_fail_silently = 1 
-
 
     " Commenting
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
