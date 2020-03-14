@@ -8,6 +8,7 @@
 # All ALIASES should go here
 alias pyserv="python2.7 -m SimpleHTTPServer"
 alias pyrm='find . -name "*.pyc" -exec rm -rf {} \;'
+alias vim="nvim"
 alias vprof="vim ~/.zprofile"
 alias sprof="source ~/.zprofile"
 alias hprof="cat ~/.zprofile | peco"
@@ -22,7 +23,7 @@ alias ym="youtube-dl --extract-audio --audio-format mp3 --audio-quality 0 --pref
 alias p="python"
 alias vtmux="vim ~/.tmux.conf"
 alias ctagsm="ctags -R --exclude=.git --exclude=log --exclude=node_modules *"
-alias ctagsall='ctags -R --fields=+l --languages=python,java --python-kinds=-iv --exclude="*zip" -f ./.tags ./ $JAVA_HOME $CONDA_PREFIX/lib/python3.7/site-packages/'
+alias ctagsall='ctags -R --fields=+l --languages=python,java,go --python-kinds=-iv --exclude="*zip" -f ./.tags ./ $JAVA_HOME $CONDA_PREFIX/lib/python3.7/site-packages/' $GOPATH
 alias ctagspy='ctags -R --fields=+l --languages=python --python-kinds=-iv --exclude="*zip" -f ./.tags ./'
 # Using asana from: https://github.com/thash/asana
 alias asana="~/go/bin/asana" # Brew install asana
@@ -35,7 +36,7 @@ alias asana-add="asana-client letsdothis "
 # alias open="xdg-open"
 # Open file in widnows
 alias open="explorer.exe"
-#alias xdg-open="explorer.exe"
+alias xdg-open="open"
 # Music
 alias sconsify='sconsify -username=1156282187 -playlists="Deep House Relax"'
 alias mt='mpc toggle' # Toggle play/pause
@@ -101,10 +102,9 @@ alias bu="xrandr --output DP-0 --brightness 1"
 alias bd="xrandr --output DP-0 --brightness 0.25"
 
 # Windows Subsystem for Linux (wsl)
-alias cdw="cd /c/"
-alias cdwa="cd /c/Users/alejandro/Music"
-alias cdwm="cd /c/Users/alejandro/Music"
-alias cdwp="cd /c/Users/alejandro/Programming"
+alias cdw="cd /c/Users/axsau/"
+alias cdwa="cd /c/Users/axsau/Music"
+alias cdwp="cd /c/Users/axsau/Programming"
 
 # Wifi from terminal
 alias ws="nmcli general && nmcli device wifi | head"
@@ -303,6 +303,11 @@ function kdelns() {
     kubectl get namespace $1 -o json |jq '.spec = {"finalizers":[]}' >temp.json
     curl -k -H "Content-Type: application/json" -X PUT --data-binary @temp.json 127.0.0.1:8001/api/v1/namespaces/$1/finalize 
 }
+# Kubernetes KIND
+alias kindconfig='kubectl cluster-info --context kind-kind'
+
+# AWS CLI moving to aws2
+alias aws="aws2"
 
 
 # CONDA ALIASES
@@ -477,7 +482,7 @@ group_lazy_load() {
 }
 
 export NVM_DIR=~/.nvm
-group_lazy_load $HOME/.nvm/nvm.sh nvm node npm truffle grunt gulp
+group_lazy_load $HOME/.nvm/nvm.sh nvm node npm truffle grunt gulp yarn vim
 
 #group_lazy_load $HOME/.rvm/scripts/rvm rvm irb rake rails
 

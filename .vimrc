@@ -72,8 +72,12 @@
     " Plug 'ludovicchabant/vim-gutentags'
     " Bulletpoint plug
     Plug 'dkarter/bullets.vim'
+    " COC Autocompllete
+    " See https://octetz.com/docs/2019/2019-04-24-vim-as-a-go-ide/ for
+    " autocomplete setup for golang
+    Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
     " Async Linter Engine (ALE)
-    Plug 'w0rp/ale'
+    " Plug 'w0rp/ale'
     " Emmet Vim (Autocomplete of HTML)
     Plug 'mattn/emmet-vim'
     " Vim airline status line
@@ -87,7 +91,7 @@
     " Enhanced go
     Plug 'fatih/vim-go'
     " Markdown preview
-    Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install()  }  }
+    Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
     " Vimtex
     Plug 'lervag/vimtex'
     " Dim inactive (First plugin is to listen to tmux events, other to dim)
@@ -107,8 +111,8 @@
     " Set paste automatically
     Plug 'roxma/vim-paste-easy'
     " Autocomplete (instead of supertab)
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-    Plug 'deoplete-plugins/deoplete-go', { 'do': 'make'}
+    " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+    " Plug 'deoplete-plugins/deoplete-go', { 'do': 'make'}
     " Snippets
     Plug 'SirVer/ultisnips'
     " Libsonnet file 
@@ -249,45 +253,97 @@
     " Always show the status line
     set laststatus=2
 
-    " " Format the status line
-    "set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
+    " -------------------------------------------------------------------------------------------------
+    " GoLang settings
+    " See https://octetz.com/docs/2019/2019-04-24-vim-as-a-go-ide/
+    " -------------------------------------------------------------------------------------------------
 
 
-    " Deoplete config
-    set omnifunc=syntaxcomplete#Complete
+    " coc.nvim default settings
+    " -------------------------------------------------------------------------------------------------
 
-    let g:deoplete#enable_at_startup = 1
-    let g:deoplete#enable_smart_case = 1
-    let g:deoplete#file#enable_buffer_path = 1
+    " if hidden is not set, TextEdit might fail.
+    set hidden
+    " Better display for messages
+    set cmdheight=2
+    " Smaller updatetime for CursorHold & CursorHoldI
+    set updatetime=300
+    " don't give |ins-completion-menu| messages.
+    set shortmess+=c
+    " always show signcolumns
+    set signcolumn=yes
 
-    inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+    " Use tab for trigger completion with characters ahead and navigate.
+    " Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+    inoremap <silent><expr> <TAB>
+          \ pumvisible() ? "\<C-n>" :
+          \ <SID>check_back_space() ? "\<TAB>" :
+          \ coc#refresh()
+    inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-    let g:deoplete#sources={}
-    let g:deoplete#sources._=['ale', 'omni', 'buffer', 'member', 'tag', 'file']
-    call deoplete#custom#option('omni_patterns', {
-    \ 'go': '[^. *\t]\.\w*',
-    \ 'java': '[^. *\t]\.\w*',
-    \})
+    function! s:check_back_space() abort
+      let col = col('.') - 1
+      return !col || getline('.')[col - 1]  =~# '\s'
+    endfunction
 
+    " Use <c-space> to trigger completion.
+    inoremap <silent><expr> <c-space> coc#refresh()
 
-    " ALE Settings
-    " Only run linters defined in ale_linters
-    " Enable tab autocomplete with deoplete
-    let g:ale_completion_enabled = 1
-    let g:ale_linters_explicit = 1
-    let g:ale_linters = {'python':  ['flake8', 'mypy', 'pylint'], 'go': ['gofmt', 'goimports', 'golangci-lint', 'golint', 'govet', 'golangserver']}
-    let g:ale_python_pylint_options = ' --disable=line-too-long,bad-continuation '
-    let g:ale_python_flake8_options = '--ignore=E501,E302,E131,W503,E126,E124,E123'
-    let g:ale_python_pylint_use_global = 0
-    nmap <silent> <C-Up> <Plug>(ale_previous_wrap)
-    nmap <silent> <C-Down> <Plug>(ale_next_wrap)
+    " Use `[c` and `]c` to navigate diagnostics
+    nmap <silent> [c <Plug>(coc-diagnostic-prev)
+    nmap <silent> ]c <Plug>(coc-diagnostic-next)
+
+    " Remap keys for gotos
+    nmap <silent> gd <Plug>(coc-definition)
+    nmap <silent> gy <Plug>(coc-type-definition)
+    nmap <silent> gi <Plug>(coc-implementation)
+    nmap <silent> gr <Plug>(coc-references)
+
+    " Use U to show documentation in preview window
+    nnoremap <silent> U :call <SID>show_documentation()<CR>
+
+    " Remap for rename current word
+    nmap <leader>rn <Plug>(coc-rename)
+
+    " Remap for format selected region
+    vmap <leader>f  <Plug>(coc-format-selected)
+    nmap <leader>f  <Plug>(coc-format-selected)
+    " Show all diagnostics
+    nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
+    " Manage extensions
+    nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
+    " Show commands
+    nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
+    " Find symbol of current document
+    nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
+    " Search workspace symbols
+    nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
+    " Do default action for next item.
+    nnoremap <silent> <space>j  :<C-u>CocNext<CR>
+    " Do default action for previous item.
+    nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
+    " Resume latest coc list
+    nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
+
+    " vimgo settings
+    " -------------------------------------------------------------------------------------------------
+
+    let g:go_highlight_build_constraints = 1
+    let g:go_highlight_extra_types = 1
+    let g:go_highlight_fields = 1
+    let g:go_highlight_functions = 1
+    let g:go_highlight_methods = 1
+    let g:go_highlight_operators = 1
+    let g:go_highlight_structs = 1
+    let g:go_highlight_types = 1
+
+    let g:go_fmt_command = "gofmt"
+    let g:go_def_mode='gopls'
+    let g:go_info_mode='gopls'
 
     let g:go_fmt_fail_silently = 1 
+    let g:go_def_mapping_enabled = 0
 
-    " Commenting
-    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    "noremap <C-x> <leader>cb
-    "noremap <C-u> <leader>cu
 
     """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     " => General
@@ -560,11 +616,19 @@
     " Pressing ,ss will toggle and untoggle spell checking
     map <leader>ss :setlocal spell!<cr>
 
-    " Shortcuts using <leader>
-    map <leader>sn ]s
-    map <leader>sp [s
-    map <leader>sa zg
-    map <leader>s? z=
+    " Quick Docs on spllcheck
+    " Next spell word - ]s
+    " Previous spell word - [s
+    " Add word to dictionary - zg
+    " Remove word from dicationary - z=
+
+    set spelllang=en_gb
+    set spellfile=$HOME/.vim/spell/en.utf-8.add
+        
+    augroup markdownSpell
+        autocmd!
+        autocmd FileType latex,tex,md,markdown setlocal spell
+    augroup END
 
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
