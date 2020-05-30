@@ -17,6 +17,7 @@ alias vzsh="vim ~/.zshrc"
 alias szsh="source ~/.zshrc"
 alias yd="youtube-dl --add-metadata --write-all-thumbnails --embed-thumbnail --write-info-json --embed-subs --all-subs --external-downloader aria2c --external-downloader-args '-c -j 3 -x 3 -s 3 -k 1M'"
 alias ydm='youtube-dl --extract-audio --audio-format mp3 --prefer-ffmpeg -o "%(title)s.%(ext)s" --ignore-errors ' 
+function ydmw() { (cd /c/Users/axsau/Music/other/ && ydm $1) }
 alias lss="l | peco"
 # Download MP3 From Youtube
 alias ym="youtube-dl --extract-audio --audio-format mp3 --audio-quality 0 --prefer-ffmpeg" 
@@ -47,11 +48,14 @@ alias mconf='vim ~/.config/ncmpcpp/config'
 # Get size of directory sorted
 alias duh="du -hs * | sort -h"
 alias duhh="du -hs .* * | sort -h"
+# Speed test
+alias speedtest=librespeed-cli
 # Enable Flux
 alias fu='xflux11 -l 51.5074, -g -0.1278 -r 0'
 alias fd='killall xflux11'
 alias fl='pidof xflux11'
 alias p='python3'
+alias gl='git log'
 function ft () { # Toggle flux
     local flux_pid=$(pidof xflux11)
     if [ "x$flux_pid" != "x" ]; then
@@ -171,7 +175,17 @@ alias gd='git diff'
 alias gk='gitk --all&'
 alias gx='gitx --all'
 alias gga='git add .; git commit -m "added"; git push '
-alias gi='cp ~/Programming/lib/git/global_gitignore .gitignore'
+alias gi='git init'
+alias gignore='cp ~/Programming/lib/git/global_gitignore .gitignore'
+# REmoves git folder completely from history and adds it to git ignore
+function gremove() {
+    git filter-branch --tree-filter "rm -rf $1" --prune-empty HEAD
+    git for-each-ref --format="%(refname)" refs/original/ | xargs -n 1 git update-ref -d
+    echo "$1/" >> .gitignore
+    git add .gitignore
+    git commit -m "Removing $1 from git history"
+    git gc
+}
 
 # View file
 alias view='vim -c '
@@ -311,9 +325,6 @@ alias aws="aws2"
 
 
 # CONDA ALIASES
-alias cl="conda list"
-alias ci="conda install"
-alias cr="conda remove"
 # This function allows for the following commands:
 # cenv <COMMAND> <OPTIONAL_YML_FILE>
 #       Commands are:
@@ -412,6 +423,19 @@ EOF
         fi
 }
 
+### GAMEDEV
+# Unreal Compile WSL compile_commands.json
+function unreal_cpp_setup () {
+    PROJECT_PATH="$(pwd)/$1.uproject"
+    echo "$PROJECT_PATH"
+    # Getting windows path and escaping backslashes
+    WIN_PROJECT_PATH=$(wslpath -w "$PROJECT_PATH" | sed 's/\\/\\\\/g')
+    echo "$WIN_PROJECT_PATH"
+	"/c/Program Files/Epic Games/UE_4.24/Engine/Binaries/DotNET/UnrealBuildTool.exe" -mode=GenerateClangDatabase -project="$WIN_PROJECT_PATH" $1 Development Win64
+	python /home/alejandro/Programming/lib/wsl-to-ccls-compile-commands/convert.py --path "/c/Program Files/Epic Games/UE_4.24/compile_commands.json"
+	python ~/Programming/lib/wsl-compile-commands-converter/convert.py "/c/Program Files/Epic Games/UE_4.24/compile_commands.json"
+}
+
 #######################################################################
 #               GPG Keys                                            #
 #######################################################################
@@ -482,7 +506,7 @@ group_lazy_load() {
 }
 
 export NVM_DIR=~/.nvm
-group_lazy_load $HOME/.nvm/nvm.sh nvm node npm truffle grunt gulp yarn vim
+group_lazy_load $HOME/.nvm/nvm.sh nvm node npm truffle grunt gulp yarn joplin vim
 
 #group_lazy_load $HOME/.rvm/scripts/rvm rvm irb rake rails
 
@@ -497,6 +521,7 @@ export PATH=$PATH:~/.local/bin/
 export PATH=$PATH:~/Programming/bin/kafka/bin/
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:/usr/local/kubebuilder/bin
+export PATH=$PATH:~/.joplin-bin/bin
 
 # GOLang
 export GOPATH=$HOME/go
@@ -603,28 +628,9 @@ bip() {
   fi
 }
 
-# # Search on chrome history
-# # c - browse chrome history
-# c() {
-#   local cols sep google_history open
-#   cols=$(( COLUMNS / 3 ))
-#   sep='{::}'
-# 
-#   if [ "$(uname)" = "Darwin" ]; then
-#     google_history="$HOME/Library/Application Support/Google/Chrome/Default/History"
-#     open=open
-#   else
-#     google_history="$HOME/.config/google-chrome/Default/History"
-#     open=xdg-open
-#   fi
-#   cp -f "$google_history" /tmp/h
-#   sqlite3 -separator $sep /tmp/h \
-#     "select substr(title, 1, $cols), url
-#      from urls order by last_visit_time desc" |
-#   awk -F $sep '{printf "%-'$cols's  \x1b[36m%s\x1b[m\n", $1, $2}' |
-#   fzf --ansi --multi | sed 's#.*\(https*://\)#\1#' | xargs $open > /dev/null 2> /dev/null
-# }
-
+# Ensure editor is vim
+export VISUAL=vim
+export EDITOR="$VISUAL"
 
 # Quickfixes for WSL
 umask 002
