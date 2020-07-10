@@ -61,29 +61,23 @@
     " Smooth scroll
     Plug 'terryma/vim-smooth-scroll'
     " Complete closing parentheses/brackets - Replaced with vanilla remap
-    " Plug 'jiangmiao/auto-pairs'
+    Plug 'jiangmiao/auto-pairs'
+    " Plug 'Raimondi/delimitMate'
     " Fugitive plugin
     Plug 'tpope/vim-fugitive'
     " NERD Commenter
     Plug 'scrooloose/nerdcommenter'
-    " Universal ctags
-    " Plug 'universal-ctags/ctags'
-    " Gutentags (tagking care of tag managemenet)
-    " Plug 'ludovicchabant/vim-gutentags'
     " Bulletpoint plug
     Plug 'dkarter/bullets.vim'
     " COC Autocompllete
     " See https://octetz.com/docs/2019/2019-04-24-vim-as-a-go-ide/ for
     " autocomplete setup for golang
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
-    " Async Linter Engine (ALE)
-    " Plug 'w0rp/ale'
     " Emmet Vim (Autocomplete of HTML)
     Plug 'mattn/emmet-vim'
     " Vim airline status line
     Plug 'vim-airline/vim-airline'
-    " Geeknote plugin - uses alternative: https://github.com/jeffkowalski/geeknote
-    "Plug 'neilagabriel/vim-geeknote'
+    Plug 'vim-airline/vim-airline-themes'
     " Vim Repeat
     Plug 'tpope/vim-repeat'
     " Vim Easyclip
@@ -92,15 +86,17 @@
     Plug 'fatih/vim-go'
     " Markdown preview
     Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
-    " Vimtex
-    Plug 'lervag/vimtex'
     " Dim inactive (First plugin is to listen to tmux events, other to dim)
     Plug 'tmux-plugins/vim-tmux-focus-events'
-    Plug 'blueyed/vim-diminactive'
+    Plug 'blueyed/vim-diminactive' " Linked to plugin above
     " Syntax highlighting for log files
     Plug 'mtdl9/vim-log-highlighting'
     " Python black formatter (for concistent format)
     Plug 'ambv/black'
+    " ADd all popular colorschemes available
+    Plug 'flazz/vim-colorschemes'
+    " Cycle through all colorschemes with f4 
+    Plug 'vim-scripts/CycleColor'
     " Add colours to hex
     Plug 'etdev/vim-hexcolor'
     " Sidebar minimap - COMMENTING OUT: Too slow
@@ -115,10 +111,20 @@
     " Plug 'deoplete-plugins/deoplete-go', { 'do': 'make'}
     " Snippets
     " Plug 'SirVer/ultisnips'
+    Plug 'honza/vim-snippets'
     " Libsonnet file 
     Plug 'google/vim-jsonnet'
     " Multi-language rich syntax support Syntax
     Plug 'sheerun/vim-polyglot'
+    " Advanced syntax support for cpp
+    Plug 'octol/vim-cpp-enhanced-highlight'
+    " cpp proto function codegen with :GenDefinition & :GetDeclaration
+    Plug 'vim-scripts/a.vim' " dependency for below and is used to switch from header to definition file
+    Plug 'tenfyzhong/vim-gencode-cpp'
+
+
+
+
 
     " Vanilla auto close parens and quotes
     " inoremap " ""<left>
@@ -146,23 +152,74 @@
     "set clipboard=unnamed
     "let g:EasyClipShareYanks=1
 
-	" Enable for WSL clipboard
+    " Enable for WSL clipboard
     let s:clip = '/c/Windows/System32/clip.exe'  " default location
-	if executable(s:clip)
-		augroup WSLYank
-			autocmd!
-			autocmd TextYankPost * call system('echo '.shellescape(join(v:event.regcontents, "\<CR>")).' | '.s:clip)
-		augroup END
-	end
+    if executable(s:clip)
+        augroup WSLYank
+            autocmd!
+            autocmd TextYankPost * call system('echo '.shellescape(join(v:event.regcontents, "\<CR>")).' | '.s:clip)
+        augroup END
+    end
     noremap <C-C> :call system('/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command Get-Clipboard')<CR> 
-	" For slowdown
-	"set eventignore=TextYankPost
+    " For slowdown
+    "set eventignore=TextYankPost
     
     
 
     " Airline status line
     let g:airline#extensions#tabline#enabled = 1
-	let g:airline#extensions#coc#enabled = 1
+    let g:airline#extensions#tabline#buffer_idx_mode = 1
+    let g:airline_powerline_fonts = 1
+    let g:airline_theme = "wombat"
+
+    nmap 1 <Plug>AirlineSelectTab1
+    nmap 2 <Plug>AirlineSelectTab2
+    nmap 3 <Plug>AirlineSelectTab3
+    nmap 4 <Plug>AirlineSelectTab4
+    nmap 5 <Plug>AirlineSelectTab5
+    nmap 6 <Plug>AirlineSelectTab6
+    nmap 7 <Plug>AirlineSelectTab7
+    nmap 8 <Plug>AirlineSelectTab8
+    nmap 9 <Plug>AirlineSelectTab9
+
+    " Function that displays various different type of details form CoC.vim
+    " syntax plugins based on language server
+    function! ErrorsDiagnostic() abort
+      let info = get(b:, 'coc_diagnostic_info', {})
+      if empty(info) | return '' | endif
+      let msgs = []
+      if get(info, 'error', 0)
+        call add(msgs, ' 💀 ERRORS: ' . info['error'] . ' 💀 ')
+      endif
+      return join(msgs, ' ')
+    endfunction
+
+    function! WarningsDiagnostic() abort
+      let info = get(b:, 'coc_diagnostic_info', {})
+      if empty(info) | return '' | endif
+      let msgs = []
+      if get(info, 'warning', 0)
+        call add(msgs, '  🤓 WARNINGS: ' . info['warning'] . ' 🤓 ')
+      endif
+      return join(msgs, ' ')
+    endfunction
+
+    function! CoCDiagnostic() abort
+      let info = get(b:, 'coc_diagnostic_info', {})
+      if empty(info) | return '' | endif
+      let msgs = []
+      return get(g:, 'coc_status', '')
+    endfunction
+
+    function! AirlineInit()
+            let g:airline_section_a = airline#section#create(['mode', '😈 ', 'branch'])
+        let g:airline_section_b = airline#section#create_left(['file'])
+        let g:airline_section_c = airline#section#create(['🔍 %#Error#%{ErrorsDiagnostic()}%*%#WarningMsg#%{WarningsDiagnostic()}%*%#Error#%{CoCDiagnostic()}%*%#Pmenu#'])
+    endfunction
+    autocmd User AirlineAfterInit call AirlineInit()
+
+
+    let g:airline#extensions#coc#enabled = 1
     
     " Geeknote 
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -220,7 +277,7 @@
     noremap <C-p><C-l> :BLines<CR>
     noremap <C-p><C-c> :Commits<CR>
 
-	" rainbow parentheses
+    " rainbow parentheses
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     let g:rainbow_active = 1
     let g:rainbow_conf = {
@@ -275,6 +332,9 @@
     "  * For C can also use others https://github.com/neoclide/coc.nvim/wiki/Language-servers#ccobjective-c
     "  * CocInstall coc-cmake
     "  * Bash - currently manually added to settings
+    "  * CocInstall coc-snippets - Adds snippet functionality
+    "  * CocInstall coc-highlight - Introduces overrides for coc diagnostic
+    "  syntax highlights such as errors and warnings
     "
     "  Other expected requirements:
     "  * Python server expects update of Palantir's Python language server
@@ -309,11 +369,21 @@
     " Use tab for trigger completion with characters ahead and navigate.
     " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
     " other plugin before putting this into your config.
+    " USE THIS ONE IF NO OTHER PLUGINS:
+    """ inoremap <silent><expr> <TAB>
+    """       \ pumvisible() ? "\<C-n>" :
+    """       \ <SID>check_back_space() ? "\<TAB>" :
+    """       \ coc#refresh()
+    """ inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+    """
+    " USE THIS ONE IF USING COC SNIPPET PLUGIN:
     inoremap <silent><expr> <TAB>
-          \ pumvisible() ? "\<C-n>" :
-          \ <SID>check_back_space() ? "\<TAB>" :
-          \ coc#refresh()
-    inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+      \ pumvisible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+    let g:coc_snippet_next = '<tab>' 
+    """
 
     function! s:check_back_space() abort
       let col = col('.') - 1
@@ -335,6 +405,8 @@
     " Use `[g` and `]g` to navigate diagnostics
     nmap <silent> [g <Plug>(coc-diagnostic-prev)
     nmap <silent> ]g <Plug>(coc-diagnostic-next)
+    nmap <silent> [e <Plug>(coc-diagnostic-prev-error)
+    nmap <silent> ]e <Plug>(coc-diagnostic-next-error)
 
     " GoTo code navigation.
     nmap <silent> gd <Plug>(coc-definition)
@@ -343,7 +415,11 @@
     nmap <silent> gr <Plug>(coc-references)
 
     " Use K to show documentation in preview window.
-    nnoremap <silent> K :call <SID>show_documentation()<CR>
+    " This opens the documentation and the function signature if available
+    " If opening this on top of a function it will show two popups
+    " If you just add a command and wait inside a function the signature would
+    " still pop-up
+    nnoremap  <M-k> :call <SID>show_documentation()<CR>:call CocActionAsync('showSignatureHelp')<CR>
 
     function! s:show_documentation()
       if (index(['vim','help'], &filetype) >= 0)
@@ -355,6 +431,7 @@
 
     " Highlight the symbol and its references when holding the cursor.
     autocmd CursorHold * silent call CocActionAsync('highlight')
+    nnoremap <M-i> :call CocActionAsync('highlight')<CR>
 
     " Symbol renaming.
     nmap <leader>rn <Plug>(coc-rename)
@@ -409,7 +486,6 @@
     " Add (Neo)Vim's native statusline support.
     " NOTE: Please see `:h coc-status` for integrations with external plugins that
     " provide custom statusline: lightline.vim, vim-airline.
-    set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
     " Mappings using CoCList:
     " Show all diagnostics.
@@ -419,15 +495,27 @@
     " Show commands.
     nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
     " Find symbol of current document.
-    nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
+    nnoremap <silent> <space>s  :<C-u>CocList outline<cr>
     " Search workspace symbols.
-    nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
+    nnoremap <silent> <space>o  :<C-u>CocList -I symbols<cr>
     " Do default action for next item.
     nnoremap <silent> <space>j  :<C-u>CocNext<CR>
     " Do default action for previous item.
     nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
     " Resume latest coc list.
     nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
+    
+    " coc snippets settings:
+    " Use <C-l> for trigger snippet expand.
+    imap <C-l> <Plug>(coc-snippets-expand)
+    " Use <C-j> for select text for visual placeholder of snippet.
+    vmap <C-j> <Plug>(coc-snippets-select)
+    " Use <C-j> for jump to next placeholder, it's default of coc.nvim
+    let g:coc_snippet_next = '<c-j>'
+    " Use <C-k> for jump to previous placeholder, it's default of coc.nvim
+    let g:coc_snippet_prev = '<c-k>'
+    " Use <C-j> for both expand and jump (make expand higher priority.)
+    imap <C-j> <Plug>(coc-snippets-expand-jump)
 
     " Language specific
     "
@@ -443,8 +531,25 @@
     " Godot
     " Currently can be accessed directly through official language server
     " https://github.com/godotengine/godot/issues/34523#issuecomment-582144661
+    
+    " CPP C++
+    " Syntax:
+    "let g:cpp_class_scope_highlight = 1
+    let g:cpp_member_variable_highlight = 1
+    let g:cpp_class_decl_highlight = 1
+    "let g:cpp_posix_standard = 1
+    "let g:cpp_experimental_simple_template_highlight = 1
+    "let g:cpp_experimental_template_highlight = 1
 
-    " vimgo settings
+    " a.vim override to work with cpp with h files
+    " With this and the cppgenplugin you can generate cpp
+    " body by using the :GenDefinition or :GenDeclaration cmds
+    let g:alternateExtensions_CPP = "inc,h,H,HPP,hpp"
+    let g:alternateExtensions_cpp = "inc,h,H,HPP,hpp"
+    let g:alternateExtensions_h = "cpp"
+    let g:alternateExtensions_H = "cpp"
+
+    " VIMGO SETTINGS:
     " -------------------------------------------------------------------------------------------------
 
     let g:go_highlight_build_constraints = 1
@@ -553,10 +658,11 @@
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     " Enable syntax highlighting
     syntax enable
+    set background=dark
     colorscheme molokai_custom
     "let g:molokai_original = 0
-    " colorscheme desert
-    set background=dark
+    " Other popular colors
+    " colorscheme monokai-phoenix
 
     " Set extra options when running in GUI mode
     if has("gui_running")
@@ -597,6 +703,11 @@
     set undofile
     endif
 
+    " Ensure if vim is opened without params the last buffer is opened
+    if argc() == 0
+        autocmd VimEnter * nested :edit #<1
+    endif
+
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     " => Text, tab and indent related
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -612,7 +723,8 @@
 
     " Make tabs displayed explicitly
     set list
-    set listchars=tab:>-
+    "set listchars=tab:▶\ ,trail:·,extends:\#,nbsp:⎵
+    set listchars=tab:⍿\ ,trail:·,extends:\#,nbsp:⎵
 
     augroup golang
         autocmd BufRead *.go set nolist
@@ -662,6 +774,11 @@
 
     " Close all the buffers
     map <leader>ba :1,1000 bd!<cr>
+
+    " Move to next and previous buffer
+    map <tab> :bn<cr><cr>
+    map <S-tab> :bp<cr>
+    map <C-q> :Bclose<cr>
 
     " Useful mappings for managing tabs
     map <leader>tn :tabnew<cr>
@@ -863,12 +980,12 @@ endfunction
 
 
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	" Configuration for extra visualisation in FZF.vim
+    " Configuration for extra visualisation in FZF.vim
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	" Command for git grep
-	" - fzf#vim#grep(command, with_column, [options], [fullscreen])
-	" command! -bang -nargs=* GGrep
-	"  \ call fzf#vim#grep('git grep --line-number '.shellescape(<q-args>), 0, <bang>0)
+    " Command for git grep
+    " - fzf#vim#grep(command, with_column, [options], [fullscreen])
+    " command! -bang -nargs=* GGrep
+    "  \ call fzf#vim#grep('git grep --line-number '.shellescape(<q-args>), 0, <bang>0)
     "
     command! -bang -nargs=* GGrep
       \ call fzf#vim#grep(
@@ -877,10 +994,10 @@ endfunction
       \           : fzf#vim#with_preview(),
       \   <bang>0)
 
-	" Override Colors command. You can safely do this in your .vimrc as fzf.vim
-	" will not override existing commands.
-	command! -bang Colors
-	  \ call fzf#vim#colors({'left': '15%', 'options': '--reverse --margin 30%,0'}, <bang>0)
+    " Override Colors command. You can safely do this in your .vimrc as fzf.vim
+    " will not override existing commands.
+    command! -bang Colors
+      \ call fzf#vim#colors({'left': '15%', 'options': '--reverse --margin 30%,0'}, <bang>0)
 
     " Augmenting Ag command using fzf#vim#with_preview function
     "     * For syntax-highlighting, Ruby and any of the following tools are required:
@@ -902,31 +1019,31 @@ endfunction
       \ call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(), <bang>0)
 
     function! s:tags_sink(line)
-              let parts = split(a:line, '\t\zs')
-              let excmd = matchstr(parts[2:], '^.*\ze;"\t')
-              execute 'silent e' parts[1][:-2]
-              let [magic, &magic] = [&magic, 0]
-              execute excmd
-              let &magic = magic
-            endfunction
+      let parts = split(a:line, '\t\zs')
+      let excmd = matchstr(parts[2:], '^.*\ze;"\t')
+      execute 'silent e' parts[1][:-2]
+      let [magic, &magic] = [&magic, 0]
+      execute excmd
+      let &magic = magic
+    endfunction
 
-            function! s:tags()
-              if empty(tagfiles())
-                echohl WarningMsg
-                echom 'Preparing tags'
-                echohl None
-                call system('ctags -R')
-              endif
+    function! s:tags()
+      if empty(tagfiles())
+        echohl WarningMsg
+        echom 'Preparing tags'
+        echohl None
+        call system('ctags -R')
+      endif
 
-              call fzf#run({
-              \ 'source':  'cat '.join(map(tagfiles(), 'fnamemodify(v:val, ":S")')).
-              \            '| grep -v -a ^!',
-              \ 'options': '+m -d "\t" --with-nth 1,4,2,3.. -n 1 --tiebreak=index',
-              \ 'down':    '40%',
-              \ 'sink':    function('s:tags_sink')})
-            endfunction
+      call fzf#run({
+      \ 'source':  'cat '.join(map(tagfiles(), 'fnamemodify(v:val, ":S")')).
+      \            '| grep -v -a ^!',
+      \ 'options': '+m -d "\t" --with-nth 1,4,2,3.. -n 1 --tiebreak=index',
+      \ 'down':    '40%',
+      \ 'sink':    function('s:tags_sink')})
+    endfunction
 
-            command! Tags call fzf#vim#tags(expand('<cword>'), {'options': '--exact --select-1'})
+    command! Tags call fzf#vim#tags(expand('<cword>'), {'options': '--exact --select-1'})
 
     " " Reload vimrc file automatically
     " augroup myvimrc

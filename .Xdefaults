@@ -328,3 +328,6 @@ URxvt.solarized.default:          dark
 ! URxvt*tabbar-bg:                 colour
 ! URxvt*tabbar-fg:                 colour
 ! URxvt*url-launcher: string
+
+xterm*metaSendsEscape: true
+

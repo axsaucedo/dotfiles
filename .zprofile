@@ -9,6 +9,10 @@
 alias pyserv="python2.7 -m SimpleHTTPServer"
 alias pyrm='find . -name "*.pyc" -exec rm -rf {} \;'
 alias vim="nvim"
+function gvim() {
+    rm /tmp/godotnvimsocket || true
+    NVIM_LISTEN_ADDRESS=/tmp/godotnvimsocket nvim
+}
 alias vprof="vim ~/.zprofile"
 alias sprof="source ~/.zprofile"
 alias hprof="cat ~/.zprofile | peco"
@@ -67,6 +71,10 @@ function ft () { # Toggle flux
 }
 # Change jupyer notebook theme 
 alias jtm="jt -t monokai -T -nfs 115 -cellw 98% -N -kl -ofs 11 -altmd"
+
+# Tar / Compress
+tarz() { tar -zcvf $1.tar.gz $1; rm -r $1; }
+untarz() { tar -zxvf $1; rm -r $1; }
 
 # To use when audio not working and dummy output displayed
 alias audioreset="pulseaudio -k && sudo alsa force-reload"
@@ -181,11 +189,14 @@ alias gignore='cp ~/Programming/lib/git/global_gitignore .gitignore'
 function gremove() {
     git filter-branch --tree-filter "rm -rf $1" --prune-empty HEAD
     git for-each-ref --format="%(refname)" refs/original/ | xargs -n 1 git update-ref -d
-    echo "$1/" >> .gitignore
+    echo "$1" >> .gitignore
     git add .gitignore
     git commit -m "Removing $1 from git history"
     git gc
 }
+# CUSTOM git aliases
+alias gssh="~/Programming/lib/custom_scripts/git_https_to_ssh.sh"
+alias ghttps="~/Programming/lib/custom_scripts/git_ssh_to_https.sh"
 
 # View file
 alias view='vim -c '
@@ -282,6 +293,8 @@ alias kdd='kubectl describe deployment'
 alias kdeld='kubectl delete deployment'
 alias ksd='kubectl scale deployment'
 alias krsd='kubectl rollout status deployment'
+# Grant admin privileges to the default service account
+alias kadmin='kubectl create rolebinding default-admin --clusterrole=admin --serviceaccount=default:default'
 kres(){
     kubectl set env $@ REFRESHED_AT=$(date +%Y%m%d%H%M%S)
 }
@@ -322,6 +335,9 @@ alias kindconfig='kubectl cluster-info --context kind-kind'
 
 # AWS CLI moving to aws2
 alias aws="aws2"
+
+# Godot 
+alias godot="\"/c/Program Files (x86)/Steam/steamapps/common/Godot Engine/godot.windows.opt.tools.64.exe\""
 
 
 # CONDA ALIASES
@@ -431,9 +447,9 @@ function unreal_cpp_setup () {
     # Getting windows path and escaping backslashes
     WIN_PROJECT_PATH=$(wslpath -w "$PROJECT_PATH" | sed 's/\\/\\\\/g')
     echo "$WIN_PROJECT_PATH"
-	"/c/Program Files/Epic Games/UE_4.24/Engine/Binaries/DotNET/UnrealBuildTool.exe" -mode=GenerateClangDatabase -project="$WIN_PROJECT_PATH" $1 Development Win64
-	python /home/alejandro/Programming/lib/wsl-to-ccls-compile-commands/convert.py --path "/c/Program Files/Epic Games/UE_4.24/compile_commands.json"
-	python ~/Programming/lib/wsl-compile-commands-converter/convert.py "/c/Program Files/Epic Games/UE_4.24/compile_commands.json"
+	"/c/Program Files/Epic Games/UE_4.25/Engine/Binaries/DotNET/UnrealBuildTool.exe" -mode=GenerateClangDatabase -project="$WIN_PROJECT_PATH" -Engine -ThirdParty -rocket -progress $1 Development Win64
+	python /home/alejandro/Programming/lib/wsl-to-ccls-compile-commands/convert.py --path "/c/Program Files/Epic Games/UE_4.25/compile_commands.json"
+	python ~/Programming/lib/wsl-compile-commands-converter/convert.py "/c/Program Files/Epic Games/UE_4.25/compile_commands.json"
 }
 
 #######################################################################
@@ -506,7 +522,7 @@ group_lazy_load() {
 }
 
 export NVM_DIR=~/.nvm
-group_lazy_load $HOME/.nvm/nvm.sh nvm node npm truffle grunt gulp yarn joplin vim
+group_lazy_load $HOME/.nvm/nvm.sh nvm node npm truffle grunt gulp yarn joplin vim nvim gvim
 
 #group_lazy_load $HOME/.rvm/scripts/rvm rvm irb rake rails
 
@@ -632,8 +648,13 @@ bip() {
 export VISUAL=vim
 export EDITOR="$VISUAL"
 
-# Quickfixes for WSL
-umask 002
+########### WSL
+#
+# DISPLAY
+export DISPLAY=127.0.0.1:0.0 # When DISPLAY enabled and WSL1 is used
+# File permissions and write level
+umask 002 # ENsure all files are being written with the right permissions
+
 
 echo ".zprofile ran"
 

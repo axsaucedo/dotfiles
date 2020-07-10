@@ -65,10 +65,10 @@ hi ModeMsg         guifg=#E6DB74
 hi MoreMsg         guifg=#E6DB74
 hi Operator        guifg=#F92672
 
-" complete menu
-hi Pmenu           guifg=#66D9EF guibg=#000000
-hi PmenuSel                      guibg=#808080
-hi PmenuSbar                     guibg=#080808
+" auto-complete menu popup documentation
+hi Pmenu           guifg=#d7ff00 guibg=#444444
+hi PmenuSel                      guibg=#005f5f
+hi PmenuSbar                     guibg=#005fff
 hi PmenuThumb      guifg=#66D9EF
 
 hi PreCondit       guifg=#A6E22E               gui=bold
@@ -125,7 +125,7 @@ else
    hi CursorLine                    guibg=#293739
    hi CursorLineNr    guifg=#FD971F               gui=none
    hi CursorColumn                  guibg=#293739
-   hi ColorColumn                   guibg=#232526
+   hi ColorColumn                   guibg=#1c1c1c
    hi LineNr          guifg=#465457 guibg=#232526
    hi NonText         guifg=#465457
    hi SpecialKey      guifg=#465457
@@ -135,15 +135,6 @@ end
 " Support for 256-color terminal
 "
 if &t_Co > 255
-   if s:molokai_original == 1
-      hi Normal                   ctermbg=234
-      hi CursorLine               ctermbg=235   cterm=none
-      hi CursorLineNr ctermfg=208               cterm=none
-   else
-      hi Normal       ctermfg=252 ctermbg=233
-      hi CursorLine               ctermbg=234   cterm=none
-      hi CursorLineNr ctermfg=208               cterm=none
-   endif
    hi Boolean         ctermfg=135
    hi Character       ctermfg=144
    hi Number          ctermfg=135
@@ -182,10 +173,10 @@ if &t_Co > 255
    hi MoreMsg         ctermfg=229
    hi Operator        ctermfg=161
 
-   " complete menu
-   hi Pmenu           ctermfg=81  ctermbg=16
-   hi PmenuSel        ctermfg=255 ctermbg=242
-   hi PmenuSbar                   ctermbg=232
+   " auto-complete menu popup documentation
+   hi Pmenu           ctermfg=228 ctermbg=238
+   hi PmenuSel        ctermfg=255 ctermbg=23
+   hi PmenuSbar                   ctermbg=27
    hi PmenuThumb      ctermfg=81
 
    hi PreCondit       ctermfg=118               cterm=bold
@@ -225,16 +216,19 @@ if &t_Co > 255
    hi WildMenu        ctermfg=81  ctermbg=16
 
    hi Comment         ctermfg=59
-   hi CursorColumn                ctermbg=236
-   hi ColorColumn                 ctermbg=236
-   hi LineNr          ctermfg=250 ctermbg=236
+   hi CursorColumn                ctermbg=234
+   hi CursorLine                  ctermbg=234 cterm=none
+   hi ColorColumn                 ctermbg=234
+   hi CursorLineNr    ctermfg=208 cterm=none
+   hi LineNr          ctermfg=250 ctermbg=238
    hi NonText         ctermfg=59
+   hi Normal          ctermfg=252 ctermbg=233
 
    hi SpecialKey      ctermfg=59
 
    if exists("g:rehash256") && g:rehash256 == 1
        hi Normal       ctermfg=252 ctermbg=234
-       hi CursorLine               ctermbg=236   cterm=none
+       hi CursorLine               ctermbg=233   cterm=none
        hi CursorLineNr ctermfg=208               cterm=none
 
        hi Boolean         ctermfg=141
@@ -279,15 +273,29 @@ hi Exception       ctermfg=197 cterm=bold
 hi String ctermfg=228
 hi Comment         ctermfg=244 cterm=bold
 hi Visual                      ctermbg=238
+hi Highlight                   cterm=bold ctermbg=Blue ctermfg=NONE
 hi Search          ctermbg=210 ctermfg=black
 hi IncSearch          ctermfg=210 ctermbg=black
 set cursorline
-hi Cursor          ctermbg=blue ctermfg=red guifg=red guibg=blue 
+set cursorcolumn
+hi Cursor          guifg=red guibg=blue ctermfg=NONE  ctermbg=253
 hi PreCondit       ctermfg=197 cterm=bold
 hi Directory       ctermfg=81 cterm=bold
 hi PreProc         ctermfg=197
 hi StatusLine      ctermfg=231 ctermbg=232
 hi StatusLineNC    ctermfg=244 ctermbg=232
+
+" Custom CoCVIM settings
+hi CocErrorHighlight ctermbg=52  guibg=#5f0000
+"hi CocWarningHighlight ctermbg=3  guibg=#808000
+"hi CocInfoHighlight ctermfg=Red  guifg=#ff0000
+"hi CocHintHighlight ctermfg=Red  guifg=#ff0000
+"hi CocErrorLine ctermbg=52  guibg=#5f0000
+"hi CocWarningLine ctermbg=3  guibg=#808000
+"hi CocInfoLine ctermfg=Red  guifg=#ff0000
+"hi CocHintLine ctermfg=Red  guifg=#ff0000
+
+hi CocHighlightText guibg=#00005f ctermbg=17 gui=underline cterm=underline
 
 " Must be at the end, because of ctermbg=234 bug.
 " https://groups.google.com/forum/#!msg/vim_dev/afPqwAFNdrU/nqh6tOM87QUJ
