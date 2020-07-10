@@ -11,4 +11,6 @@ cp ~/.zprofile .zprofile || echo "no zprofile"
 cp ~/.zshrc .zshrc || echo "no zshrc"
 cp -r ~/.vim/colors .vim/colors || echo "no .vim/colors"
 cp -r ~/.vim/spell .vim/ || echo "no .vim/spell"
+mkdir -p .config/nvim/
+cp ~/.config/nvim/coc-settings.json .config/nvim/coc-settings.json || echo "no coc-settings.json"
 

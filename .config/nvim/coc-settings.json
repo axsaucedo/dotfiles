@@ -1,0 +1,48 @@
+{
+  "languageserver": {
+    "bash": {
+      "command": "bash-language-server",
+      "args": ["start"],
+      "filetypes": ["sh"],
+      "ignoredRootPaths": ["~"]
+    },
+    "godot": {
+      "host": "localhost",
+      "filetypes": ["gd", "gdscript3"],
+      "port": 6008
+    },
+    "ccls": {
+      "command": "ccls",
+      "filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp", "h", "hpp"],
+      "rootPatterns": [".ccls", "compile_commands.json", ".git/", ".hg/"],
+      "initializationOptions": {
+         "cache": {
+           "directory": "/tmp/ccls"
+         },
+         "clang": {
+           "extraArgs": [
+               "-I/usr/include"
+           ],
+           "jsonInfoComments": [
+               "THESE ARE JUST COMMENTS FOR INFORMATION IN THIS FILE",
+               "To use llvm 10.x or 8.x of LLVM just replace the path below version and it should work as expected",
+               "For example the path for 10.x is:",
+               "-I/home/alejandro/Programming/lib/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/include/c++/v1",
+               "and the path for 8 is:",
+               "-I/home/alejandro/Programming/lib/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/include/c++/v1",
+               "COMMON DEFAULTS TO INCLUDE",
+               "Some of the common default includes in the ccls file are:",
+               "-I/home/alejandro/Programming/lib/clang+llvm-8.0.0-x86_64-linux-gnu-ubuntu-18.04/include/c++/v1",
+               "-I/home/alejandro/Programming/lib/clang+llvm-8.0.0-x86_64-linux-gnu-ubuntu-18.04/lib/clang/8.0.0",
+               "-I/home/alejandro/Programming/lib/clang+llvm-8.0.0-x86_64-linux-gnu-ubuntu-18.04/lib/clang/8.0.0/include",
+               "-I/usr/include"
+           ]
+         }
+       }
+    }
+  },
+  "python.formatting.provider": "black",
+  "python.pythonPath": "/home/alejandro/miniconda3/bin/python",
+  "suggest.enablePreview": true,
+  "signature.hideOnTextChange": false
+}
