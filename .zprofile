@@ -71,10 +71,12 @@ function ft () { # Toggle flux
 }
 # Change jupyer notebook theme 
 alias jtm="jt -t monokai -T -nfs 115 -cellw 98% -N -kl -ofs 11 -altmd"
+# Run time start for zsh
+alias timez="time zsh -i -c echo"
 
 # Tar / Compress
-tarz() { tar -zcvf $1.tar.gz $1; rm -r $1; }
-untarz() { tar -zxvf $1; rm -r $1; }
+tarz() { tar -zcvf $1.tar.gz $1; }
+untarz() { tar -zxvf $1; }
 
 # To use when audio not working and dummy output displayed
 alias audioreset="pulseaudio -k && sudo alsa force-reload"
@@ -87,6 +89,12 @@ alias cdee="cd ~/Programming/ethical/ethical"
 alias cdd="cd ~/Programming/devnull"
 alias cds="cd ~/Programming/kubernetes/seldon"
 alias cdss="cd ~/Programming/kubernetes/seldon/seldon-core"
+# Windows Subsystem for Linux (wsl)
+alias cdw="cd /c/Users/axsau/"
+alias cdwa="cd /c/Users/axsau/Music"
+alias cdwp="cd /c/Users/axsau/Programming"
+alias cdv="cd /c/Users/axsau/Programming/vulkan/"
+alias cdvk="cd /home/alejandro/Programming/kubernetes/seldon/vulkan-kompute"
 
 
 # Mac Specific
@@ -112,11 +120,6 @@ alias xd="x disconnect"
 alias b="xrandr --output DP-0 --brightness"
 alias bu="xrandr --output DP-0 --brightness 1"
 alias bd="xrandr --output DP-0 --brightness 0.25"
-
-# Windows Subsystem for Linux (wsl)
-alias cdw="cd /c/Users/axsau/"
-alias cdwa="cd /c/Users/axsau/Music"
-alias cdwp="cd /c/Users/axsau/Programming"
 
 # Wifi from terminal
 alias ws="nmcli general && nmcli device wifi | head"
@@ -184,7 +187,7 @@ alias gk='gitk --all&'
 alias gx='gitx --all'
 alias gga='git add .; git commit -m "added"; git push '
 alias gi='git init'
-alias gignore='cp ~/Programming/lib/git/global_gitignore .gitignore'
+alias gicp='cp ~/Programming/lib/global_gitignore .gitignore'
 # REmoves git folder completely from history and adds it to git ignore
 function gremove() {
     git filter-branch --tree-filter "rm -rf $1" --prune-empty HEAD
@@ -298,6 +301,10 @@ alias kadmin='kubectl create rolebinding default-admin --clusterrole=admin --ser
 kres(){
     kubectl set env $@ REFRESHED_AT=$(date +%Y%m%d%H%M%S)
 }
+kevicted() {
+    # Remove evicted pods in a namespace with first parameter being the namespace
+    kubectl get pods -n $1 | grep Evicted | awk '{print $1}' | xargs kubectl delete pod -n $1
+}
 # Rollout management.
 alias kgrs='kubectl get rs'
 alias krh='kubectl rollout history'
@@ -330,11 +337,14 @@ function kdelns() {
     kubectl get namespace $1 -o json |jq '.spec = {"finalizers":[]}' >temp.json
     curl -k -H "Content-Type: application/json" -X PUT --data-binary @temp.json 127.0.0.1:8001/api/v1/namespaces/$1/finalize 
 }
+### DELETE STUCK TERMINATING Resource
+function kdelr() {
+    kubectl proxy &
+    kubectl get $1 $2 -o json |jq '.spec = {"finalizers":[]}' >temp.json
+    curl -k -H "Content-Type: application/json" -X PUT --data-binary @temp.json 127.0.0.1:8001/api/v1/$1/$2/finalize 
+}
 # Kubernetes KIND
 alias kindconfig='kubectl cluster-info --context kind-kind'
-
-# AWS CLI moving to aws2
-alias aws="aws2"
 
 # Godot 
 alias godot="\"/c/Program Files (x86)/Steam/steamapps/common/Godot Engine/godot.windows.opt.tools.64.exe\""
@@ -439,7 +449,19 @@ EOF
         fi
 }
 
-### GAMEDEV
+### ZIG
+export PATH=$PATH:~/Programming/lib/zig
+
+
+### CPP
+export PATH=$PATH:~/Programming/lib/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin/
+alias wcmake="/c/Program\ Files/CMake/bin/cmake.exe"
+alias wscons='cmd.exe /c "C:\Users\axsau\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.8_qbz5n2kfra8p0\LocalCache\local-packages\Python38\Scripts\scons.bat"'
+alias msbuild="/c/Program\ Files\ (x86)/Microsoft\ Visual\ Studio/2019/Community/MSBuild/Current/Bin/MSBuild.exe"
+
+alias clang-format=/home/alejandro/Programming/lib/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin/clang-format
+alias clang-tidy=/home/alejandro/Programming/lib/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin/clang-tidy
+
 # Unreal Compile WSL compile_commands.json
 function unreal_cpp_setup () {
     PROJECT_PATH="$(pwd)/$1.uproject"
@@ -521,10 +543,14 @@ group_lazy_load() {
     done
 }
 
-export NVM_DIR=~/.nvm
-group_lazy_load $HOME/.nvm/nvm.sh nvm node npm truffle grunt gulp yarn joplin vim nvim gvim
+# Load nvm
+# export NVM_DIR=~/.nvm
+# group_lazy_load $HOME/.nvm/nvm.sh nvm node npm truffle grunt gulp yarn joplin vim nvim gvim
 
-#group_lazy_load $HOME/.rvm/scripts/rvm rvm irb rake rails
+# Load cargo rust 
+group_lazy_load $HOME/.cargo/env cargo rust
+
+# group_lazy_load $HOME/.rvm/scripts/rvm rvm irb rake rails
 
 source ~/.all_secret_keys
 
@@ -538,6 +564,7 @@ export PATH=$PATH:~/Programming/bin/kafka/bin/
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:/usr/local/kubebuilder/bin
 export PATH=$PATH:~/.joplin-bin/bin
+export PATH=$PATH:/c/Users/axsau/Programming/lib/vcpkg/
 
 # GOLang
 export GOPATH=$HOME/go
@@ -545,6 +572,13 @@ alias cdg=cd $GOPATH
 
 # JAVA
 export JAVA_HOME="/usr/lib/jvm/default-java"
+
+# SPARK
+export SPARK_HOME=/opt/spark
+export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
+export PYSPARK_PYTHON=/home/alejandro/miniconda3/bin/python
+export PYSPARK_DRIVER_PYTHON=jupyter
+export PYSPARK_DRIVER_PYTHON_OPTS='notebook'
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -560,10 +594,6 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
-
-
-# Ensure that WSL Docker is reachable from linux
-export DOCKER_HOST=tcp://localhost:2375
 
 
 # Show prompt type vim mode (insert/visual)
@@ -585,6 +615,22 @@ export TERM="xterm-256color"
 [ -z "$ZSH_NAME" ] && [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,node_modules}/*" 2> /dev/null'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
+# Function to convert mp4 to gif - params:
+# Arg1 - Name of input/output file
+# Arg2 - Pixels for width to base on (900 recommended)
+vid2gif() {
+    ffmpeg -i $1.mp4 frame%04d.png
+    gifski -o $1.gif frame*.png --width $2
+    rm frame*.png
+}
+
+# Compress / reduce size of video 
+# Arg1 - Name of input file
+# Arg2 - Name of output file
+ffmpegrerduce() {
+    ffmpeg -i $1 -c:v libx264 -b:v 2000k -minrate 1000k -maxrate 2500k -r:v 25/1 -speed 4 -c:a aac -b:a 128k -ar 48000  -y $2
+}
 
 # fkill - kill processes
 fkill() {
@@ -651,10 +697,19 @@ export EDITOR="$VISUAL"
 ########### WSL
 #
 # DISPLAY
-export DISPLAY=127.0.0.1:0.0 # When DISPLAY enabled and WSL1 is used
+export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0
+# We need to disable "native opengl" to open VxSRV
+export LIBGL_ALWAYS_INDIRECT=0
+export XDG_RUNTIME_DIR=/home/alejandro/tmp-xdg-runtime-dir
+export RUNLEVEL=3
 # File permissions and write level
 umask 002 # ENsure all files are being written with the right permissions
 
+alias wpython="/c/Users/axsau/scoop/apps/python/current/python.exe"
 
 echo ".zprofile ran"
+
+
+export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/.poetry/bin:$PATH"
 

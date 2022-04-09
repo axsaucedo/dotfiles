@@ -138,6 +138,13 @@ plugins=(
   zsh-autosuggestions # git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
   zsh-syntax-highlighting # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
   kube-ps1
+  asdf # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/asdf
+  kubectl # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/kubectl
+  gcloud # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/gcloud
+  docker
+  golang
+  helm
+  ubuntu
   $plugins
 )
 
@@ -213,17 +220,11 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-# Kubectl autocomplete
-source <(kubectl completion zsh)
-# Jenkins X autocompletion
-source <(jx completion zsh)
-
 # Avoid escaping parenthesis
 zstyle ':urlglobber' url-other-schema
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/alejandro/google-cloud-sdk/path.zsh.inc' ]; then . '/home/alejandro/google-cloud-sdk/path.zsh.inc'; fi
+DISABLE_AUTO_UPDATE="true"
+echo "ZSH auto-updates disabled. Please check updates manually."
 
-# The next line enables shell command completion for gcloud.
-if [ -f '/home/alejandro/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/alejandro/google-cloud-sdk/completion.zsh.inc'; fi
+export PATH="$HOME/.poetry/bin:$PATH"
 

@@ -61,7 +61,8 @@
     " Smooth scroll
     Plug 'terryma/vim-smooth-scroll'
     " Complete closing parentheses/brackets - Replaced with vanilla remap
-    Plug 'jiangmiao/auto-pairs'
+    " Removing autopairs in favour of coc-pairs
+    " Plug 'jiangmiao/auto-pairs'
     " Plug 'Raimondi/delimitMate'
     " Fugitive plugin
     Plug 'tpope/vim-fugitive'
@@ -73,8 +74,8 @@
     " See https://octetz.com/docs/2019/2019-04-24-vim-as-a-go-ide/ for
     " autocomplete setup for golang
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
-    " Emmet Vim (Autocomplete of HTML)
-    Plug 'mattn/emmet-vim'
+    " Emmet Vim (Autocomplete of HTML) - DISABLED as enabled via coc-emmet
+    " Plug 'mattn/emmet-vim'
     " Vim airline status line
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
@@ -83,9 +84,11 @@
     " Vim Easyclip
     Plug 'svermeulen/vim-easyclip'
     " Enhanced go
-    Plug 'fatih/vim-go'
+    Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
     " Markdown preview
     Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
+    " Vim Table Mode (Toggle with :TableModeToggle)
+    Plug 'dhruvasagar/vim-table-mode'
     " Dim inactive (First plugin is to listen to tmux events, other to dim)
     Plug 'tmux-plugins/vim-tmux-focus-events'
     Plug 'blueyed/vim-diminactive' " Linked to plugin above
@@ -105,25 +108,54 @@
     " Shortcuts to add/remove quotes/brances on selection
     Plug 'tpope/vim-surround'
     " Set paste automatically
-    Plug 'roxma/vim-paste-easy'
+    "  > Commenting out paste-easy as it has an error where it pastes
+    "    <Plug>CocRefresh after putting parentheses too fast (issue #3)
+    " Plug 'roxma/vim-paste-easy'
     " Autocomplete (instead of supertab)
     " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
     " Plug 'deoplete-plugins/deoplete-go', { 'do': 'make'}
     " Snippets
     " Plug 'SirVer/ultisnips'
     Plug 'honza/vim-snippets'
+    Plug 'rafamadriz/friendly-snippets'
     " Libsonnet file 
     Plug 'google/vim-jsonnet'
     " Multi-language rich syntax support Syntax
     Plug 'sheerun/vim-polyglot'
     " Advanced syntax support for cpp
     Plug 'octol/vim-cpp-enhanced-highlight'
+    " Automatic formatting for c/c++
+    Plug 'rhysd/vim-clang-format'
     " cpp proto function codegen with :GenDefinition & :GetDeclaration
     Plug 'vim-scripts/a.vim' " dependency for below and is used to switch from header to definition file
     Plug 'tenfyzhong/vim-gencode-cpp'
+    " Search and replace
+    Plug 'brooth/far.vim'
+    " Activity watcher to send activity
+    "Plug 'ActivityWatch/aw-watcher-vim'
+    " Bluespec syntax highlighting
+    " Plug 'mtikekar/vim-bsv'
+    " Cmake syntax
+    Plug 'pboettch/vim-cmake-syntax'
 
+    " Activity watch config
+    let g:aw_apiurl_host = system("awk '$1 ~ /nameserver/ { print $2 }' /etc/resolv.conf")
+    let g:aw_apiurl_port = '5600'
 
+    " FAR.VIM Config
+    set lazyredraw            " improve scrolling performance when navigating through large results
+    set regexpengine=1        " use old regexp engine
+    set ignorecase smartcase  " ignore case only when the pattern contains no capital letters
 
+    " shortcut for far.vim find
+    nnoremap <silent> <Find-Shortcut>  :Farf<cr>
+    vnoremap <silent> <Find-Shortcut>  :Farf<cr>
+
+    " shortcut for far.vim replace
+    nnoremap <silent> <Replace-Shortcut>  :Farr<cr>
+    vnoremap <silent> <Replace-Shortcut>  :Farr<cr>
+
+    let g:far#source="rg"
 
 
     " Vanilla auto close parens and quotes
@@ -212,7 +244,7 @@
     endfunction
 
     function! AirlineInit()
-            let g:airline_section_a = airline#section#create(['mode', '😈 ', 'branch'])
+        let g:airline_section_a = airline#section#create(['mode', '😈 ', 'branch', '%{&paste?"📋✔":"📋⚪"}'])
         let g:airline_section_b = airline#section#create_left(['file'])
         let g:airline_section_c = airline#section#create(['🔍 %#Error#%{ErrorsDiagnostic()}%*%#WarningMsg#%{WarningsDiagnostic()}%*%#Error#%{CoCDiagnostic()}%*%#Pmenu#'])
     endfunction
@@ -252,9 +284,14 @@
     " Allow for Ctrl+n to be shortcut to open nerdtree in the working directory
     nnoremap <S-M> :NERDTreeToggle<CR>
 
+    " If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
+    autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
+        \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
+
     " Set width
     let g:NERDTreeWinSize=30
     let NERDTreeShowHidden=1
+    let NERDTreeIgnore=['\.o$', '\.obj$']
 
     " FZF
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -269,6 +306,7 @@
         endif
     endfun
     noremap <C-p><C-p> :call FzfOmniFiles()<CR> 
+    noremap <C-p><C-a> :Files<CR> 
     noremap <C-p><C-b> :Buffers<CR>
     noremap <C-p><C-f> :Ag<CR>
     noremap <C-p><C-g> :GGrep<CR>
@@ -311,11 +349,42 @@
     " Always show the status line
     set laststatus=2
 
-    " -------------------------------------------------------------------------------------------------
-    " GoLang settings
-    " See https://octetz.com/docs/2019/2019-04-24-vim-as-a-go-ide/
+    " VIMGO SETTINGS:
     " -------------------------------------------------------------------------------------------------
 
+    " Ensure coc-go doesn't clash with vim-go
+    let g:go_code_completion_enabled = 0
+    let g:go_gopls_enabled = 0
+
+    " disable all linters as that is taken care of by coc.nvim
+    let g:lsp_diagnostics_enabled                = 0
+    let g:lsp_diagnostics_signs_enabled          = 0
+    let g:lsp_diagnostics_virtual_text_enabled   = 0
+    let g:lsp_diagnostics_highlights_enabled     = 0
+    let g:lsp_document_code_action_signs_enabled = 0
+    let g:go_metalinter_enabled = []
+
+    " don't jump to errors after metalinter is invoked
+    let g:go_jump_to_error = 0
+
+    " run go imports on file save
+    let g:go_fmt_autosave = 0
+    let g:go_imports_autosave = 0 " This is needed to avoid clash with coc.vim
+
+    " automatically highlight variable your cursor is on
+    let g:go_auto_sameids = 0
+
+    " Highlights
+    let g:go_highlight_types = 1
+    let g:go_highlight_fields = 1
+    let g:go_highlight_functions = 1
+    let g:go_highlight_function_calls = 1
+    let g:go_highlight_operators = 1
+    let g:go_highlight_extra_types = 1
+    let g:go_highlight_build_constraints = 1
+    let g:go_highlight_generate_tags = 1
+    let g:go_highlight_methods = 1
+    let g:go_highlight_structs = 1
 
     " coc.nvim default settings
     " -------------------------------------------------------------------------------------------------
@@ -353,6 +422,10 @@
     " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
     " delays and poor user experience.
     set updatetime=300
+
+    " from error: 'redrawtime exceeded' below is suggested fix
+    set redrawtime=10000
+    set regexpengine=0
 
     " Don't pass messages to |ins-completion-menu|.
     set shortmess+=c
@@ -534,12 +607,13 @@
     
     " CPP C++
     " Syntax:
-    "let g:cpp_class_scope_highlight = 1
+    let g:cpp_class_scope_highlight = 1
     let g:cpp_member_variable_highlight = 1
     let g:cpp_class_decl_highlight = 1
     "let g:cpp_posix_standard = 1
     "let g:cpp_experimental_simple_template_highlight = 1
     "let g:cpp_experimental_template_highlight = 1
+    au BufRead,BufNewFile *.tpp set filetype=cpp
 
     " a.vim override to work with cpp with h files
     " With this and the cppgenplugin you can generate cpp
@@ -549,24 +623,8 @@
     let g:alternateExtensions_h = "cpp"
     let g:alternateExtensions_H = "cpp"
 
-    " VIMGO SETTINGS:
-    " -------------------------------------------------------------------------------------------------
-
-    let g:go_highlight_build_constraints = 1
-    let g:go_highlight_extra_types = 1
-    let g:go_highlight_fields = 1
-    let g:go_highlight_functions = 1
-    let g:go_highlight_methods = 1
-    let g:go_highlight_operators = 1
-    let g:go_highlight_structs = 1
-    let g:go_highlight_types = 1
-
-    let g:go_fmt_command = "gofmt"
-    let g:go_def_mode='gopls'
-    let g:go_info_mode='gopls'
-
-    let g:go_fmt_fail_silently = 1 
-    let g:go_def_mapping_enabled = 0
+    let g:clang_format#command = "/home/alejandro/Programming/lib/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin/clang-format"
+    let g:clang_format#code_style = "mozilla"
 
 
     """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -658,6 +716,7 @@
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     " Enable syntax highlighting
     syntax enable
+    syntax sync minlines=10000
     set background=dark
     colorscheme molokai_custom
     "let g:molokai_original = 0
@@ -780,6 +839,9 @@
     map <S-tab> :bp<cr>
     map <C-q> :Bclose<cr>
 
+    " Close all buffers except current one
+    map <C-e> :%bd<bar>e#<bar>bd#<cr>
+
     " Useful mappings for managing tabs
     map <leader>tn :tabnew<cr>
     map <leader>to :tabonly<cr>
@@ -799,6 +861,7 @@
       set stal=2
     catch
     endtry
+
 
     " Return to last edit position when opening files (You want this!)
     autocmd BufReadPost *
@@ -1061,5 +1124,4 @@ endfunction
     " nnoremap k kzz
     nnoremap <C-d> <C-d>zz
     nnoremap <C-u> <C-u>zz
-
 
