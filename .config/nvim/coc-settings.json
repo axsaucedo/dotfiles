@@ -1,19 +1,12 @@
 {
   "languageserver": {
-    "bash": {
-      "command": "bash-language-server",
-      "args": ["start"],
-      "filetypes": ["sh"],
-      "ignoredRootPaths": ["~"]
-    },
-    "godot": {
-      "host": "localhost",
-      "filetypes": ["gd", "gdscript3"],
-      "port": 6008
+    "zls": {
+        "command": "zls",
+        "filetypes": ["zig"]
     },
     "ccls": {
       "command": "ccls",
-      "filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp", "h", "hpp"],
+      "filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp", "h", "hpp", "tpp"],
       "rootPatterns": [".ccls", "compile_commands.json", ".git/", ".hg/"],
       "initializationOptions": {
          "cache": {
@@ -42,7 +35,32 @@
     }
   },
   "python.formatting.provider": "black",
+  "python.formatting.blackArgs": ["--line-length", "120"],
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8Args": ["--max-line-length", "120"],
+  "python.linting.mypyEnabled": true,
+  "python.linting.enabled": true,
   "python.pythonPath": "/home/alejandro/miniconda3/bin/python",
+  "python.organizeimports.provider": "isort",
+  "javascript.autoClosingTags": true,
   "suggest.enablePreview": true,
-  "signature.hideOnTextChange": false
+  "signature.hideOnTextChange": false,
+  "colors.filetypes": ["*"],
+  "coc": {
+    "preferences": {
+      "extensionUpdateCheck": "daily",
+      "formatOnSaveFiletypes": [
+        "go"
+      ]
+    }
+  },
+  "emmet.includeLanguages": {
+      "javascript": "javascriptreact"
+  },
+  "go": {
+    "goplsOptions": {
+      "staticcheck": true
+    }
+  },
+  "snippets.ultisnips.pythonPrompt": false
 }

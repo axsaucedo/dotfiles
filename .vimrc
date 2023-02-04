@@ -36,107 +36,71 @@
 
     " Enable plugins
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
     " Nerd tree side directory
     Plug 'scrooloose/nerdtree'
     " NERDTree git plugin
     Plug 'Xuyuanp/nerdtree-git-plugin'
-    " Icons for NERDTree - Disabling as WSL doesn't support
-    " Plug 'ryanoasis/vim-webdevicons'
     " fuzzy search
-    Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
     " Colour parentheses
     Plug 'luochen1990/rainbow'
     " Multiple cursros
     Plug 'terryma/vim-multiple-cursors'
-    " Python syntax
-    "Plug 'hdima/python-syntax'
-    " Plug 'honza/vim-snippets'
-    " Markdown preview
-    Plug 'junegunn/vim-xmark', { 'do': 'make' }
-    " Adding support for YCM
-    " Plug 'Valloric/YouCompleteMe'
     " Navigation between tmux and vim
     Plug 'christoomey/vim-tmux-navigator'
-    " Smooth scroll
-    Plug 'terryma/vim-smooth-scroll'
-    " Complete closing parentheses/brackets - Replaced with vanilla remap
-    " Removing autopairs in favour of coc-pairs
-    " Plug 'jiangmiao/auto-pairs'
-    " Plug 'Raimondi/delimitMate'
     " Fugitive plugin
     Plug 'tpope/vim-fugitive'
     " NERD Commenter
     Plug 'scrooloose/nerdcommenter'
     " Bulletpoint plug
     Plug 'dkarter/bullets.vim'
+    " Enhanced go
+    "Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
     " COC Autocompllete
-    " See https://octetz.com/docs/2019/2019-04-24-vim-as-a-go-ide/ for
-    " autocomplete setup for golang
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
-    " Emmet Vim (Autocomplete of HTML) - DISABLED as enabled via coc-emmet
-    " Plug 'mattn/emmet-vim'
     " Vim airline status line
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
+    " Tokynight theme
+    Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
     " Vim Repeat
     Plug 'tpope/vim-repeat'
     " Vim Easyclip
     Plug 'svermeulen/vim-easyclip'
-    " Enhanced go
-    Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
     " Markdown preview
     Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
     " Vim Table Mode (Toggle with :TableModeToggle)
     Plug 'dhruvasagar/vim-table-mode'
     " Dim inactive (First plugin is to listen to tmux events, other to dim)
-    Plug 'tmux-plugins/vim-tmux-focus-events'
-    Plug 'blueyed/vim-diminactive' " Linked to plugin above
-    " Syntax highlighting for log files
-    Plug 'mtdl9/vim-log-highlighting'
-    " Python black formatter (for concistent format)
-    Plug 'ambv/black'
-    " ADd all popular colorschemes available
-    Plug 'flazz/vim-colorschemes'
-    " Cycle through all colorschemes with f4 
-    Plug 'vim-scripts/CycleColor'
+    "Plug 'tmux-plugins/vim-tmux-focus-events'
+    "Plug 'blueyed/vim-diminactive' " Linked to plugin above
     " Add colours to hex
     Plug 'etdev/vim-hexcolor'
-    " Sidebar minimap - COMMENTING OUT: Too slow
-    " Plug 'severin-lemaignan/vim-minimap'
+    "" Sidebar minimap
+    "Plug 'wfxr/minimap.vim'
+    " close tags
     Plug 'alvan/vim-closetag'
     " Shortcuts to add/remove quotes/brances on selection
     Plug 'tpope/vim-surround'
-    " Set paste automatically
-    "  > Commenting out paste-easy as it has an error where it pastes
-    "    <Plug>CocRefresh after putting parentheses too fast (issue #3)
-    " Plug 'roxma/vim-paste-easy'
-    " Autocomplete (instead of supertab)
-    " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-    " Plug 'deoplete-plugins/deoplete-go', { 'do': 'make'}
-    " Snippets
-    " Plug 'SirVer/ultisnips'
-    Plug 'honza/vim-snippets'
-    Plug 'rafamadriz/friendly-snippets'
-    " Libsonnet file 
-    Plug 'google/vim-jsonnet'
     " Multi-language rich syntax support Syntax
     Plug 'sheerun/vim-polyglot'
     " Advanced syntax support for cpp
     Plug 'octol/vim-cpp-enhanced-highlight'
-    " Automatic formatting for c/c++
-    Plug 'rhysd/vim-clang-format'
-    " cpp proto function codegen with :GenDefinition & :GetDeclaration
-    Plug 'vim-scripts/a.vim' " dependency for below and is used to switch from header to definition file
-    Plug 'tenfyzhong/vim-gencode-cpp'
     " Search and replace
     Plug 'brooth/far.vim'
-    " Activity watcher to send activity
-    "Plug 'ActivityWatch/aw-watcher-vim'
-    " Bluespec syntax highlighting
-    " Plug 'mtikekar/vim-bsv'
     " Cmake syntax
     Plug 'pboettch/vim-cmake-syntax'
+    " Show the current / previous function
+    Plug 'wellle/context.vim'
+    "Plug 'nvim-treesitter/nvim-treesitter'
+    "Plug 'nvim-treesitter/nvim-treesitter-context'
+    " Finishing plugin list
+    call plug#end()
+
+    " Setting grep with rg
+    set grepprg=rg\ --vimgrep\ --smart-case\ --follow
 
     " Activity watch config
     let g:aw_apiurl_host = system("awk '$1 ~ /nameserver/ { print $2 }' /etc/resolv.conf")
@@ -155,17 +119,10 @@
     nnoremap <silent> <Replace-Shortcut>  :Farr<cr>
     vnoremap <silent> <Replace-Shortcut>  :Farr<cr>
 
-    let g:far#source="rg"
+    let g:far#source="rgnvim"
 
-
-    " Vanilla auto close parens and quotes
-    " inoremap " ""<left>
-    " inoremap ' ''<left>
-    " inoremap ( ()<left>
-    " inoremap [ []<left>
-    " inoremap { {}<left>
-    " inoremap {<CR> {<CR>}<ESC>O
-    " inoremap {;<CR> {<CR>};<ESC>O
+    " Needed in order to filter with ignoring files
+    let g:far#glob_mode = "rg"
 
     " Setup NVIM
     let g:python3_host_prog=$CONDA_PREFIX."/bin/python"
@@ -192,11 +149,9 @@
             autocmd TextYankPost * call system('echo '.shellescape(join(v:event.regcontents, "\<CR>")).' | '.s:clip)
         augroup END
     end
-    noremap <C-C> :call system('/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command Get-Clipboard')<CR> 
+    noremap <C-C> :call system('/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command Get-Clipboard')<CR> 
     " For slowdown
     "set eventignore=TextYankPost
-    
-    
 
     " Airline status line
     let g:airline#extensions#tabline#enabled = 1
@@ -221,7 +176,7 @@
       if empty(info) | return '' | endif
       let msgs = []
       if get(info, 'error', 0)
-        call add(msgs, ' 💀 ERRORS: ' . info['error'] . ' 💀 ')
+        call add(msgs, '💀' . info['error'] . ' ')
       endif
       return join(msgs, ' ')
     endfunction
@@ -231,7 +186,7 @@
       if empty(info) | return '' | endif
       let msgs = []
       if get(info, 'warning', 0)
-        call add(msgs, '  🤓 WARNINGS: ' . info['warning'] . ' 🤓 ')
+        call add(msgs, ' ⚠️' . info['warning'] . '')
       endif
       return join(msgs, ' ')
     endfunction
@@ -244,20 +199,14 @@
     endfunction
 
     function! AirlineInit()
-        let g:airline_section_a = airline#section#create(['mode', '😈 ', 'branch', '%{&paste?"📋✔":"📋⚪"}'])
-        let g:airline_section_b = airline#section#create_left(['file'])
-        let g:airline_section_c = airline#section#create(['🔍 %#Error#%{ErrorsDiagnostic()}%*%#WarningMsg#%{WarningsDiagnostic()}%*%#Error#%{CoCDiagnostic()}%*%#Pmenu#'])
+        let g:airline_section_a = airline#section#create(['😈 ', 'branch', '%{&paste?"📋✔":"📋⚪"}'])
+        let g:airline_section_b = airline#section#create_left(['mode'])
+        let g:airline_section_c = airline#section#create(['🔍 ', 'file'])
     endfunction
     autocmd User AirlineAfterInit call AirlineInit()
 
 
     let g:airline#extensions#coc#enabled = 1
-    
-    " Geeknote 
-    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    " let g:GeeknoteFormat="markdown"
-
-    " nnoremap <S-M> :Geeknote<CR>
 
     " Bullets.vim
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -267,9 +216,29 @@
         \ 'gitcommit',
         \ 'scratch'
         \]
-   
-    " Finishing plugin list
-    call plug#end()
+
+    " Minimap
+    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+    let g:minimap_width = 10
+    let g:minimap_auto_start = 1
+    let g:minimap_auto_start_win_enter = 1
+    "let minimap_close_filetypes = ['startify', 'netrw', 'vim-plug', '']
+    let g:minimap_block_filetypes = [ 'fugitive', 'nerdtree', 'context.vim', 'tagbar', 'fzf', 'NvimTree', "startify", "" ]
+    let g:minimap_block_buftypes = ['nowrite', 'quickfix', 'terminal', 'prompt', "nofile"]
+
+    " Context.vim
+    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+    "let g:context_enabled = 1
+    "let g:context_filetype_blacklist = [ 'fugitive', 'nerdtree', 'minimap', 'tagbar', 'fzf', 'NvimTree', "startify", "" ]
+    "let g:context_presenter = "nvim-float"
+
+    nnoremap <M-m> :MinimapClose<CR>
+
+    " auto close if only left
+    " autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == '-MINIMAP-' | quit | endif
+
 
     " NERDTree 
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -281,17 +250,152 @@
     " Close VIM if all windwos are closed even if the NERD TREE automatically
     autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
-    " Allow for Ctrl+n to be shortcut to open nerdtree in the working directory
+    " Allow for Ctrl+m to be shortcut to open nerdtree in the working directory
     nnoremap <S-M> :NERDTreeToggle<CR>
 
     " If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
     autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
         \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
 
+    " Prevent Tab on NERDTree (breaks everything otherwise)
+    " autocmd FileType nerdtree noremap <buffer> <Tab> <nop>
+
     " Set width
     let g:NERDTreeWinSize=30
     let NERDTreeShowHidden=1
     let NERDTreeIgnore=['\.o$', '\.obj$']
+
+    " NERDTress File highlighting
+    function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
+        exec 'autocmd FileType nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
+        exec 'autocmd FileType nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
+    endfunction
+
+    call NERDTreeHighlightFile('sh', 'green', 'none', 'green', '#151515')
+    call NERDTreeHighlightFile('ini', 'yellow', 'none', 'yellow', '#151515')
+    call NERDTreeHighlightFile('md', 'blue', 'none', '#3366FF', '#151515')
+    call NERDTreeHighlightFile('yml', 'yellow', 'none', 'yellow', '#151515')
+    call NERDTreeHighlightFile('config', 'yellow', 'none', 'yellow', '#151515')
+    call NERDTreeHighlightFile('conf', 'yellow', 'none', 'yellow', '#151515')
+    call NERDTreeHighlightFile('json', 'yellow', 'none', 'yellow', '#151515')
+    call NERDTreeHighlightFile('html', 'yellow', 'none', 'yellow', '#151515')
+    call NERDTreeHighlightFile('styl', 'cyan', 'none', 'cyan', '#151515')
+    call NERDTreeHighlightFile('css', 'cyan', 'none', 'cyan', '#151515')
+    call NERDTreeHighlightFile('pyc', 'Gray', 'none', 'red', '#151515')
+    call NERDTreeHighlightFile('log', 'Gray', 'none', 'red', '#151515')
+    call NERDTreeHighlightFile('js', 'Magenta', 'none', '#ffa500', '#151515')
+    call NERDTreeHighlightFile('py', 'Magenta', 'none', '#ff00ff', '#151515')
+    call NERDTreeHighlightFile('ds_store', 'Gray', 'none', '#686868', '#151515')
+    call NERDTreeHighlightFile('gitconfig', 'Gray', 'none', '#686868', '#151515')
+    call NERDTreeHighlightFile('gitignore', 'Gray', 'none', '#686868', '#151515')
+    call NERDTreeHighlightFile('bashrc', 'Gray', 'none', '#686868', '#151515')
+    call NERDTreeHighlightFile('bashprofile', 'Gray', 'none', '#686868', '#151515')
+
+
+    """"  NvimTree
+    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+    """"" Activate nvimtree
+    """"lua require'nvim-tree'.setup()
+
+    """"" Allow for Ctrl+n to be shortcut to open nvimtree in the working directory
+    """"nnoremap <S-M> :NvimTreeToggle<CR>
+
+    """"let g:nvim_tree_git_hl = 1 "0 by default, will enable file highlight for git attributes (can be used without the icons).
+    """"let g:nvim_tree_highlight_opened_files = 1 "0 by default, will enable folder and file icon highlight for opened files/directories.
+    """"let g:nvim_tree_root_folder_modifier = ':~' "This is the default. See :help filename-modifiers for more options
+    """"let g:nvim_tree_add_trailing = 1 "0 by default, append a trailing slash to folder names
+    """"let g:nvim_tree_group_empty = 1 " 0 by default, compact folders that only contain a single folder into one node in the file tree
+    """"let g:nvim_tree_icon_padding = ' ' "one space by default, used for rendering the space between the icon and the filename. Use with caution, it could break rendering if you set an empty string depending on your font.
+    """"let g:nvim_tree_symlink_arrow = ' >> ' " defaults to ' ➛ '. used as a separator between symlinks' source and target.
+    """"let g:nvim_tree_respect_buf_cwd = 1 "0 by default, will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
+    """"let g:nvim_tree_create_in_closed_folder = 1 "0 by default, When creating files, sets the path of a file when cursor is on a closed folder to the parent folder when 0, and inside the folder when 1.
+    """"let g:nvim_tree_special_files = { 'README.md': 1, 'Makefile': 1, 'MAKEFILE': 1 } " List of filenames that gets highlighted with NvimTreeSpecialFile
+    """"let g:nvim_tree_show_icons = {
+    """"    \ 'git': 1,
+    """"    \ 'folders': 0,
+    """"    \ 'files': 0,
+    """"    \ 'folder_arrows': 0,
+    """"    \ }
+    """""If 0, do not show the icons for one of 'git' 'folder' and 'files'
+    """""1 by default, notice that if 'files' is 1, it will only display
+    """""if nvim-web-devicons is installed and on your runtimepath.
+    """""if folder is 1, you can also tell folder_arrows 1 to show small arrows next to the folder icons.
+    """""but this will not work when you set renderer.indent_markers.enable (because of UI conflict)
+
+    """"" default will show icon by default if no icon is provided
+    """"" default shows no icon by default
+    """"renderer.icons.glyphs = {
+    """"    \ 'default': "",
+    """"    \ 'symlink': "",
+    """"    \ 'git': {
+    """"    \   'unstaged': "○",
+    """"    \   'staged': "◉",
+    """"    \   'unmerged': "○",
+    """"    \   'renamed': "○",
+    """"    \   'untracked': "○",
+    """"    \   'deleted': "○",
+    """"    \   'ignored': "▣"
+    """"    \   },
+    """"    \ 'folder': {
+    """"    \   'arrow_open': "▼",
+    """"    \   'arrow_closed': "▶",
+    """"    \   'default': "📪",
+    """"    \   'open': "📬",
+    """"    \   'empty': "📪",
+    """"    \   'empty_open': "📭",
+    """"    \   'symlink': "📁🔗",
+    """"    \   'symlink_open': "📂🔗",
+    """"    \   }
+    """"    \ }
+
+    """""" let g:nvim_tree_show_icons = {
+    """"""     \ 'git': 1,
+    """"""     \ 'folders': 1,
+    """"""     \ 'files': 0,
+    """"""     \ 'folder_arrows': 1,
+    """"""     \ }
+    """""" "If 0, do not show the icons for one of 'git' 'folder' and 'files'
+    """""" "1 by default, notice that if 'files' is 1, it will only display
+    """""" "if nvim-web-devicons is installed and on your runtimepath.
+    """""" "if folder is 1, you can also tell folder_arrows 1 to show small arrows next to the folder icons.
+    """""" "but this will not work when you set renderer.indent_markers.enable (because of UI conflict)
+
+    """""" " default will show icon by default if no icon is provided
+    """""" " default shows no icon by default
+    """""" let g:nvim_tree_icons = {
+    """"""     \ 'default': "",
+    """"""     \ 'symlink': "",
+    """"""     \ 'git': {
+    """"""     \   'unstaged': "🔵",
+    """"""     \   'staged': "🟢",
+    """"""     \   'unmerged': "🟡",
+    """"""     \   'renamed': "🟠",
+    """"""     \   'untracked': "🟣",
+    """"""     \   'deleted': "🔴",
+    """"""     \   'ignored': "⚪"
+    """"""     \   },
+    """"""     \ 'folder': {
+    """"""     \   'arrow_open': "🔻",
+    """"""     \   'arrow_closed': "▶",
+    """"""     \   'default': "",
+    """"""     \   'open': "",
+    """"""     \   'empty': "",
+    """"""     \   'empty_open': "",
+    """"""     \   'symlink': "🔗",
+    """"""     \   'symlink_open': "🔗",
+    """"""     \   }
+    """"""     \ }
+
+    """"let g:nvim_tree_highlight_opened_files = 1
+    """"highlight def link NvimTreeOpenedFolderName NvimTreeOpenedFile
+
+    """"nnoremap <S-M> :NvimTreeToggle<CR>
+    """"nnoremap <leader>r :NvimTreeRefresh<CR>
+    """"nnoremap <leader>n :NvimTreeFindFile<CR>
+
+    """"" auto close if only left
+    """"autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif
 
     " FZF
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -323,38 +427,49 @@
         \   'ctermfgs': ['lightyellow', 'lightmagenta', 'lightblue', 'lightcyan' ],
         \}
 
-    " Enabling snippets
-    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    " let g:UltiSnipsExpandTrigger="<c-s>"
-    "let g:UltiSnipsJumpForwardTrigger="<c-b>"
-    "let g:UltiSnipsJumpBackwardTrigger="<c-z>"
-    
-    " Smooth scrolling
-    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    " noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
-    " noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
-    " noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
-    " noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
 
-    " Snippets
-    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    " let g:UltiSnipsExpandTrigger = "<Tab>"
-    " let g:UltiSnipsJumpForwardTrigger = "<Tab>"
-    " let g:UltiSnipsJumpBackwardTrigger = "<S-Tab>"
-    " let g:UltiSnipsMappingsToIgnore = ['autocomplete']
-    
     """"""""""""""""""""""""""""""
     " => Status line
     """"""""""""""""""""""""""""""
     " Always show the status line
     set laststatus=2
 
-    " VIMGO SETTINGS:
+    " coc.nvim default settings
+    " -------------------------------------------------------------------------------------------------
+    "  Notes:
+    "  High level:
+    "  * Config file can be located at ~/.config/nvim/coc-settings.json
+    "  * It can also be accessed through CocConfig
+    "  * Currently integrated with airline statusline (errors/warnings & load)
+    "
+    "  The current plugins expected to be installed include:
+    "  * CocInstall coc-python
+    "  * CocInstall coc-go
+    "  * CocInstall coc-clangd - also requires clangd to be installed
+    "  * For C can also use others https://github.com/neoclide/coc.nvim/wiki/Language-servers#ccobjective-c
+    "  * CocInstall coc-cmake
+    "  * Bash - currently manually added to settings
+    "  * CocInstall coc-snippets - Adds snippet functionality
+    "  * CocInstall coc-highlight - Introduces overrides for coc diagnostic
+    "  syntax highlights such as errors and warnings
+    "
+    "  Other expected requirements:
+    "  * Python server expects update of Palantir's Python language server
+    "  * Setup bash language server (node dependent) https://github.com/bash-lsp/bash-language-server
+
+    " CocGo config
+    " - Ensure files are re-fromatted on save with imports (needed explicit as
+    "   formatOnSaveFiletypes seems to only include format but not new imports)
+    autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.organizeImport')
+
+
+    " vim-go SETTINGS:
     " -------------------------------------------------------------------------------------------------
 
     " Ensure coc-go doesn't clash with vim-go
     let g:go_code_completion_enabled = 0
     let g:go_gopls_enabled = 0
+    let g:go_def_mapping_enabled = 0
 
     " disable all linters as that is taken care of by coc.nvim
     let g:lsp_diagnostics_enabled                = 0
@@ -385,29 +500,6 @@
     let g:go_highlight_generate_tags = 1
     let g:go_highlight_methods = 1
     let g:go_highlight_structs = 1
-
-    " coc.nvim default settings
-    " -------------------------------------------------------------------------------------------------
-    "  Notes:
-    "  High level:
-    "  * Config file can be located at ~/.config/nvim/coc-settings.json
-    "  * It can also be accessed through CocConfig
-    "  * Currently integrated with airline statusline (errors/warnings & load)
-    "
-    "  The current plugins expected to be installed include:
-    "  * CocInstall coc-python
-    "  * CocInstall coc-go
-    "  * CocInstall coc-clangd - also requires clangd to be installed
-    "  * For C can also use others https://github.com/neoclide/coc.nvim/wiki/Language-servers#ccobjective-c
-    "  * CocInstall coc-cmake
-    "  * Bash - currently manually added to settings
-    "  * CocInstall coc-snippets - Adds snippet functionality
-    "  * CocInstall coc-highlight - Introduces overrides for coc diagnostic
-    "  syntax highlights such as errors and warnings
-    "
-    "  Other expected requirements:
-    "  * Python server expects update of Palantir's Python language server
-    "  * Setup bash language server (node dependent) https://github.com/bash-lsp/bash-language-server
 
     " TextEdit might fail if hidden is not set.
     set hidden
@@ -450,12 +542,12 @@
     """ inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
     """
     " USE THIS ONE IF USING COC SNIPPET PLUGIN:
-    inoremap <silent><expr> <TAB>
-      \ pumvisible() ? coc#_select_confirm() :
-      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-    let g:coc_snippet_next = '<tab>' 
+    "inoremap <silent><expr> <TAB>
+    "  \ pumvisible() ? coc#_select_confirm() :
+    "  \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+    "  \ <SID>check_back_space() ? "\<TAB>" :
+    "  \ coc#refresh()
+    "let g:coc_snippet_next = '<tab>' 
     """
 
     function! s:check_back_space() abort
@@ -505,9 +597,6 @@
     " Highlight the symbol and its references when holding the cursor.
     autocmd CursorHold * silent call CocActionAsync('highlight')
     nnoremap <M-i> :call CocActionAsync('highlight')<CR>
-
-    " Symbol renaming.
-    nmap <leader>rn <Plug>(coc-rename)
 
     " Formatting selected code.
     xmap <leader>f  <Plug>(coc-format-selected)
@@ -646,10 +735,10 @@
     let g:mapleader = ","
 
     " Mapping WQ to w q 
-    command! WQ wq
-    command! Wq wq
-    command! W w
-    command! Q q
+    cab W w
+    cab wq :w <BAR> :qa<CR>
+    cab WQ :w <BAR> :qa<CR>
+    cab Wq :w <BAR> :qa<CR>
 
     " Fast saving
     nmap <leader>w :w!<cr>
@@ -839,6 +928,7 @@
     map <S-tab> :bp<cr>
     map <C-q> :Bclose<cr>
 
+
     " Close all buffers except current one
     map <C-e> :%bd<bar>e#<bar>bd#<cr>
 
@@ -923,7 +1013,7 @@
 
     set spelllang=en_gb
     set spellfile=$HOME/.vim/spell/en.utf-8.add
-        
+
     augroup markdownSpell
         autocmd!
         autocmd FileType latex,tex,md,markdown setlocal spell
@@ -932,114 +1022,86 @@
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
     " => Misc
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Remove the Windows ^M - when the encodings gets messed up
-noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
+    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+    " Remove the Windows ^M - when the encodings gets messed up
+    noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 
-" Quickly open a buffer for scripbble
-map <leader>q :e ~/buffer<cr>
+    " Quickly open a buffer for scripbble
+    map <leader>q :e ~/buffer<cr>
 
-" Toggle paste mode on and off
-map <leader>pp :setlocal paste!<cr>
+    " Toggle paste mode on and off
+    map <leader>pp :setlocal paste!<cr>
 
-" Set mouseclick for vimpp
-set mouse=a
+    " Set mouseclick for vimpp
+    set mouse=a
 
-" Close with W and Q
-command! -bang -range=% -complete=file -nargs=* W <line1>,<line2>write<bang> <args>
-command! -bang Q quit<bang>
+    " Close with W and Q
+    command! -bang -range=% -complete=file -nargs=* W <line1>,<line2>write<bang> <args>
+    command! -bang Q quit<bang>
 
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Helper functions
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-function! CmdLine(str)
-    exe "menu Foo.Bar :" . a:str
-    emenu Foo.Bar
-    unmenu Foo
-endfunction
-
-function! VisualSelection(direction) range
-    let l:saved_reg = @"
-    execute "normal! vgvy"
-
-    let l:pattern = escape(@", '\\/.*$^~[]')
-    let l:pattern = substitute(l:pattern, "\n$", "", "")
-
-    if a:direction == 'b'
-        execute "normal ?" . l:pattern . "^M"
-    elseif a:direction == 'gv'
-        call CmdLine("vimgrep " . '/'. l:pattern . '/' . ' **/*.')
-    elseif a:direction == 'replace'
-        call CmdLine("%s" . '/'. l:pattern . '/')
-    elseif a:direction == 'f'
-        execute "normal /" . l:pattern . "^M"
-    endif
-
-    let @/ = l:pattern
-    let @" = l:saved_reg
-endfunction
-
-
-" Returns true if paste mode is enabled
-function! HasPaste()
-    if &paste
-        return 'PASTE MODE  '
-    en
-    return ''
-endfunction
-
-" Don't close window, when deleting a buffer
-command! Bclose call <SID>BufcloseCloseIt()
-function! <SID>BufcloseCloseIt()
-   let l:currentBufNum = bufnr("%")
-   let l:alternateBufNum = bufnr("#")
-
-   if buflisted(l:alternateBufNum)
-     buffer #
-   else
-     bnext
-   endif
-
-   if bufnr("%") == l:currentBufNum
-     new
-   endif
-
-   if buflisted(l:currentBufNum)
-     execute("bdelete! ".l:currentBufNum)
-   endif
-endfunction
 
 
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    " => Color syntax for NERDTree highlighting
+    " => Helper functions
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    " NERDTress File highlighting
-    function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
-        exec 'autocmd FileType nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
-        exec 'autocmd FileType nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
+    function! CmdLine(str)
+        exe "menu Foo.Bar :" . a:str
+        emenu Foo.Bar
+        unmenu Foo
     endfunction
 
-    call NERDTreeHighlightFile('sh', 'green', 'none', 'green', '#151515')
-    call NERDTreeHighlightFile('ini', 'yellow', 'none', 'yellow', '#151515')
-    call NERDTreeHighlightFile('md', 'blue', 'none', '#3366FF', '#151515')
-    call NERDTreeHighlightFile('yml', 'yellow', 'none', 'yellow', '#151515')
-    call NERDTreeHighlightFile('config', 'yellow', 'none', 'yellow', '#151515')
-    call NERDTreeHighlightFile('conf', 'yellow', 'none', 'yellow', '#151515')
-    call NERDTreeHighlightFile('json', 'yellow', 'none', 'yellow', '#151515')
-    call NERDTreeHighlightFile('html', 'yellow', 'none', 'yellow', '#151515')
-    call NERDTreeHighlightFile('styl', 'cyan', 'none', 'cyan', '#151515')
-    call NERDTreeHighlightFile('css', 'cyan', 'none', 'cyan', '#151515')
-    call NERDTreeHighlightFile('pyc', 'Gray', 'none', 'red', '#151515')
-    call NERDTreeHighlightFile('log', 'Gray', 'none', 'red', '#151515')
-    call NERDTreeHighlightFile('js', 'Magenta', 'none', '#ffa500', '#151515')
-    call NERDTreeHighlightFile('py', 'Magenta', 'none', '#ff00ff', '#151515')
-    call NERDTreeHighlightFile('ds_store', 'Gray', 'none', '#686868', '#151515')
-    call NERDTreeHighlightFile('gitconfig', 'Gray', 'none', '#686868', '#151515')
-    call NERDTreeHighlightFile('gitignore', 'Gray', 'none', '#686868', '#151515')
-    call NERDTreeHighlightFile('bashrc', 'Gray', 'none', '#686868', '#151515')
-    call NERDTreeHighlightFile('bashprofile', 'Gray', 'none', '#686868', '#151515')
+    function! VisualSelection(direction) range
+        let l:saved_reg = @"
+        execute "normal! vgvy"
+
+        let l:pattern = escape(@", '\/.*$^~[]')
+        let l:pattern = substitute(l:pattern, "
+$", "", "")
+
+        if a:direction == 'b'
+            execute "normal ?" . l:pattern . "^M"
+        elseif a:direction == 'gv'
+            call CmdLine("vimgrep " . '/'. l:pattern . '/' . ' **/*.')
+        elseif a:direction == 'replace'
+            call CmdLine("%s" . '/'. l:pattern . '/')
+        elseif a:direction == 'f'
+            execute "normal /" . l:pattern . "^M"
+        endif
+
+        let @/ = l:pattern
+        let @" = l:saved_reg
+    endfunction
+
+
+    " Returns true if paste mode is enabled
+    function! HasPaste()
+        if &paste
+            return 'PASTE MODE  '
+        en
+        return ''
+    endfunction
+
+    " Don't close window, when deleting a buffer
+    command! Bclose call <SID>BufcloseCloseIt()
+    function! <SID>BufcloseCloseIt()
+       let l:currentBufNum = bufnr("%")
+       let l:alternateBufNum = bufnr("#")
+
+       if buflisted(l:alternateBufNum)
+         buffer #
+       else
+         bnext
+       endif
+
+       if bufnr("%") == l:currentBufNum
+         new
+       endif
+
+       if buflisted(l:currentBufNum)
+         execute("bdelete! ".l:currentBufNum)
+       endif
+    endfunction
+
 
 
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -1082,8 +1144,8 @@ endfunction
       \ call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(), <bang>0)
 
     function! s:tags_sink(line)
-      let parts = split(a:line, '\t\zs')
-      let excmd = matchstr(parts[2:], '^.*\ze;"\t')
+      let parts = split(a:line, '	\zs')
+      let excmd = matchstr(parts[2:], '^.*\ze;"	')
       execute 'silent e' parts[1][:-2]
       let [magic, &magic] = [&magic, 0]
       execute excmd
@@ -1101,7 +1163,7 @@ endfunction
       call fzf#run({
       \ 'source':  'cat '.join(map(tagfiles(), 'fnamemodify(v:val, ":S")')).
       \            '| grep -v -a ^!',
-      \ 'options': '+m -d "\t" --with-nth 1,4,2,3.. -n 1 --tiebreak=index',
+      \ 'options': '+m -d "	" --with-nth 1,4,2,3.. -n 1 --tiebreak=index',
       \ 'down':    '40%',
       \ 'sink':    function('s:tags_sink')})
     endfunction
@@ -1124,4 +1186,7 @@ endfunction
     " nnoremap k kzz
     nnoremap <C-d> <C-d>zz
     nnoremap <C-u> <C-u>zz
+
+    " Set new line to linux instead of windows
+    set ff=unix
 

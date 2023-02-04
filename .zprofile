@@ -6,7 +6,7 @@
 
 
 # All ALIASES should go here
-alias pyserv="python2.7 -m SimpleHTTPServer"
+alias pyserv="python -m http.server"
 alias pyrm='find . -name "*.pyc" -exec rm -rf {} \;'
 alias vim="nvim"
 function gvim() {
@@ -30,12 +30,8 @@ alias vtmux="vim ~/.tmux.conf"
 alias ctagsm="ctags -R --exclude=.git --exclude=log --exclude=node_modules *"
 alias ctagsall='ctags -R --fields=+l --languages=python,java,go --python-kinds=-iv --exclude="*zip" -f ./.tags ./ $JAVA_HOME $CONDA_PREFIX/lib/python3.7/site-packages/' $GOPATH
 alias ctagspy='ctags -R --fields=+l --languages=python --python-kinds=-iv --exclude="*zip" -f ./.tags ./'
-# Using asana from: https://github.com/thash/asana
-alias asana="~/go/bin/asana" # Brew install asana
-alias asana-list="asana tasks | peco"
-# Gem install asana-client
-alias asana-client="/var/lib/gems/2.5.0/gems/asana-client-1.0.0/bin/asana" 
-alias asana-add="asana-client letsdothis " 
+# Ascicast 2 gif (to convert .cast to .gif)
+alias asciicast2gif='docker run --rm -v $PWD:/data asciinema/asciicast2gif'
 # OPEN FILE
 # Open file in Linux:
 # alias open="xdg-open"
@@ -89,6 +85,8 @@ alias cdee="cd ~/Programming/ethical/ethical"
 alias cdd="cd ~/Programming/devnull"
 alias cds="cd ~/Programming/kubernetes/seldon"
 alias cdss="cd ~/Programming/kubernetes/seldon/seldon-core"
+cdtmp() { mkdir ~/Programming/tmp/$(date +'%Y-%m-%dT%H:%M:%S%z') && cd $_ }
+alias cleantmp="rm -rf ~/Programming/tmp/*"
 # Windows Subsystem for Linux (wsl)
 alias cdw="cd /c/Users/axsau/"
 alias cdwa="cd /c/Users/axsau/Music"
@@ -178,28 +176,7 @@ alias gdeploy='push-git-subtree.sh'
 alias gcreate='create-git-repo.sh'
 
 # GITHUB ALIASES
-alias gs='git status '
-alias ga='git add '
-alias gb='git branch '
-alias gc='git commit '
-alias gd='git diff'
-alias gk='gitk --all&'
-alias gx='gitx --all'
-alias gga='git add .; git commit -m "added"; git push '
-alias gi='git init'
-alias gicp='cp ~/Programming/lib/global_gitignore .gitignore'
-# REmoves git folder completely from history and adds it to git ignore
-function gremove() {
-    git filter-branch --tree-filter "rm -rf $1" --prune-empty HEAD
-    git for-each-ref --format="%(refname)" refs/original/ | xargs -n 1 git update-ref -d
-    echo "$1" >> .gitignore
-    git add .gitignore
-    git commit -m "Removing $1 from git history"
-    git gc
-}
-# CUSTOM git aliases
-alias gssh="~/Programming/lib/custom_scripts/git_https_to_ssh.sh"
-alias ghttps="~/Programming/lib/custom_scripts/git_ssh_to_https.sh"
+# GIt aliases have been moved to zshrc to avoid clash with plugin
 
 # View file
 alias view='vim -c '
@@ -228,6 +205,19 @@ alias dkss='docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemPerc}}\t
 alias dkv='docker volume'
 alias dkvl='docker volume ls'
 alias dkvra='docker volume prune '
+# List all tags for image
+dtags() {
+    image=$1
+    page_size=100
+    page_index=0
+    while true; do 
+      page_index=$((page_index+1))
+      results=$(curl -L -s "https://registry.hub.docker.com/v2/repositories/$image/tags?page=$page_index&page_size=$page_size" | jq -r 'select(.results != null) | .results[]["name"]')
+      echo "$results"
+      [[ -z "$results" ]] && break
+      echo "$results"
+    done
+}
 
 
 #### KUBERNETES ALIAS
@@ -339,9 +329,9 @@ function kdelns() {
 }
 ### DELETE STUCK TERMINATING Resource
 function kdelr() {
-    kubectl proxy &
+    kubectl proxy port --port 8123 &
     kubectl get $1 $2 -o json |jq '.spec = {"finalizers":[]}' >temp.json
-    curl -k -H "Content-Type: application/json" -X PUT --data-binary @temp.json 127.0.0.1:8001/api/v1/$1/$2/finalize 
+    curl -k -H "Content-Type: application/json" -X PUT --data-binary @temp.json 127.0.0.1:8123/api/v1/$1/$2/finalize 
 }
 # Kubernetes KIND
 alias kindconfig='kubectl cluster-info --context kind-kind'
@@ -506,6 +496,9 @@ gpgd () {
     gpg -d $1 | vim -
 }
 
+# Ensure password prompt can work
+# -----------------
+export GPG_TTY=$(tty)
 
 # TODO, need to make sure helper keys are automatically loaded
 alias xx="sudo bash /etc/init.d/keyremap && xmodmap ~/.Xmodmap"
@@ -595,6 +588,9 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
+# Adding mamba to the path
+export PATH=$PATH:$HOME/mambaforge/bin/
+
 
 # Show prompt type vim mode (insert/visual)
 function zle-line-init zle-keymap-select {
@@ -609,7 +605,7 @@ zle -N zle-keymap-select
 # Set folder colours for Solarized theme
 export LSCOLORS="gxfxbEaEBxxEhEhBaDaCaD"
 
-export TERM="xterm-256color"
+export TERM="screen-256color-bce"
 
 # Enabling ripgrep with FZF
 [ -z "$ZSH_NAME" ] && [ -f ~/.fzf.bash ] && source ~/.fzf.bash
@@ -678,24 +674,15 @@ tm() {
   session=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | fzf --exit-0) &&  tmux $change -t "$session" || echo "No sessions found."
 }
 
-# Install (one or multiple) selected application(s)
-# using "brew search" as source input
-# mnemonic [B]rew [I]nstall [P]lugin
-bip() {
-  local inst=$(brew search | fzf -m)
-
-  if [[ $inst ]]; then
-    for prog in $(echo $inst);
-    do; brew install $prog; done;
-  fi
-}
-
 # Ensure editor is vim
 export VISUAL=vim
 export EDITOR="$VISUAL"
 
+# Set interaction on command line to vim forma
+# set -o vi
+
 ########### WSL
-#
+
 # DISPLAY
 export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0
 # We need to disable "native opengl" to open VxSRV
@@ -705,11 +692,29 @@ export RUNLEVEL=3
 # File permissions and write level
 umask 002 # ENsure all files are being written with the right permissions
 
+# WSL Allow fast reclaim of memory https://devblogs.microsoft.com/commandline/memory-reclaim-in-the-windows-subsystem-for-linux-2/
+# This is useful when running docker and containers are stopped to make sure memory is given back to windows
+alias wmem="sudo bash -c 'echo 1 > /proc/sys/vm/drop_caches'"
+
 alias wpython="/c/Users/axsau/scoop/apps/python/current/python.exe"
 
-echo ".zprofile ran"
+# Allow running windows espasno locally
+alias espanso="cmd.exe /c/Users/axsau/AppData/Local/Programs/Espanso/espanso.cmd"
 
+# Neeed for backspace working on ec2 ssh machines
+#export TERM=vt100
 
-export PATH="$HOME/.cargo/bin:$PATH"
+# Envs
 export PATH="$HOME/.poetry/bin:$PATH"
+
+# Vulkan
+export VULKAN_SDK_VERSION=1.3.231.2
+export VULKAN_SDK="$HOME/Programming/bin/VulkanSDK/${VULKAN_SDK_VERSION}/x86_64"
+export PATH="${VULKAN_SDK}/bin:${PATH}"
+export LD_LIBRARY_PATH="${VULKAN_SDK}/lib"
+export VK_LAYER_PATH="${VULKAN_SDK}/etc/explicit_layer.d"
+# Swiftshader for vulkan linux
+export VK_ICD_FILENAMES=$HOME/Programming/bin/swiftshader/vk_swiftshader_icd.json
+
+echo ".zprofile ran"
 
