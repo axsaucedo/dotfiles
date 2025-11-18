@@ -265,9 +265,8 @@ if &t_Co > 255
    endif
 end
 
-" Setting the color of fonts to white
-"hi Normal                 ctermfg=231 ctermbg=234
-hi Normal           guifg=#e6e1de ctermfg=none gui=none ctermbg=16
+" Setting ctermbg as NONE to ensure parent background is used
+hi Normal           guifg=#e6e1de ctermfg=none gui=none ctermbg=NONE
 hi Function ctermfg=81
 hi Exception       ctermfg=197 cterm=bold
 hi String ctermfg=228

@@ -1,5 +1,10 @@
 {
   "languageserver": {
+    "go": {
+      "command": "gopls",
+      "rootPatterns": ["go.mod"],
+      "filetypes": ["go"]
+    },
     "zls": {
         "command": "zls",
         "filetypes": ["zig"]
@@ -38,10 +43,11 @@
   "python.formatting.blackArgs": ["--line-length", "120"],
   "python.linting.flake8Enabled": true,
   "python.linting.flake8Args": ["--max-line-length", "120"],
-  "python.linting.mypyEnabled": true,
+  "python.linting.mypyEnabled": false,
   "python.linting.enabled": true,
-  "python.pythonPath": "/home/alejandro/miniconda3/bin/python",
+  "python.pythonPath": "/Users/asaucedo/.pyenv/shims/python",
   "python.organizeimports.provider": "isort",
+  "inlayHint.enable": false,
   "javascript.autoClosingTags": true,
   "suggest.enablePreview": true,
   "signature.hideOnTextChange": false,
@@ -56,11 +62,6 @@
   },
   "emmet.includeLanguages": {
       "javascript": "javascriptreact"
-  },
-  "go": {
-    "goplsOptions": {
-      "staticcheck": true
-    }
   },
   "snippets.ultisnips.pythonPrompt": false
 }

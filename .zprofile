@@ -4,6 +4,8 @@
 # loading oh-my-zsh please add them at the end off the ZSHRC.
 # Examples of this are commands like `bindkey -v`.
 
+# PREFIX FOR ZALANDO
+# alias kubectl=zkubectl
 
 # All ALIASES should go here
 alias pyserv="python -m http.server"
@@ -19,12 +21,12 @@ alias hprof="cat ~/.zprofile | peco"
 alias vvim="vim ~/.vimrc"
 alias vzsh="vim ~/.zshrc"
 alias szsh="source ~/.zshrc"
-alias yd="youtube-dl --add-metadata --write-all-thumbnails --embed-thumbnail --write-info-json --embed-subs --all-subs --external-downloader aria2c --external-downloader-args '-c -j 3 -x 3 -s 3 -k 1M'"
-alias ydm='youtube-dl --extract-audio --audio-format mp3 --prefer-ffmpeg -o "%(title)s.%(ext)s" --ignore-errors ' 
+alias yd="yt-dlp --add-metadata --write-all-thumbnails --embed-thumbnail --write-info-json --embed-subs --all-subs --external-downloader aria2c --external-downloader-args '-c -j 3 -x 3 -s 3 -k 1M'"
+alias ydm='yt-dlp --extract-audio --audio-format mp3 --prefer-ffmpeg -o "%(title)s.%(ext)s" --ignore-errors ' 
 function ydmw() { (cd /c/Users/axsau/Music/other/ && ydm $1) }
 alias lss="l | peco"
 # Download MP3 From Youtube
-alias ym="youtube-dl --extract-audio --audio-format mp3 --audio-quality 0 --prefer-ffmpeg" 
+alias ym="yt-dlp --extract-audio --audio-format mp3 --audio-quality 0 --prefer-ffmpeg" 
 alias p="python"
 alias vtmux="vim ~/.tmux.conf"
 alias ctagsm="ctags -R --exclude=.git --exclude=log --exclude=node_modules *"
@@ -36,7 +38,7 @@ alias asciicast2gif='docker run --rm -v $PWD:/data asciinema/asciicast2gif'
 # Open file in Linux:
 # alias open="xdg-open"
 # Open file in widnows
-alias open="explorer.exe"
+# alias open="explorer.exe"
 alias xdg-open="open"
 # Music
 alias sconsify='sconsify -username=1156282187 -playlists="Deep House Relax"'
@@ -92,7 +94,7 @@ alias cdw="cd /c/Users/axsau/"
 alias cdwa="cd /c/Users/axsau/Music"
 alias cdwp="cd /c/Users/axsau/Programming"
 alias cdv="cd /c/Users/axsau/Programming/vulkan/"
-alias cdvk="cd /home/alejandro/Programming/kubernetes/seldon/vulkan-kompute"
+alias cdvk="cd ~/Programming/vk/kompute"
 
 
 # Mac Specific
@@ -178,11 +180,15 @@ alias gcreate='create-git-repo.sh'
 # GITHUB ALIASES
 # GIt aliases have been moved to zshrc to avoid clash with plugin
 
+# Github pages
+alias gh-pages="bundle exec jekyll"
+
 # View file
 alias view='vim -c '
 alias viewl="vim -c 'set syntax=log' -c 'set nowrap' - "
 
 # DOCKER ALIASES
+export DOCKER_HOST=
 alias dk='docker'
 alias dc='docker-compose'
 alias dcu='docker-compose up -d'
@@ -221,6 +227,9 @@ dtags() {
 
 
 #### KUBERNETES ALIAS
+
+autoload -U +X compinit && compinit
+source <(kubectl completion zsh)
 
 alias kdash='kubectl -n kube-system describe secret default && echo "Website at http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/overview?namespace=default" && kubectl proxy'
 # This command is used a LOT both below and in daily life
@@ -319,7 +328,7 @@ alias ktn='kubectl top node'
 alias ktp='kubectl top pod'
 ### FULLY CLEAN NAMESPACE
 function kcleanns() {
-    kubectl api-resources --verbs=list --namespaced -o name | xargs -n 1 kubectl delete --all -n $1
+    kubectl api-resources --verbs=list --namespaced -o name | xargs -n 1 kubectl delete --all --force -n $1
 }
 ### DELETE STUCK TERMINATING NAMESPACE
 function kdelns() {
@@ -439,8 +448,25 @@ EOF
         fi
 }
 
+### Joplin export
+export PATH=$PATH:~/Programming/lib/joplin-export
+# Upgrade Joplin in Mac
+alias joplinupgrade="SHARP_IGNORE_GLOBAL_LIBVIPS=1 NPM_CONFIG_PREFIX=~/Programming/ npm install -g joplin"
+
+### RUBY
+export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
+
 ### ZIG
 export PATH=$PATH:~/Programming/lib/zig
+
+
+### PYTHON
+function uv-init() {
+    uv init;
+    uv venv;
+    echo ". .venv/bin/activate" >.envrc;
+    direnv allow;
+}
 
 
 ### CPP
@@ -541,7 +567,11 @@ group_lazy_load() {
 # group_lazy_load $HOME/.nvm/nvm.sh nvm node npm truffle grunt gulp yarn joplin vim nvim gvim
 
 # Load cargo rust 
-group_lazy_load $HOME/.cargo/env cargo rust
+# group_lazy_load $HOME/.cargo/env cargo rust
+
+# Load cargo envs
+. "$HOME/.cargo/env"
+
 
 # group_lazy_load $HOME/.rvm/scripts/rvm rvm irb rake rails
 
@@ -549,7 +579,7 @@ source ~/.all_secret_keys
 
 # Setting PATH
 #export PATH=$PATH:~/anaconda3/bin
-export PATH=$PATH:~/miniconda3/bin
+#export PATH=$PATH:~/miniconda3/bin
 export PATH=$PATH:~/go/bin
 export PATH=$PATH:~/Programming/bin
 export PATH=$PATH:~/.local/bin/
@@ -559,37 +589,43 @@ export PATH=$PATH:/usr/local/kubebuilder/bin
 export PATH=$PATH:~/.joplin-bin/bin
 export PATH=$PATH:/c/Users/axsau/Programming/lib/vcpkg/
 
+# Joplin
+alias joplin-reload="/Users/asaucedo/Programming/lib/joplin-export/joplin-export-job.sh"
+
 # GOLang
 export GOPATH=$HOME/go
 alias cdg=cd $GOPATH
 
 # JAVA
-export JAVA_HOME="/usr/lib/jvm/default-java"
+# # Linux JVM
+# export JAVA_HOME="/usr/lib/jvm/default-java"
+# Mac brew installed
+export JAVA_HOME=$(/usr/libexec/java_home)
 
-# SPARK
-export SPARK_HOME=/opt/spark
+# # SPARK
+export SPARK_HOME=/opt/homebrew/Cellar/apache-spark/3.5.3/libexec/
 export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
-export PYSPARK_PYTHON=/home/alejandro/miniconda3/bin/python
+export PYSPARK_PYTHON=/Users/asaucedo/.pyenv/shims/python
 export PYSPARK_DRIVER_PYTHON=jupyter
 export PYSPARK_DRIVER_PYTHON_OPTS='notebook'
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/alejandro/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/alejandro/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/alejandro/miniconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/alejandro/miniconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
+#__conda_setup="$('/home/alejandro/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+#if [ $? -eq 0 ]; then
+#    eval "$__conda_setup"
+#else
+#    if [ -f "/home/alejandro/miniconda3/etc/profile.d/conda.sh" ]; then
+#        . "/home/alejandro/miniconda3/etc/profile.d/conda.sh"
+#    else
+#        export PATH="/home/alejandro/miniconda3/bin:$PATH"
+#    fi
+#fi
+#unset __conda_setup
 # <<< conda initialize <<<
 
 # Adding mamba to the path
-export PATH=$PATH:$HOME/mambaforge/bin/
+#export PATH=$PATH:$HOME/mambaforge/bin/
 
 
 # Show prompt type vim mode (insert/visual)
@@ -605,7 +641,8 @@ zle -N zle-keymap-select
 # Set folder colours for Solarized theme
 export LSCOLORS="gxfxbEaEBxxEhEhBaDaCaD"
 
-export TERM="screen-256color-bce"
+# export TERM="screen-256color-bce"
+export TERM="xterm"
 
 # Enabling ripgrep with FZF
 [ -z "$ZSH_NAME" ] && [ -f ~/.fzf.bash ] && source ~/.fzf.bash
@@ -639,7 +676,7 @@ fkill() {
   fi
 }
 # fbr - checkout git branch (including remote branches)
-fbr() {
+git-branches() {
   local branches branch
   branches=$(git branch --all | grep -v HEAD) &&
   branch=$(echo "$branches" |
@@ -647,7 +684,7 @@ fbr() {
   git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
 }
 # fshow - git commit browser
-fshow() {
+git-commits() {
   git log --graph --color=always \
       --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
   fzf --ansi --no-sort --reverse --tiebreak=index --bind=ctrl-s:toggle-sort \
@@ -684,7 +721,9 @@ export EDITOR="$VISUAL"
 ########### WSL
 
 # DISPLAY
-export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0
+# Adding :0 as the DISPLAY to ensure it opens on the config
+export DISPLAY=:0
+#export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0
 # We need to disable "native opengl" to open VxSRV
 export LIBGL_ALWAYS_INDIRECT=0
 export XDG_RUNTIME_DIR=/home/alejandro/tmp-xdg-runtime-dir
@@ -708,13 +747,13 @@ alias espanso="cmd.exe /c/Users/axsau/AppData/Local/Programs/Espanso/espanso.cmd
 export PATH="$HOME/.poetry/bin:$PATH"
 
 # Vulkan
-export VULKAN_SDK_VERSION=1.3.231.2
-export VULKAN_SDK="$HOME/Programming/bin/VulkanSDK/${VULKAN_SDK_VERSION}/x86_64"
+export VULKAN_SDK_VERSION=1.3.275.0
+export VULKAN_SDK="$HOME/VulkanSDK/${VULKAN_SDK_VERSION}/macOS"
 export PATH="${VULKAN_SDK}/bin:${PATH}"
 export LD_LIBRARY_PATH="${VULKAN_SDK}/lib"
-export VK_LAYER_PATH="${VULKAN_SDK}/etc/explicit_layer.d"
+export VK_LAYER_PATH="${VULKAN_SDK}/share/vulkan/explicit_layer.d"
 # Swiftshader for vulkan linux
-export VK_ICD_FILENAMES=$HOME/Programming/bin/swiftshader/vk_swiftshader_icd.json
+export VK_ICD_FILENAMES="${VULKAN_SDK}/share/vulkan/icd.d/MoltenVK_icd.json"
 
 # Custom Zalando Machine 
 
@@ -728,10 +767,6 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # SBT Config
 export SBT_CREDENTIALS="$HOME/.ivy2/.credentials"
-
-# COnfiguring docker-compose with podman
-export DOCKER_HOST=unix:///Users/your-name/.local/share/containers/podman/machine/podman-machine-default/podman.sock
-export COMPOSE_DOCKER_CLI_BUILD=0
 
 # Adding main dirs
 export PATH=$PATH:$HOME/Programming/bin

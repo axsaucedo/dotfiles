@@ -67,10 +67,19 @@
     Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
     " Vim Repeat
     Plug 'tpope/vim-repeat'
-    " Vim Easyclip
-    Plug 'svermeulen/vim-easyclip'
+    " Vim Easyclip (Disable if mac)
+    "Plug 'svermeulen/vim-easyclip'
+    " Avoid copying on every cut operation instead cut with mm
+    Plug 'svermeulen/vim-cutlass'
     " Markdown preview
     Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
+    """  Rmarkdown
+    """Plug 'vim-pandoc/vim-rmarkdown'
+    """Plug 'vim-pandoc/vim-pandoc'
+    """Plug 'vim-pandoc/vim-pandoc-syntax'
+    " Vim Markdown
+    Plug 'godlygeek/tabular'
+    Plug 'preservim/vim-markdown'
     " Vim Table Mode (Toggle with :TableModeToggle)
     Plug 'dhruvasagar/vim-table-mode'
     " Dim inactive (First plugin is to listen to tmux events, other to dim)
@@ -94,8 +103,6 @@
     Plug 'pboettch/vim-cmake-syntax'
     " Show the current / previous function
     Plug 'wellle/context.vim'
-    "Plug 'nvim-treesitter/nvim-treesitter'
-    "Plug 'nvim-treesitter/nvim-treesitter-context'
     " Finishing plugin list
     call plug#end()
 
@@ -121,11 +128,15 @@
 
     let g:far#source="rgnvim"
 
+    " Plug 'preservim/vim-markdown'
+    let g:vim_markdown_folding_style_pythonic = 1
+    let g:vim_markdown_folding_level = 3
+
     " Needed in order to filter with ignoring files
     let g:far#glob_mode = "rg"
 
     " Setup NVIM
-    let g:python3_host_prog=$CONDA_PREFIX."/bin/python"
+    let g:python3_host_prog="~/.pyenv/versions/3.10.5/bin/python"
 
     " Guten Tags
     set tags=./.tags,.tags;
@@ -137,21 +148,13 @@
     " Previm
     let g:previm_open_cmd = "open -a 'Google Chrome'"
 
-    " Easyclip
-    "set clipboard=unnamed
-    "let g:EasyClipShareYanks=1
+    " Easyclip / Now Clutlass.vim https://github.com/svermeulen/vim-cutlass
+    set clipboard=unnamedplus
+    nnoremap m d
+    xnoremap m d
 
-    " Enable for WSL clipboard
-    let s:clip = '/c/Windows/System32/clip.exe'  " default location
-    if executable(s:clip)
-        augroup WSLYank
-            autocmd!
-            autocmd TextYankPost * call system('echo '.shellescape(join(v:event.regcontents, "\<CR>")).' | '.s:clip)
-        augroup END
-    end
-    noremap <C-C> :call system('/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command Get-Clipboard')<CR> 
-    " For slowdown
-    "set eventignore=TextYankPost
+    nnoremap mm dd
+    nnoremap M D
 
     " Airline status line
     let g:airline#extensions#tabline#enabled = 1
@@ -230,9 +233,8 @@
     " Context.vim
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-    "let g:context_enabled = 1
-    "let g:context_filetype_blacklist = [ 'fugitive', 'nerdtree', 'minimap', 'tagbar', 'fzf', 'NvimTree', "startify", "" ]
-    "let g:context_presenter = "nvim-float"
+    let g:context_enabled = 1
+    let g:context_filetype_blacklist = [ 'fugitive', 'nerdtree', 'minimap', 'tagbar', 'fzf', 'NvimTree', "startify", "json", "", "html" ]
 
     nnoremap <M-m> :MinimapClose<CR>
 
@@ -426,6 +428,7 @@
         \   'guifgs': ['darkorange3', 'seagreen3', 'firebrick', 'royalblue3' ],
         \   'ctermfgs': ['lightyellow', 'lightmagenta', 'lightblue', 'lightcyan' ],
         \}
+
 
 
     """"""""""""""""""""""""""""""
@@ -668,16 +671,16 @@
     nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
     
     " coc snippets settings:
-    " Use <C-l> for trigger snippet expand.
-    imap <C-l> <Plug>(coc-snippets-expand)
-    " Use <C-j> for select text for visual placeholder of snippet.
-    vmap <C-j> <Plug>(coc-snippets-select)
-    " Use <C-j> for jump to next placeholder, it's default of coc.nvim
-    let g:coc_snippet_next = '<c-j>'
-    " Use <C-k> for jump to previous placeholder, it's default of coc.nvim
-    let g:coc_snippet_prev = '<c-k>'
-    " Use <C-j> for both expand and jump (make expand higher priority.)
-    imap <C-j> <Plug>(coc-snippets-expand-jump)
+    "" Use <C-l> for trigger snippet expand.
+    "imap <C-l> <Plug>(coc-snippets-expand)
+    "" Use <C-j> for select text for visual placeholder of snippet.
+    "vmap <C-j> <Plug>(coc-snippets-select)
+    "" Use <C-j> for jump to next placeholder, it's default of coc.nvim
+    "let g:coc_snippet_next = '<c-j>'
+    "" Use <C-k> for jump to previous placeholder, it's default of coc.nvim
+    "let g:coc_snippet_prev = '<c-k>'
+    "" Use <C-j> for both expand and jump (make expand higher priority.)
+    "imap <C-j> <Plug>(coc-snippets-expand-jump)
 
     " Language specific
     "
@@ -808,9 +811,11 @@
     syntax sync minlines=10000
     set background=dark
     colorscheme molokai_custom
-    "let g:molokai_original = 0
+    "colorscheme molokai_dark
+    let g:molokai_original = 1
     " Other popular colors
     " colorscheme monokai-phoenix
+    set notermguicolors " IMPORTANT FOR CUSTOM MOLOKAI TO WORK"
 
     " Set extra options when running in GUI mode
     if has("gui_running")
@@ -916,6 +921,10 @@
     map <C-k> <C-W>k
     map <C-h> <C-W>h
     map <C-l> <C-W>l
+    map <M-j> <C-W>j
+    map <M-k> <C-W>k
+    map <M-h> <C-W>h
+    map <M-l> <C-W>l
 
     " Close the current buffer
     map <leader>bd :Bclose<cr>
