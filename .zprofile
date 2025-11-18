@@ -716,5 +716,28 @@ export VK_LAYER_PATH="${VULKAN_SDK}/etc/explicit_layer.d"
 # Swiftshader for vulkan linux
 export VK_ICD_FILENAMES=$HOME/Programming/bin/swiftshader/vk_swiftshader_icd.json
 
+# Custom Zalando Machine 
+
+# Set PATH, MANPATH, etc., for Homebrew.
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Adding asdf
+. $HOME/.asdf/asdf.sh
+
+export PATH="$HOME/.local/bin:$PATH"
+
+# SBT Config
+export SBT_CREDENTIALS="$HOME/.ivy2/.credentials"
+
+# COnfiguring docker-compose with podman
+export DOCKER_HOST=unix:///Users/your-name/.local/share/containers/podman/machine/podman-machine-default/podman.sock
+export COMPOSE_DOCKER_CLI_BUILD=0
+
+# Adding main dirs
+export PATH=$PATH:$HOME/Programming/bin
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
 echo ".zprofile ran"
 

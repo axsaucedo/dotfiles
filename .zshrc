@@ -148,6 +148,32 @@ function gremove() {
 alias gssh="~/Programming/lib/custom_scripts/git_https_to_ssh.sh"
 alias ghttps="~/Programming/lib/custom_scripts/git_ssh_to_https.sh"
 
+
+
+
+# Custom Zalando mac configuration
+
+# Set PATH, MANPATH, etc., for Homebrew.
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Adding asdf
+. $HOME/.asdf/asdf.sh
+
+export PATH="$HOME/.local/bin:$PATH"
+
+# SBT Config
+export SBT_CREDENTIALS="$HOME/.ivy2/.credentials"
+
+# COnfiguring docker-compose with podman
+export DOCKER_HOST=unix:///Users/your-name/.local/share/containers/podman/machine/podman-machine-default/podman.sock
+export COMPOSE_DOCKER_CLI_BUILD=0
+
+# Adding main dirs
+export PATH=$PATH:$HOME/Programming/bin
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
 echo ".zshrc ran"
 
 tmux ls || tmux new # Create and attach tmux session if none exist and send I as normally it starts in vi mode
