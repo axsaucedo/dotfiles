@@ -151,3 +151,24 @@ export PATH="/Users/asaucedo/.pixi/bin:$PATH"
 for f in ~/.zshrc.zalando ~/.zshrc.local; do
   [ -r "$f" ] && source "$f"
 done
+
+#######################################################################
+#                           Dotfiles helpers
+#######################################################################
+
+# Operate on the dotfiles repo from anywhere: `dots`, `dots diff`, `dots push`
+dots() { git -C ~/Programming/dotfiles "${@:-status}"; }
+
+# Once a day, mention uncommitted dotfiles changes. Auto-commit handles saving;
+# this is about the push, which is deliberately manual on a public repo.
+_dots_nudge() {
+  local stamp=~/.cache/dots-nudge
+  [[ -n $(find "$stamp" -maxdepth 0 -mtime -1 2>/dev/null) ]] && return
+  mkdir -p ~/.cache && touch "$stamp"
+  local n
+  n=$(git -C ~/Programming/dotfiles status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+  (( n > 0 )) && print -P "%F{yellow}dotfiles: $n uncommitted change(s) — run 'dots'%f"
+  n=$(git -C ~/Programming/dotfiles log --oneline @{u}.. 2>/dev/null | wc -l | tr -d ' ')
+  (( n > 0 )) && print -P "%F{yellow}dotfiles: $n unpushed commit(s) — run 'dots push'%f"
+}
+_dots_nudge
