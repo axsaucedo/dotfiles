@@ -59,8 +59,8 @@
     Plug 'junegunn/fzf.vim'
     " Colour parentheses
     Plug 'luochen1990/rainbow'
-    " Multiple cursros
-    Plug 'terryma/vim-multiple-cursors'
+    " Multiple cursors
+    Plug 'mg979/vim-visual-multi'
     " Navigation between tmux and vim
     Plug 'christoomey/vim-tmux-navigator'
     " Fugitive plugin
