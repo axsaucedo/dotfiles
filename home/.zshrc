@@ -92,6 +92,8 @@ command -v atuin >/dev/null && eval "$(atuin init zsh --disable-up-arrow)"
 # Avoid changing folder without cd (ie typing folder name directly)
 setopt noautocd
 
+[ -r ~/.aliases.zsh ] && source ~/.aliases.zsh
+
 
 #######################################################################
 #                           Autocompletion
