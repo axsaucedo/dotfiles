@@ -117,7 +117,7 @@
     " Cmake syntax
     Plug 'pboettch/vim-cmake-syntax'
     " Show the current / previous function
-    Plug 'wellle/context.vim'
+    Plug 'nvim-treesitter/nvim-treesitter-context'
     " Animations 
     Plug 'axsaucedo/neovim-power-mode'
     Plug 'sphamba/smear-cursor.nvim'
@@ -135,6 +135,12 @@
     if !exists('g:treesitter_configured')
         lua require('nvim-treesitter.configs').setup({ensure_installed = {'python', 'go', 'cpp', 'c', 'lua', 'vim', 'vimdoc', 'javascript', 'typescript', 'json', 'yaml', 'bash', 'markdown', 'markdown_inline', 'cmake', 'html', 'css'}, highlight = {enable = true, disable = {'markdown', 'markdown_inline'}}, auto_install = true})
         let g:treesitter_configured = 1
+    endif
+
+    " Tree-sitter context
+    if !exists('g:treesitter_context_configured')
+        lua require('treesitter-context').setup({})
+        let g:treesitter_context_configured = 1
     endif
 
     " Neovim Power Mode
@@ -279,13 +285,6 @@
         \ 'gitcommit',
         \ 'scratch'
         \]
-
-    " Context.vim
-    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-    let g:context_enabled = 1
-    let g:context_filetype_blacklist = [ 'fugitive', 'nerdtree', 'tagbar', 'fzf', 'NvimTree', "startify", "json", "", "html" ]
-
 
     " NERDTree 
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
