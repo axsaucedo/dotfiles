@@ -35,16 +35,12 @@ alias ctagspy='ctags -R --fields=+l --languages=python --python-kinds=-iv --excl
 # Ascicast 2 gif (to convert .cast to .gif)
 alias asciicast2gif='docker run --rm -v $PWD:/data asciinema/asciicast2gif'
 alias xdg-open="open"
-# Music
-alias sconsify='sconsify -username=1156282187 -playlists="Deep House Relax"'
 # Get size of directory sorted
 alias duh="du -hs ./* | sort -h"
 alias duhh="du -hs ./.* * | sort -h"
 # Speed test
 alias speedtest=librespeed-cli
 alias p='python3'
-# Change jupyer notebook theme 
-alias jtm="jt -t monokai -T -nfs 115 -cellw 98% -N -kl -ofs 11 -altmd"
 # Run time start for zsh
 alias timez="time zsh -i -c echo"
 
@@ -76,22 +72,6 @@ alias cda="cd ~/Programming/agentic/"
 
 # Mac Specific
 alias mergepdf='"/System/Library/Automator/Combine PDF Pages.action/Contents/Resources/join.py" -o ./merged.pdf'
-alias spoof="sudo spoof-mac randomize en0; spoof-mac.py list"
-
-# Geeknote Shortcuts
-alias en="vim -c Geeknote"
-function ec() {
-    vim +"GeeknoteCreateNote $1"
-}
-
-# Express VPN
-alias x="expressvpn"
-alias xl="x list | peco"
-alias xc="x connect"
-alias xcs="x connect ch2"
-alias xs="x status"
-alias xh="x --help | peco"
-alias xd="x disconnect"
 
 # Brightness
 alias b="xrandr --output DP-0 --brightness"
@@ -598,13 +578,6 @@ _zi=~/.cache/zsh-init
 mkdir -p "$_zi"
 [[ -s $_zi/java_home ]] || /usr/libexec/java_home >| "$_zi/java_home"
 export JAVA_HOME=$(<"$_zi/java_home")
-
-# # SPARK
-export SPARK_HOME=/opt/homebrew/Cellar/apache-spark/3.5.3/libexec/
-export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
-export PYSPARK_PYTHON=/Users/asaucedo/.pyenv/shims/python
-export PYSPARK_DRIVER_PYTHON=jupyter
-export PYSPARK_DRIVER_PYTHON_OPTS='notebook'
 
 # Ensure opt+backspace and opt+keys behave for moving around text
 bindkey -M viins '^[[1;3D' backward-word        # Option+Left
