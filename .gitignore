@@ -24,3 +24,8 @@ Thumbs.db
 # Python
 __pycache__/
 *.py[cod]
+
+# Vim runtime state — rewritten constantly; symlinking these would make the
+# auto-commit watch fire on every vim session.
+home/.vim/.netrwhist
+home/.vim/spell/*.spl
