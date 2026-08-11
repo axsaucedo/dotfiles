@@ -1,9 +1,6 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# p10k instant prompt deliberately NOT enabled: it paints a cached prompt
+# immediately and finishes loading behind it, which reads as a glitchy
+# two-stage startup. Startup is fast enough to load in one pass instead.
 
 
 #     8P d8P  dP"8 888 888
@@ -19,6 +16,9 @@ fi
 #######################################################################
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# Collapse past prompts to a minimal line so scrollback stays clean
+POWERLEVEL9K_TRANSIENT_PROMPT=always
 
 # Theme specific options
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
@@ -57,6 +57,7 @@ autoload -U colors && colors
 plugins=(
   # git removed git plugin as it only adds aliases that clash with mine
   vi-mode
+  fzf-tab # MUST load before widget-wrapping plugins (autosuggestions, syntax-highlighting). git clone https://github.com/Aloxaf/fzf-tab $ZSH_CUSTOM/plugins/fzf-tab
   zsh-autosuggestions # git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
   kubectl
   docker
@@ -85,6 +86,10 @@ zstyle ':urlglobber' url-other-schema
 ## Loading direnv
 command -v direnv >/dev/null && eval "$(direnv hook zsh)"
 
+## atuin: searchable shell history database on ctrl-r (brew install atuin).
+## Arrow-up is left on zsh's default history so only ctrl-r changes behavior.
+command -v atuin >/dev/null && eval "$(atuin init zsh --disable-up-arrow)"
+
 # Avoid changing folder without cd (ie typing folder name directly)
 setopt noautocd
 
@@ -96,10 +101,15 @@ setopt noautocd
 # compinit already ran inside oh-my-zsh; do NOT run it again here -- a rerun
 # rebuilds the completion table and wipes compdefs registered below.
 
-# uv + 1password completions, cached: the eval forks the tool on every shell
-# start, so dump once and re-source; regenerate when the binary is newer.
+# kubectl + uv + 1password completions, cached: the eval forks the tool on
+# every shell start, so dump once and re-source; regenerate when the binary
+# is newer.
 _zc=~/.cache/zsh-completions
 mkdir -p "$_zc"
+if command -v kubectl >/dev/null; then
+  [[ $_zc/kubectl.zsh -nt ${commands[kubectl]} ]] || kubectl completion zsh > "$_zc/kubectl.zsh"
+  source "$_zc/kubectl.zsh"
+fi
 if command -v uv >/dev/null; then
   [[ $_zc/uv.zsh -nt ${commands[uv]} ]] || uv generate-shell-completion zsh > "$_zc/uv.zsh"
   source "$_zc/uv.zsh"
