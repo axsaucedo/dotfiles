@@ -65,8 +65,6 @@
     Plug 'christoomey/vim-tmux-navigator'
     " Fugitive plugin
     Plug 'tpope/vim-fugitive'
-    " NERD Commenter
-    Plug 'scrooloose/nerdcommenter'
     " Bulletpoint plug
     Plug 'dkarter/bullets.vim'
     " COC Autocompllete
