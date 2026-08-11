@@ -138,6 +138,11 @@ return {
       vim.g.power_mode_color_1 = "#FF0000"
       vim.g.hud_linter_duration = 2
     end,
+    -- The plugin auto-setups on VimEnter, which has already fired by the
+    -- time InsertEnter loads it — call setup explicitly instead.
+    config = function()
+      require("power-mode").setup()
+    end,
   },
   {
     "sphamba/smear-cursor.nvim",
