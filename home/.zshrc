@@ -57,6 +57,7 @@ autoload -U colors && colors
 plugins=(
   # git removed git plugin as it only adds aliases that clash with mine
   vi-mode
+  fzf-tab # MUST load before widget-wrapping plugins (autosuggestions, syntax-highlighting). git clone https://github.com/Aloxaf/fzf-tab $ZSH_CUSTOM/plugins/fzf-tab
   zsh-autosuggestions # git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
   kubectl
   docker
