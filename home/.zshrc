@@ -96,12 +96,15 @@ setopt noautocd
 # compinit already ran inside oh-my-zsh; do NOT run it again here -- a rerun
 # rebuilds the completion table and wipes compdefs registered below.
 
-source <(kubectl completion zsh)
-
-# uv + 1password completions, cached: the eval forks the tool on every shell
-# start, so dump once and re-source; regenerate when the binary is newer.
+# kubectl + uv + 1password completions, cached: the eval forks the tool on
+# every shell start, so dump once and re-source; regenerate when the binary
+# is newer.
 _zc=~/.cache/zsh-completions
 mkdir -p "$_zc"
+if command -v kubectl >/dev/null; then
+  [[ $_zc/kubectl.zsh -nt ${commands[kubectl]} ]] || kubectl completion zsh > "$_zc/kubectl.zsh"
+  source "$_zc/kubectl.zsh"
+fi
 if command -v uv >/dev/null; then
   [[ $_zc/uv.zsh -nt ${commands[uv]} ]] || uv generate-shell-completion zsh > "$_zc/uv.zsh"
   source "$_zc/uv.zsh"
