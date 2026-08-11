@@ -186,7 +186,8 @@
     " Needed in order to filter with ignoring files
     let g:far#glob_mode = "rg"
 
-    " Setup NVIM
+    " Python3 provider (used by vim-pandoc); without an explicit pin nvim
+    " falls into pyenv shim resolution and fails to load the host
     let g:python3_host_prog="~/.pyenv/versions/3.10.5/bin/python"
 
     " Tags
@@ -207,7 +208,6 @@
 
     " Airline status line
     let g:airline#extensions#tabline#enabled = 1
-    let g:airline#extensions#tabline#buffer_idx_mode = 1
     let g:airline#extensions#tabline#buffer_idx_mode = 1
     let g:airline_powerline_fonts = 1
     let g:airline_theme = "wombat"
@@ -381,16 +381,8 @@
     "  * It can also be accessed through CocConfig
     "  * Currently integrated with airline statusline (errors/warnings & load)
     "
-    "  The current plugins expected to be installed include:
-    "  * CocInstall coc-python
-    "  * CocInstall coc-go
-    "  * CocInstall coc-clangd - also requires clangd to be installed
-    "  * For C can also use others https://github.com/neoclide/coc.nvim/wiki/Language-servers#ccobjective-c
-    "  * CocInstall coc-cmake
-    "  * Bash - currently manually added to settings
-    "  * CocInstall coc-snippets - Adds snippet functionality
-    "  * CocInstall coc-highlight - Introduces overrides for coc diagnostic
-    "  syntax highlights such as errors and warnings
+    "  Extensions are managed with :CocInstall / :CocUninstall; see the
+    "  current set with :CocList extensions.
     "
     " CocGo config
     " - Ensure files are re-fromatted on save with imports (needed explicit as
@@ -616,11 +608,10 @@
     " Set to auto read when a file is changed from the outside
     set autoread
 
-    " Mapping WQ to w q 
-    cab W w
-    cab wq :w <BAR> :qa<CR>
-    cab WQ :w <BAR> :qa<CR>
-    cab Wq :w <BAR> :qa<CR>
+    " Fix capitalisation typos of :wq — plain :wq stays native (previous
+    " version expanded it to :qa, quitting ALL windows, not just the current)
+    cab WQ wq
+    cab Wq wq
 
     " Fast saving
     nmap <leader>w :w!<cr>
@@ -692,9 +683,6 @@
         set t_Co=256
         set guitablabel=%M\ %t
     endif
-
-    " Set utf8 as standard encoding and en_US as the standard language
-    set encoding=utf8
 
     " Use Unix as the standard file type
     set ffs=unix,dos,mac
@@ -786,8 +774,12 @@
     " => Moving around, tabs, windows and buffers
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     " Treat long lines as break lines (useful when moving around in them)
-    map j gj
-    map k gk
+    " <expr> keeps counts (5j) and operators (dj) on real lines; recursive
+    " `map j gj` broke both.
+    nnoremap <expr> j v:count ? 'j' : 'gj'
+    nnoremap <expr> k v:count ? 'k' : 'gk'
+    xnoremap <expr> j v:count ? 'j' : 'gj'
+    xnoremap <expr> k v:count ? 'k' : 'gk'
 
     " Disable highlight when <leader><cr> is pressed
     map <silent> <leader><cr> :noh<cr>
@@ -853,10 +845,12 @@
     map <C-\> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
     " Resize the window with bindings
-    noremap <S-H> <C-W>5<
-    noremap <S-L> <C-W>5>
-    noremap <S-J> <C-W>2+
-    noremap <S-K> <C-W>2-
+    " Previously on <S-H/J/K/L>, which shadowed the native H/L (screen top/
+    " bottom), J (join lines) and K — <S-J> IS J. Moved to Shift+arrows.
+    noremap <S-Left> <C-W>5<
+    noremap <S-Right> <C-W>5>
+    noremap <S-Down> <C-W>2+
+    noremap <S-Up> <C-W>2-
 
 
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -901,7 +895,8 @@
 
     augroup markdownSpell
         autocmd!
-        autocmd FileType latex,tex,md,markdown setlocal spell
+        " 'latex'/'md' are not real filetypes ('tex'/'markdown' are)
+        autocmd FileType tex,plaintex,markdown setlocal spell
     augroup END
 
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
