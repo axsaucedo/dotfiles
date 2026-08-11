@@ -1,13 +1,13 @@
-#
-# This ZPROFILE file will execute before loading oh-my-zsh and before
-# loading ZSHRC. If you would like to add commands that load after 
-# loading oh-my-zsh please add them at the end off the ZSHRC.
-# Examples of this are commands like `bindkey -v`.
 
-# PREFIX FOR ZALANDO
-# alias kubectl=zkubectl
+#           888 88e  888 88e    e88 88e   888'Y88 888 888     888'Y88 
+#    8P d8P 888 888D 888 888D  d888 888b  888 ,'Y 888 888     888 ,'Y 
+#    P d8P  888 88"  888 88"  C8888 8888D 888C8   888 888     888C8   
+#     d8P d 888      888 b,    Y888 888P  888 "   888 888  ,d 888 ",d 
+#    d8P d8 888      888 88b,   "88 88"   888     888 888,d88 888,d88 
+
 
 # All ALIASES should go here
+alias colorsprint="msgcat --color=test" # print all colors
 alias pyserv="python -m http.server"
 alias pyrm='find . -name "*.pyc" -exec rm -rf {} \;'
 alias vim="nvim"
@@ -48,8 +48,8 @@ alias mp="mpc prev"
 alias m='ncmpcpp'
 alias mconf='vim ~/.config/ncmpcpp/config'
 # Get size of directory sorted
-alias duh="du -hs * | sort -h"
-alias duhh="du -hs .* * | sort -h"
+alias duh="du -hs ./* | sort -h"
+alias duhh="du -hs ./.* * | sort -h"
 # Speed test
 alias speedtest=librespeed-cli
 # Enable Flux
@@ -57,7 +57,6 @@ alias fu='xflux11 -l 51.5074, -g -0.1278 -r 0'
 alias fd='killall xflux11'
 alias fl='pidof xflux11'
 alias p='python3'
-alias gl='git log'
 function ft () { # Toggle flux
     local flux_pid=$(pidof xflux11)
     if [ "x$flux_pid" != "x" ]; then
@@ -73,7 +72,11 @@ alias jtm="jt -t monokai -T -nfs 115 -cellw 98% -N -kl -ofs 11 -altmd"
 alias timez="time zsh -i -c echo"
 
 # Tar / Compress
-tarz() { tar -zcvf $1.tar.gz $1; }
+tarz() {
+    local name="$1"
+    shift
+    tar -zcvf "${name}.tar.gz" "$@" "$name"
+}
 untarz() { tar -zxvf $1; }
 
 # To use when audio not working and dummy output displayed
@@ -81,13 +84,14 @@ alias audioreset="pulseaudio -k && sudo alsa force-reload"
 
 # Change folders
 alias cdp="cd ~/Programming"
+alias cdz="cd ~/Programming/zalando"
 alias cdk="cd ~/.keys"
 alias cde="cd ~/Programming/ethical"
 alias cdee="cd ~/Programming/ethical/ethical"
 alias cdd="cd ~/Programming/devnull"
 alias cds="cd ~/Programming/kubernetes/seldon"
 alias cdss="cd ~/Programming/kubernetes/seldon/seldon-core"
-cdtmp() { mkdir ~/Programming/tmp/$(date +'%Y-%m-%dT%H:%M:%S%z') && cd $_ }
+cdtmp() { mkdir /tmp/$(date +'%Y-%m-%dT%H-%M-%S') && cd $_ }
 alias cleantmp="rm -rf ~/Programming/tmp/*"
 # Windows Subsystem for Linux (wsl)
 alias cdw="cd /c/Users/axsau/"
@@ -95,6 +99,10 @@ alias cdwa="cd /c/Users/axsau/Music"
 alias cdwp="cd /c/Users/axsau/Programming"
 alias cdv="cd /c/Users/axsau/Programming/vulkan/"
 alias cdvk="cd ~/Programming/vk/kompute"
+alias cdak="cd ~/Programming/agentic/kaos"
+alias cdaa=cdak
+alias cdau="cd ~/Programming/agentic/kaos-ui"
+alias cda="cd ~/Programming/agentic/"
 
 
 # Mac Specific
@@ -177,11 +185,123 @@ cpdf() {
 alias gdeploy='push-git-subtree.sh'
 alias gcreate='create-git-repo.sh'
 
-# GITHUB ALIASES
+####### GITHUB ALIASES
+
+# Delete all untracked files and ask first for confirmation
+git-clean() {
+  git clean -xfd -n
+  local ans
+  # Works in zsh
+  read "ans?Proceed with git clean -xfd? [y/N] "
+  [[ $ans == [yY] ]] && git clean -xfd
+}
 # GIt aliases have been moved to zshrc to avoid clash with plugin
+git-branches() {
+  local branches branch
+  branches=$(git branch --all | grep -v HEAD) &&
+  branch=$(echo "$branches" |
+           fzf-tmux -d $(( 2 + $(wc -l <<< "$branches") )) +m) &&
+  git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
+}
+git-commits() {
+  git log --graph --color=always \
+      --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
+  fzf --ansi --no-sort --reverse --tiebreak=index --bind=ctrl-s:toggle-sort \
+      --bind "ctrl-m:execute:
+                (grep -o '[a-f0-9]\{7\}' | head -1 |
+                xargs -I % bash -c 'git show -p --color=always %') << 'FZF-EOF'
+                {}
+FZF-EOF"
+}
+# Git stash commands
+alias git-stash-apply="git stash list | fzf --preview-window=right:70%:wrap --preview 's=\$(echo {} | cut -d: -f1); git stash show -p --color=always \"\$s\"' | cut -d: -f1 | xargs -r git stash apply"
+alias git-stash-pop="git stash list | fzf --preview-window=right:70%:wrap --preview 's=\$(echo {} | cut -d: -f1); git stash show -p --color=always \"\$s\"' | cut -d: -f1 | xargs -r git stash pop"
+alias git-stash-drop="git stash list | fzf --preview-window=right:70%:wrap --preview 's=\$(echo {} | cut -d: -f1); git stash show -p --color=always \"\$s\"' | cut -d: -f1 | xargs -r git stash drop"
+# Git aliases (for clashes with git plugin)
+alias gco="git checkout"
+alias gp='git push'
+alias gl='git-commits'
+alias gs='git status '
+alias ga='git add '
+alias gaf='git add $(git ls-files -m -o --exclude-standard | fzf -m)'
+alias gb='git-branches'
+alias gc='git commit -v -s '
+alias gd='git diff -u'
+alias gk='gitk --all&'
+alias gx='gitx --all'
+alias gi='git init'
+alias gitignore="curl -O https://gist.githubusercontent.com/axsaucedo/a3331f79d30ce3acef95f187d8e72b87/raw/9520430de244b9ddcf004dc2ae832456e35a00ea/.gitignore"
+# REmoves git folder completely from history and adds it to git ignore
+function gremove() {
+    git filter-branch --tree-filter "rm -rf $1" --prune-empty HEAD
+    git for-each-ref --format="%(refname)" refs/original/ | xargs -n 1 git update-ref -d
+    echo "$1" >> .gitignore
+    git add .gitignore
+    git commit -m "Removing $1 from git history"
+    git gc
+}
+# Git exploration commands
+## What Changes the Most
+alias git-blame-files='git log --format=format: --name-only --since="1 year ago" | sort | uniq -c | sort -nr | head -20'
+
+## Who built this
+alias git-blame-authors='git shortlog -sn --no-merges'
+
+## Where do bugs cluster
+alias git-blame-bugs="git log -i -E --grep=\"fix|bug|broken\" --name-only --format='' | sort | uniq -c | sort -nr | head -20"
+
+## Is project accelerating or dying
+alias git-blame-project="git log --format='%ad' --date=format:'%Y-%m' | sort | uniq -c"
+
+## How often is the team firefighting
+alias git-blame-fire="git log --oneline --since=\"1 year ago\" | grep -iE 'revert|hotfix|emergency|rollback'"
+
+# Script to laod all sessions on copilot and run the selected session
+copilot-sessions() {
+  local sdir="${HOME}/.copilot/session-state"
+  local id
+  id=$(ls -td "$sdir"/*/ 2>/dev/null | while read -r d; do
+    local uuid=$(basename "$d")
+    local git_root=$(grep '^git_root:' "$d/workspace.yaml" 2>/dev/null | sed 's/^git_root: //')
+    local cwd=$(grep '^cwd:' "$d/workspace.yaml" 2>/dev/null | sed 's/^cwd: //')
+    local project=$(basename "${git_root:-${cwd:--}}")
+    local modified=$(stat -f "%Sm" -t "%b %d %H:%M" "$d/workspace.yaml" 2>/dev/null)
+    local plan_line=""
+    [ -f "$d/plan.md" ] && plan_line=$(head -1 "$d/plan.md" | sed 's/^#* *//')
+    printf "\033[2m%s\033[0m | \033[33m%s\033[0m | \033[36m%s\033[0m | \033[35m%s\033[0m\n" \
+      "$uuid" "${modified:--}" "${project:--}" "${plan_line:--}"
+  done | fzf --ansi --header "Enter: resume | Esc: cancel | CWD: -C \"$PWD\"" \
+    --delimiter ' \| ' --with-nth=2.. --preview-window=right:55%:wrap \
+    --preview 'd='"$sdir"'/{1}
+      printf "\033[1;34m📅 Last Modified\033[0m\n"
+      printf "   \033[33m%s\033[0m\n" "$(stat -f "%Sm" -t "%Y-%m-%d %H:%M" "$d/workspace.yaml" 2>/dev/null)"
+      echo ""
+      printf "\033[1;34m📋 Workspace\033[0m\n"
+      printf "   \033[2mID:\033[0m  %s\n" "$(grep "^id:" "$d/workspace.yaml" 2>/dev/null | sed "s/^id: //")"
+      printf "   \033[2mCWD:\033[0m %s\n" "$(grep "^cwd:" "$d/workspace.yaml" 2>/dev/null | sed "s/^cwd: //")"
+      summary=$(grep "^summary:" "$d/workspace.yaml" 2>/dev/null | head -1 | sed "s/^summary: //")
+      [ -n "$summary" ] && printf "   \033[1;33mSummary:\033[0m %s\n" "$summary"
+      if [ -f "$d/plan.md" ]; then
+        echo ""
+        printf "\033[1;34m📝 Plan\033[0m\n"
+        bat --style=plain --color=always -l md "$d/plan.md" 2>/dev/null | sed "s/^/   /" || sed "s/^/   /" "$d/plan.md" 2>/dev/null
+      fi') || return 0
+  copilot --resume="${id%% |*}" "$@"
+}
 
 # Github pages
-alias gh-pages="bundle exec jekyll"
+alias gh-pages="bundle exec jekyll serve"
+
+# AI Agents
+
+# claude code
+export PATH=$PATH:~/.claude/bin
+
+# Copilot telemetry usage
+export COPILOT_OTEL_ENABLED=true
+export COPILOT_OTEL_EXPORTER_TYPE=file
+export COPILOT_OTEL_FILE_EXPORTER_PATH="$HOME/.copilot/otel/copilot-otel-$(date +%Y%m%d-%H%M%S).jsonl"
+
 
 # View file
 alias view='vim -c '
@@ -252,6 +372,7 @@ alias krf='kubectl delete -f'
 # Pod management.
 alias kg='kubectl get'
 alias kgp='kubectl get pods'
+alias ke='kubectl edit'
 alias kgpw='kgp --watch'
 alias kgpwide='kgp -o wide'
 alias kep='kubectl edit pods'
@@ -344,6 +465,9 @@ function kdelr() {
 }
 # Kubernetes KIND
 alias kindconfig='kubectl cluster-info --context kind-kind'
+kind-stop()   { docker stop $(kind get nodes --name "${1:-kind}") ; }
+kind-start()  { docker start $(kind get nodes --name "${1:-kind}") ; }
+kind-status() { docker ps -a --filter label=io.x-k8s.kind.cluster --format '{{.Label "io.x-k8s.kind.cluster"}}: {{.State}}' | sort -u ; }
 
 # Godot 
 alias godot="\"/c/Program Files (x86)/Steam/steamapps/common/Godot Engine/godot.windows.opt.tools.64.exe\""
@@ -453,21 +577,48 @@ export PATH=$PATH:~/Programming/lib/joplin-export
 # Upgrade Joplin in Mac
 alias joplinupgrade="SHARP_IGNORE_GLOBAL_LIBVIPS=1 NPM_CONFIG_PREFIX=~/Programming/ npm install -g joplin"
 
+# LANGUAGES
+
 ### RUBY
 export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
+export HOMEBREW_AUTO_UPDATE_SECS=604800
 
 ### ZIG
 export PATH=$PATH:~/Programming/lib/zig
 
 
 ### PYTHON
-function uv-init() {
+
+# This function creates the venv in the same directory
+function uv-init-local() {
     uv init;
-    uv venv;
+    uv venv --seed;
     echo ". .venv/bin/activate" >.envrc;
     direnv allow;
 }
 
+# This default function creates it in a central directory
+function uv-init() {
+    local UV_DIR=~/.venvs/${PWD//\//-}
+    uv init;
+    UV_PROJECT_ENVIRONMENT=$UV_DIR uv venv --seed;
+    ln -sfn $UV_DIR .venv
+    uv sync;
+    echo "source ./.venv/bin/activate" > .envrc;
+    direnv allow;
+}
+
+alias pip="python -m pip"
+
+
+
+### PERL
+
+PATH="/Users/asaucedo/perl5/bin${PATH:+:${PATH}}"; export PATH;
+PERL5LIB="/Users/asaucedo/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="/Users/asaucedo/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"/Users/asaucedo/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/Users/asaucedo/perl5"; export PERL_MM_OPT;
 
 ### CPP
 export PATH=$PATH:~/Programming/lib/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin/
@@ -490,22 +641,27 @@ function unreal_cpp_setup () {
 	python ~/Programming/lib/wsl-compile-commands-converter/convert.py "/c/Program Files/Epic Games/UE_4.25/compile_commands.json"
 }
 
+# Utilities
+
+alias cat="bat --style plain"
+alias ccat="bat --style full"
+
 #######################################################################
-#               GPG Keys                                            #
+#               GPG Keys & Passwords
 #######################################################################
 
-# List keys:
+# List GPG keys:
 # ----------
 alias gpglk="gpg --list-secret-keys"
 alias gpgl="gpg --list-keys"
 
-# Generate keys:
+# Generate GPG keys:
 # -------------
 alias gpggf="gpg --full-generate-key"
 #OR
 alias gpgg="gpg --gen-key"
 
-# Export/Import keys:
+# Export/Import GPG keys:
 # -------------------
 alias gpge="gpg --export -a Alejandro"
 alias gpgi="gpg --import " # Input file
@@ -525,9 +681,6 @@ gpgd () {
 # Ensure password prompt can work
 # -----------------
 export GPG_TTY=$(tty)
-
-# TODO, need to make sure helper keys are automatically loaded
-alias xx="sudo bash /etc/init.d/keyremap && xmodmap ~/.Xmodmap"
 
 
 lazy_load() {
@@ -589,6 +742,9 @@ export PATH=$PATH:/usr/local/kubebuilder/bin
 export PATH=$PATH:~/.joplin-bin/bin
 export PATH=$PATH:/c/Users/axsau/Programming/lib/vcpkg/
 
+# Roborev
+export PATH=$PATH:/Users/asaucedo/Programming/external/roborev/bin
+
 # Joplin
 alias joplin-reload="/Users/asaucedo/Programming/lib/joplin-export/joplin-export-job.sh"
 
@@ -637,6 +793,11 @@ function zle-line-init zle-keymap-select {
 zle -N zle-line-init
 zle -N zle-keymap-select
 
+# Ensure opt+backspace and opt+keys behave for moving around text
+bindkey -M viins '^[[1;3D' backward-word        # Option+Left
+bindkey -M viins '^[[1;3C' forward-word         # Option+Right
+bindkey -M viins '^[^?'    backward-kill-word    # Option+Backspace
+
 
 # Set folder colours for Solarized theme
 export LSCOLORS="gxfxbEaEBxxEhEhBaDaCaD"
@@ -650,19 +811,40 @@ export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # Function to convert mp4 to gif - params:
-# Arg1 - Name of input/output file
-# Arg2 - Pixels for width to base on (900 recommended)
-vid2gif() {
-    ffmpeg -i $1.mp4 frame%04d.png
-    gifski -o $1.gif frame*.png --width $2
-    rm frame*.png
+vid-to-gif() {
+  local input="input.mov"
+  local output="output.gif"
+  local start=""
+  local end=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -i|--input)  input="$2"; shift 2;;
+      -o|--output) output="$2"; shift 2;;
+      -s|--start)  start="$2"; shift 2;;
+      -e|--end)    end="$2"; shift 2;;
+      -h|--help)   echo "Usage: gifify [-i input] [-o output] [-s start] [-e end]"; return 0;;
+      *) echo "Unknown arg: $1" >&2; return 1;;
+    esac
+  done
+
+  local args=()
+  [[ -n "$start" ]] && args+=(-ss "$start")
+  [[ -n "$end" ]]   && args+=(-to "$end")
+
+  ffmpeg -i "$input" -vf "setpts=0.5*PTS,fps=15,scale=1080:-1:flags=lanczos" \
+    "${args[@]}" -loop 0 "$output"
 }
+
 
 # Compress / reduce size of video 
 # Arg1 - Name of input file
 # Arg2 - Name of output file
 ffmpegrerduce() {
     ffmpeg -i $1 -c:v libx264 -b:v 2000k -minrate 1000k -maxrate 2500k -r:v 25/1 -speed 4 -c:a aac -b:a 128k -ar 48000  -y $2
+}
+ffmpeg-remove-audio() {
+    ffmpeg -i $1 -c copy -an $2
 }
 
 # fkill - kill processes
@@ -675,76 +857,51 @@ fkill() {
     echo $pid | xargs kill -${1:-9}
   fi
 }
-# fbr - checkout git branch (including remote branches)
-git-branches() {
-  local branches branch
-  branches=$(git branch --all | grep -v HEAD) &&
-  branch=$(echo "$branches" |
-           fzf-tmux -d $(( 2 + $(wc -l <<< "$branches") )) +m) &&
-  git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
-}
-# fshow - git commit browser
-git-commits() {
-  git log --graph --color=always \
-      --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
-  fzf --ansi --no-sort --reverse --tiebreak=index --bind=ctrl-s:toggle-sort \
-      --bind "ctrl-m:execute:
-                (grep -o '[a-f0-9]\{7\}' | head -1 |
-                xargs -I % sh -c 'git show --color=always % | less -R') << 'FZF-EOF'
-                {}
-FZF-EOF"
-}
 
-# tm - create new tmux session, or switch to existing one. Works from within tmux too. (@bag-man)
-# `tm` will allow you to select your tmux session via fzf.
-# `tm irc` will attach to the irc session (if it exists), else it will create it.
-
-# tm - create new tmux session, or switch to existing one. Works from within tmux too. (@bag-man)
-# `tm` will allow you to select your tmux session via fzf.
-# `tm irc` will attach to the irc session (if it exists), else it will create it.
-
-tm() {
-  [[ -n "$TMUX" ]] && change="switch-client" || change="attach-session"
-  if [ $1 ]; then
-    tmux $change -t "$1" 2>/dev/null || (tmux new-session -d -s $1 && tmux $change -t "$1"); return
-  fi
-  session=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | fzf --exit-0) &&  tmux $change -t "$session" || echo "No sessions found."
-}
 
 # Ensure editor is vim
-export VISUAL=vim
+export VISUAL=nvim
 export EDITOR="$VISUAL"
 
-# Set interaction on command line to vim forma
-# set -o vi
+#######################################################################
+#                           WSL ONLY
+#######################################################################
 
-########### WSL
+if uname -r | grep -q "Microsoft"
+then
+    # This function is required for the copy to clipboard and back
+    function xclip {
+        # If the output is "in" then copy, otherwise paste
+        if [[ "${@:$#}" == "-in" ]]; then
+            cat "/dev/stdin" | clip.exe
+        else
+            echo -n "$(/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command Get-Clipboard)" | sed 's/\r//'
+        fi
+    }
 
-# DISPLAY
-# Adding :0 as the DISPLAY to ensure it opens on the config
-export DISPLAY=:0
-#export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0
-# We need to disable "native opengl" to open VxSRV
-export LIBGL_ALWAYS_INDIRECT=0
-export XDG_RUNTIME_DIR=/home/alejandro/tmp-xdg-runtime-dir
-export RUNLEVEL=3
-# File permissions and write level
-umask 002 # ENsure all files are being written with the right permissions
+    # DISPLAY
+    # Adding :0 as the DISPLAY to ensure it opens on the config
+    export DISPLAY=:0
+    #export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0
+    # We need to disable "native opengl" to open VxSRV
+    export LIBGL_ALWAYS_INDIRECT=0
+    export XDG_RUNTIME_DIR=/home/alejandro/tmp-xdg-runtime-dir
+    export RUNLEVEL=3
+    # File permissions and write level
+    umask 002 # ENsure all files are being written with the right permissions
 
-# WSL Allow fast reclaim of memory https://devblogs.microsoft.com/commandline/memory-reclaim-in-the-windows-subsystem-for-linux-2/
-# This is useful when running docker and containers are stopped to make sure memory is given back to windows
-alias wmem="sudo bash -c 'echo 1 > /proc/sys/vm/drop_caches'"
+    # WSL Allow fast reclaim of memory https://devblogs.microsoft.com/commandline/memory-reclaim-in-the-windows-subsystem-for-linux-2/
+    # This is useful when running docker and containers are stopped to make sure memory is given back to windows
+    alias wmem="sudo bash -c 'echo 1 > /proc/sys/vm/drop_caches'"
 
-alias wpython="/c/Users/axsau/scoop/apps/python/current/python.exe"
+    alias wpython="/c/Users/axsau/scoop/apps/python/current/python.exe"
 
-# Allow running windows espasno locally
-alias espanso="cmd.exe /c/Users/axsau/AppData/Local/Programs/Espanso/espanso.cmd"
+    # Allow running windows espasno locally
+    alias espanso="cmd.exe /c/Users/axsau/AppData/Local/Programs/Espanso/espanso.cmd"
 
-# Neeed for backspace working on ec2 ssh machines
-#export TERM=vt100
-
-# Envs
-export PATH="$HOME/.poetry/bin:$PATH"
+    # Neeed for backspace working on ec2 ssh machines
+    #export TERM=vt100
+fi
 
 # Vulkan
 export VULKAN_SDK_VERSION=1.3.275.0
@@ -774,5 +931,8 @@ export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
-echo ".zprofile ran"
+# Obsidian
+export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
+
+
 
