@@ -638,7 +638,10 @@ alias cdg='cd $GOPATH'
 
 # JAVA
 # Mac brew installed
-export JAVA_HOME=$(/usr/libexec/java_home)
+_zi=~/.cache/zsh-init
+mkdir -p "$_zi"
+[[ -s $_zi/java_home ]] || /usr/libexec/java_home >| "$_zi/java_home"
+export JAVA_HOME=$(<"$_zi/java_home")
 
 # # SPARK
 export SPARK_HOME=/opt/homebrew/Cellar/apache-spark/3.5.3/libexec/
@@ -734,7 +737,8 @@ export VK_ICD_FILENAMES="${VULKAN_SDK}/share/vulkan/icd.d/MoltenVK_icd.json"
 # Custom Zalando Machine 
 
 # Set PATH, MANPATH, etc., for Homebrew.
-eval "$(/opt/homebrew/bin/brew shellenv)"
+[[ $_zi/brew.zsh -nt /opt/homebrew/bin/brew ]] || /opt/homebrew/bin/brew shellenv >| "$_zi/brew.zsh"
+source "$_zi/brew.zsh"
 
 # Adding asdf
 export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
@@ -747,7 +751,9 @@ export SBT_CREDENTIALS="$HOME/.ivy2/.credentials"
 # Adding main dirs
 export PATH=$PATH:$HOME/Programming/bin
 export PYENV_ROOT="$HOME/.pyenv"
-eval "$(pyenv init - --no-rehash)"
+[[ $_zi/pyenv.zsh -nt ${commands[pyenv]} ]] || pyenv init - --no-rehash >| "$_zi/pyenv.zsh"
+source "$_zi/pyenv.zsh"
+unset _zi
 
 # Obsidian
 export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
