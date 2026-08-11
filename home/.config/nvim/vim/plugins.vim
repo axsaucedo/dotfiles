@@ -13,7 +13,7 @@
 
 
 " Sections:
-"    -> Vim-plug configuration
+"    -> Plugin configuration
 "    -> General
 "    -> VIM user interface
 "    -> Colors and Fonts
