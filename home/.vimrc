@@ -682,7 +682,7 @@
     let g:molokai_original = 1
     " Other popular colors
     " colorscheme monokai-phoenix
-    set notermguicolors " IMPORTANT FOR CUSTOM MOLOKAI TO WORK"
+    set termguicolors " molokai_custom now carries true gui colors
     "hi Normal guibg=NONE ctermbg=NONE " Setting transparent background force
 
     " Set extra options when running in GUI mode
