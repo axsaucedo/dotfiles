@@ -113,7 +113,7 @@
     " Advanced syntax support for cpp
     Plug 'octol/vim-cpp-enhanced-highlight'
     " Search and replace
-    Plug 'brooth/far.vim'
+    Plug 'MagicDuck/grug-far.nvim'
     " Cmake syntax
     Plug 'pboettch/vim-cmake-syntax'
     " Show the current / previous function
@@ -164,11 +164,8 @@
     " Setting grep with rg
     set grepprg=rg\ --vimgrep\ --smart-case\ --follow
 
-    " FAR.VIM Config
     set lazyredraw            " improve scrolling performance when navigating through large results
     set ignorecase smartcase  " ignore case only when the pattern contains no capital letters
-
-    let g:far#source="rgnvim"
 
     " Plug pandoc for markdown
      let g:pandoc#syntax#conceal#use = 0
@@ -189,9 +186,6 @@
     let g:mkdp_browser = 'firefox'
     let g:mkdp_theme = 'dark'
 
-    " Needed in order to filter with ignoring files
-    let g:far#glob_mode = "rg"
-
     " Python3 provider (used by vim-pandoc); without an explicit pin nvim
     " falls into pyenv shim resolution and fails to load the host
     let g:python3_host_prog="~/.pyenv/versions/3.10.5/bin/python"
@@ -211,6 +205,13 @@
     " like <leader>w saves the current file
     let mapleader = ","
     let g:mapleader = ","
+
+    " Grug Far
+    if !exists('g:grug_far_configured')
+        lua require('grug-far').setup({})
+        let g:grug_far_configured = 1
+    endif
+    nnoremap <leader>fr :GrugFar<CR>
 
     " Airline status line
     let g:airline#extensions#tabline#enabled = 1
