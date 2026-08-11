@@ -6,6 +6,8 @@
 #    d8P d8 888      888 88b,   "88 88"   888     888 888,d88 888,d88 
 
 
+typeset -U path PATH
+
 # All ALIASES should go here
 alias colorsprint="msgcat --color=test" # print all colors
 alias pyserv="python -m http.server"
@@ -23,49 +25,24 @@ alias vzsh="vim ~/.zshrc"
 alias szsh="source ~/.zshrc"
 alias yd="yt-dlp --add-metadata --write-all-thumbnails --embed-thumbnail --write-info-json --embed-subs --all-subs --external-downloader aria2c --external-downloader-args '-c -j 3 -x 3 -s 3 -k 1M'"
 alias ydm='yt-dlp --extract-audio --audio-format mp3 --prefer-ffmpeg -o "%(title)s.%(ext)s" --ignore-errors ' 
-function ydmw() { (cd /c/Users/axsau/Music/other/ && ydm $1) }
 alias lss="l | peco"
 # Download MP3 From Youtube
 alias ym="yt-dlp --extract-audio --audio-format mp3 --audio-quality 0 --prefer-ffmpeg" 
-alias p="python"
 alias vtmux="vim ~/.tmux.conf"
 alias ctagsm="ctags -R --exclude=.git --exclude=log --exclude=node_modules *"
 alias ctagsall='ctags -R --fields=+l --languages=python,java,go --python-kinds=-iv --exclude="*zip" -f ./.tags ./ $JAVA_HOME $CONDA_PREFIX/lib/python3.7/site-packages/' $GOPATH
 alias ctagspy='ctags -R --fields=+l --languages=python --python-kinds=-iv --exclude="*zip" -f ./.tags ./'
 # Ascicast 2 gif (to convert .cast to .gif)
 alias asciicast2gif='docker run --rm -v $PWD:/data asciinema/asciicast2gif'
-# OPEN FILE
-# Open file in Linux:
-# alias open="xdg-open"
-# Open file in widnows
-# alias open="explorer.exe"
 alias xdg-open="open"
 # Music
 alias sconsify='sconsify -username=1156282187 -playlists="Deep House Relax"'
-alias mt='mpc toggle' # Toggle play/pause
-alias mn='mpc next'
-alias mp="mpc prev"
-alias m='ncmpcpp'
-alias mconf='vim ~/.config/ncmpcpp/config'
 # Get size of directory sorted
 alias duh="du -hs ./* | sort -h"
 alias duhh="du -hs ./.* * | sort -h"
 # Speed test
 alias speedtest=librespeed-cli
-# Enable Flux
-alias fu='xflux11 -l 51.5074, -g -0.1278 -r 0'
-alias fd='killall xflux11'
-alias fl='pidof xflux11'
 alias p='python3'
-function ft () { # Toggle flux
-    local flux_pid=$(pidof xflux11)
-    if [ "x$flux_pid" != "x" ]; then
-        
-        killall xflux11
-    else
-        xflux11 -l 51.5074, -g -0.1278 -r 0
-    fi
-}
 # Change jupyer notebook theme 
 alias jtm="jt -t monokai -T -nfs 115 -cellw 98% -N -kl -ofs 11 -altmd"
 # Run time start for zsh
@@ -79,9 +56,6 @@ tarz() {
 }
 untarz() { tar -zxvf $1; }
 
-# To use when audio not working and dummy output displayed
-alias audioreset="pulseaudio -k && sudo alsa force-reload"
-
 # Change folders
 alias cdp="cd ~/Programming"
 alias cdz="cd ~/Programming/zalando"
@@ -93,11 +67,6 @@ alias cds="cd ~/Programming/kubernetes/seldon"
 alias cdss="cd ~/Programming/kubernetes/seldon/seldon-core"
 cdtmp() { mkdir /tmp/$(date +'%Y-%m-%dT%H-%M-%S') && cd $_ }
 alias cleantmp="rm -rf ~/Programming/tmp/*"
-# Windows Subsystem for Linux (wsl)
-alias cdw="cd /c/Users/axsau/"
-alias cdwa="cd /c/Users/axsau/Music"
-alias cdwp="cd /c/Users/axsau/Programming"
-alias cdv="cd /c/Users/axsau/Programming/vulkan/"
 alias cdvk="cd ~/Programming/vk/kompute"
 alias cdak="cd ~/Programming/agentic/kaos"
 alias cdaa=cdak
@@ -128,52 +97,6 @@ alias xd="x disconnect"
 alias b="xrandr --output DP-0 --brightness"
 alias bu="xrandr --output DP-0 --brightness 1"
 alias bd="xrandr --output DP-0 --brightness 0.25"
-
-# Wifi from terminal
-alias ws="nmcli general && nmcli device wifi | head"
-alias wl="nmcli device wifi"
-alias wd="nmcli radio wifi off"
-alias wu="nmcli radio wifi on"
-declare -f fzf
-wcc() {
-    local ssid
-    local tmpfile
-    nmcltmp="/tmp/nmcltmp.tmp"
-    nmclout="/tmp/nmclout.tmp"
-
-    while [ "x$ssid" = "x" ]; do
-        rm $nmcltmp $rmclout
-        # Scan for networks and wait 1 sec
-        echo "Scanning for networks "
-        nmcli device wifi rescan
-        # Save all the current connections into tmp file 
-        nmcli dev wifi | sed 1d > $nmcltmp
-        # Run the fzf command with the connections found 
-        # and store output in tmp file
-        timeout 10 fzf < $nmcltmp > $nmclout
-        # Get the SSID name from the file found
-        ssid=$(awk -F'  +' '{print $2}' < $nmclout)
-        sleep 0.3
-    done
-
-    if [ "x$ssid" != "x" ]
-    then
-        echo "Connecting to $ssid"
-        echo $ssid | nmcli device wifi connect "$ssid"
-    fi
-
-    # Clean
-    rm $nmclout $nmcltmp
-}
-wcn() { 
-    echo "Re-scanning wifi (If none appear, rerun...)"
-    device wifi rescan
-    sleep 1
-    echo "Connecting to $DEFAULT_WIFI_SSID"
-    nmcli device wifi connect "$DEFAULT_WIFI_SSID" password "$DEFAULT_WIFI_PASSWORD" 
-    nmcli general status
-}
-
 
 # Compress pdf
 cpdf() {
@@ -466,10 +389,6 @@ kind-stop()   { docker stop $(kind get nodes --name "${1:-kind}") ; }
 kind-start()  { docker start $(kind get nodes --name "${1:-kind}") ; }
 kind-status() { docker ps -a --filter label=io.x-k8s.kind.cluster --format '{{.Label "io.x-k8s.kind.cluster"}}: {{.State}}' | sort -u ; }
 
-# Godot 
-alias godot="\"/c/Program Files (x86)/Steam/steamapps/common/Godot Engine/godot.windows.opt.tools.64.exe\""
-
-
 # CONDA ALIASES
 # This function allows for the following commands:
 # cenv <COMMAND> <OPTIONAL_YML_FILE>
@@ -580,10 +499,6 @@ alias joplinupgrade="SHARP_IGNORE_GLOBAL_LIBVIPS=1 NPM_CONFIG_PREFIX=~/Programmi
 export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
 export HOMEBREW_AUTO_UPDATE_SECS=604800
 
-### ZIG
-export PATH=$PATH:~/Programming/lib/zig
-
-
 ### PYTHON
 
 # This function creates the venv in the same directory
@@ -617,27 +532,6 @@ PERL_LOCAL_LIB_ROOT="/Users/asaucedo/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_L
 PERL_MB_OPT="--install_base \"/Users/asaucedo/perl5\""; export PERL_MB_OPT;
 PERL_MM_OPT="INSTALL_BASE=/Users/asaucedo/perl5"; export PERL_MM_OPT;
 
-### CPP
-export PATH=$PATH:~/Programming/lib/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin/
-alias wcmake="/c/Program\ Files/CMake/bin/cmake.exe"
-alias wscons='cmd.exe /c "C:\Users\axsau\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.8_qbz5n2kfra8p0\LocalCache\local-packages\Python38\Scripts\scons.bat"'
-alias msbuild="/c/Program\ Files\ (x86)/Microsoft\ Visual\ Studio/2019/Community/MSBuild/Current/Bin/MSBuild.exe"
-
-alias clang-format=/home/alejandro/Programming/lib/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin/clang-format
-alias clang-tidy=/home/alejandro/Programming/lib/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin/clang-tidy
-
-# Unreal Compile WSL compile_commands.json
-function unreal_cpp_setup () {
-    PROJECT_PATH="$(pwd)/$1.uproject"
-    echo "$PROJECT_PATH"
-    # Getting windows path and escaping backslashes
-    WIN_PROJECT_PATH=$(wslpath -w "$PROJECT_PATH" | sed 's/\\/\\\\/g')
-    echo "$WIN_PROJECT_PATH"
-	"/c/Program Files/Epic Games/UE_4.25/Engine/Binaries/DotNET/UnrealBuildTool.exe" -mode=GenerateClangDatabase -project="$WIN_PROJECT_PATH" -Engine -ThirdParty -rocket -progress $1 Development Win64
-	python /home/alejandro/Programming/lib/wsl-to-ccls-compile-commands/convert.py --path "/c/Program Files/Epic Games/UE_4.25/compile_commands.json"
-	python ~/Programming/lib/wsl-compile-commands-converter/convert.py "/c/Program Files/Epic Games/UE_4.25/compile_commands.json"
-}
-
 # Utilities
 
 alias cat="bat --style plain"
@@ -660,7 +554,6 @@ alias gpgg="gpg --gen-key"
 
 # Export/Import GPG keys:
 # -------------------
-alias gpge="gpg --export -a Alejandro"
 alias gpgi="gpg --import " # Input file
 alias gpges="gpg --export-secret-keys Alejandro"
 
@@ -728,16 +621,10 @@ group_lazy_load() {
 source ~/.all_secret_keys
 
 # Setting PATH
-#export PATH=$PATH:~/anaconda3/bin
-#export PATH=$PATH:~/miniconda3/bin
 export PATH=$PATH:~/go/bin
 export PATH=$PATH:~/Programming/bin
 export PATH=$PATH:~/.local/bin/
-export PATH=$PATH:~/Programming/bin/kafka/bin/
-export PATH=$PATH:/usr/local/go/bin
-export PATH=$PATH:/usr/local/kubebuilder/bin
 export PATH=$PATH:~/.joplin-bin/bin
-export PATH=$PATH:/c/Users/axsau/Programming/lib/vcpkg/
 
 # Roborev
 export PATH=$PATH:/Users/asaucedo/Programming/external/roborev/bin
@@ -747,11 +634,9 @@ alias joplin-reload="/Users/asaucedo/Programming/lib/joplin-export/joplin-export
 
 # GOLang
 export GOPATH=$HOME/go
-alias cdg=cd $GOPATH
+alias cdg='cd $GOPATH'
 
 # JAVA
-# # Linux JVM
-# export JAVA_HOME="/usr/lib/jvm/default-java"
 # Mac brew installed
 export JAVA_HOME=$(/usr/libexec/java_home)
 
@@ -761,25 +646,6 @@ export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
 export PYSPARK_PYTHON=/Users/asaucedo/.pyenv/shims/python
 export PYSPARK_DRIVER_PYTHON=jupyter
 export PYSPARK_DRIVER_PYTHON_OPTS='notebook'
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-#__conda_setup="$('/home/alejandro/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-#if [ $? -eq 0 ]; then
-#    eval "$__conda_setup"
-#else
-#    if [ -f "/home/alejandro/miniconda3/etc/profile.d/conda.sh" ]; then
-#        . "/home/alejandro/miniconda3/etc/profile.d/conda.sh"
-#    else
-#        export PATH="/home/alejandro/miniconda3/bin:$PATH"
-#    fi
-#fi
-#unset __conda_setup
-# <<< conda initialize <<<
-
-# Adding mamba to the path
-#export PATH=$PATH:$HOME/mambaforge/bin/
-
 
 # Show prompt type vim mode (insert/visual)
 function zle-line-init zle-keymap-select {
@@ -857,53 +723,12 @@ fkill() {
 export VISUAL=nvim
 export EDITOR="$VISUAL"
 
-#######################################################################
-#                           WSL ONLY
-#######################################################################
-
-if uname -r | grep -q "Microsoft"
-then
-    # This function is required for the copy to clipboard and back
-    function xclip {
-        # If the output is "in" then copy, otherwise paste
-        if [[ "${@:$#}" == "-in" ]]; then
-            cat "/dev/stdin" | clip.exe
-        else
-            echo -n "$(/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command Get-Clipboard)" | sed 's/\r//'
-        fi
-    }
-
-    # DISPLAY
-    # Adding :0 as the DISPLAY to ensure it opens on the config
-    export DISPLAY=:0
-    #export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0
-    # We need to disable "native opengl" to open VxSRV
-    export LIBGL_ALWAYS_INDIRECT=0
-    export XDG_RUNTIME_DIR=/home/alejandro/tmp-xdg-runtime-dir
-    export RUNLEVEL=3
-    # File permissions and write level
-    umask 002 # ENsure all files are being written with the right permissions
-
-    # WSL Allow fast reclaim of memory https://devblogs.microsoft.com/commandline/memory-reclaim-in-the-windows-subsystem-for-linux-2/
-    # This is useful when running docker and containers are stopped to make sure memory is given back to windows
-    alias wmem="sudo bash -c 'echo 1 > /proc/sys/vm/drop_caches'"
-
-    alias wpython="/c/Users/axsau/scoop/apps/python/current/python.exe"
-
-    # Allow running windows espasno locally
-    alias espanso="cmd.exe /c/Users/axsau/AppData/Local/Programs/Espanso/espanso.cmd"
-
-    # Neeed for backspace working on ec2 ssh machines
-    #export TERM=vt100
-fi
-
 # Vulkan
 export VULKAN_SDK_VERSION=1.3.275.0
 export VULKAN_SDK="$HOME/VulkanSDK/${VULKAN_SDK_VERSION}/macOS"
 export PATH="${VULKAN_SDK}/bin:${PATH}"
 export LD_LIBRARY_PATH="${VULKAN_SDK}/lib"
 export VK_LAYER_PATH="${VULKAN_SDK}/share/vulkan/explicit_layer.d"
-# Swiftshader for vulkan linux
 export VK_ICD_FILENAMES="${VULKAN_SDK}/share/vulkan/icd.d/MoltenVK_icd.json"
 
 # Custom Zalando Machine 
@@ -922,10 +747,7 @@ export SBT_CREDENTIALS="$HOME/.ivy2/.credentials"
 # Adding main dirs
 export PATH=$PATH:$HOME/Programming/bin
 export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init - --no-rehash)"
 
 # Obsidian
 export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
-
-
