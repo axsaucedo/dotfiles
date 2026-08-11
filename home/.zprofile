@@ -348,9 +348,6 @@ dtags() {
 
 #### KUBERNETES ALIAS
 
-autoload -U +X compinit && compinit
-source <(kubectl completion zsh)
-
 alias kdash='kubectl -n kube-system describe secret default && echo "Website at http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/overview?namespace=default" && kubectl proxy'
 # This command is used a LOT both below and in daily life
 alias k=kubectl
@@ -802,9 +799,6 @@ bindkey -M viins '^[^?'    backward-kill-word    # Option+Backspace
 # Set folder colours for Solarized theme
 export LSCOLORS="gxfxbEaEBxxEhEhBaDaCaD"
 
-# export TERM="screen-256color-bce"
-export TERM="xterm"
-
 # Enabling ripgrep with FZF
 [ -z "$ZSH_NAME" ] && [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,node_modules}/*" 2> /dev/null'
@@ -918,7 +912,7 @@ export VK_ICD_FILENAMES="${VULKAN_SDK}/share/vulkan/icd.d/MoltenVK_icd.json"
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Adding asdf
-. $HOME/.asdf/asdf.sh
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
 export PATH="$HOME/.local/bin:$PATH"
 
@@ -929,10 +923,9 @@ export SBT_CREDENTIALS="$HOME/.ivy2/.credentials"
 export PATH=$PATH:$HOME/Programming/bin
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+eval "$(pyenv init - --no-rehash)"
 
 # Obsidian
 export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
-
 
 

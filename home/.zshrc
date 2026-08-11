@@ -96,6 +96,8 @@ setopt noautocd
 # compinit already ran inside oh-my-zsh; do NOT run it again here -- a rerun
 # rebuilds the completion table and wipes compdefs registered below.
 
+source <(kubectl completion zsh)
+
 # uv + 1password completions, cached: the eval forks the tool on every shell
 # start, so dump once and re-source; regenerate when the binary is newer.
 _zc=~/.cache/zsh-completions
