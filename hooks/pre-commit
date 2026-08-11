@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Block commits containing secrets. This repo is PUBLIC.
+#
+# Installed via `git config core.hooksPath hooks` (see install.sh), so the hook
+# is versioned with the repo rather than living only in .git/hooks — a fresh
+# clone is protected as soon as install.sh runs.
+#
+# Bypass (only when you are certain): git commit --no-verify
+
+set -uo pipefail
+
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
+
+fail() {
+    echo ""
+    echo "  COMMIT BLOCKED: $1"
+    echo ""
+    [ -x "$REPO/bin/notify-fail.sh" ] &&
+        "$REPO/bin/notify-fail.sh" "dotfiles: commit blocked" "$1" 2>/dev/null
+    exit 1
+}
+
+# 1. gitleaks — broad secret detection on staged content
+if command -v gitleaks >/dev/null 2>&1; then
+    if ! gitleaks protect --staged --redact --no-banner 2>&1; then
+        fail "gitleaks found a secret in staged changes. Nothing was committed."
+    fi
+else
+    echo "  WARNING: gitleaks not installed (brew install gitleaks) — relying on pattern check only" >&2
+fi
+
+# 2. Site-specific patterns gitleaks does not know about.
+#
+#    Internal hostnames and tooling names are not secrets, but must not be
+#    published from a public repo. The patterns themselves would be a disclosure
+#    if committed here — a denylist names exactly what it is hiding — so they
+#    live OUTSIDE the repo, one extended-regex per line:
+#
+#        ~/.config/dotfiles/internal-patterns
+#
+#    Absent that file this check is skipped and gitleaks alone applies.
+PATTERN_FILE="${DOTFILES_PATTERN_FILE:-$HOME/.config/dotfiles/internal-patterns}"
+if [ -r "$PATTERN_FILE" ]; then
+    if MATCHES=$(git diff --cached | grep -E '^\+' | grep -inEf "$PATTERN_FILE" 2>/dev/null); then
+        echo ""
+        echo "  Offending lines (truncated):"
+        echo "$MATCHES" | head -10 | cut -c1-60 | sed 's/^/    /;s/$/…/'
+        fail "site-specific internal reference detected — move it to a machine-local file."
+    fi
+fi
+
+# 3. Files that must never be tracked, even if force-added.
+if git diff --cached --name-only |
+   grep -qE '(^|/)(\.all_secret_keys|\.zshrc\.[a-z]+|\.zllm-completion\.zsh)$'; then
+    fail "attempted to commit a machine-local or secret file."
+fi
+
+exit 0
