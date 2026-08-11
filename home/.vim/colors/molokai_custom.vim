@@ -34,7 +34,7 @@ hi String          guifg=#E6DB74
 hi Conditional     guifg=#F92672               gui=bold
 hi Constant        guifg=#AE81FF               gui=bold
 hi Cursor          guifg=#000000 guibg=#F8F8F0
-hi iCursor         guifg=#000000 guibg=#F8F8F0
+hi iCursor         guifg=NONE guibg=NONE
 hi Debug           guifg=#BCA3A3               gui=bold
 hi Define          guifg=#66D9EF
 hi Delimiter       guifg=#8F8F8F
@@ -80,7 +80,9 @@ hi Search          guifg=#000000 guibg=#FFE792
 hi SignColumn      guifg=#A6E22E guibg=#232526
 hi SpecialChar     guifg=#F92672               gui=bold
 hi SpecialComment  guifg=#7E8E91               gui=bold
-hi Special         guifg=#66D9EF guibg=bg      gui=italic
+" guibg=bg would error once Normal guibg is NONE; NONE matches the old
+" unset ctermbg anyway
+hi Special         guifg=#66D9EF guibg=NONE    gui=italic
 if has("spell")
     hi SpellBad    guisp=#FF0000 gui=undercurl
     hi SpellCap    guisp=#7070F0 gui=undercurl
@@ -106,8 +108,8 @@ hi Visual                        guibg=#403D3D
 hi WarningMsg      guifg=#FFFFFF guibg=#333333 gui=bold
 hi WildMenu        guifg=#66D9EF guibg=#000000
 
-hi TabLineFill     guifg=#1B1D1E guibg=#1B1D1E
-hi TabLine         guibg=#1B1D1E guifg=#808080 gui=none
+hi TabLineFill     guifg=NONE guibg=NONE
+hi TabLine         guibg=NONE guifg=NONE gui=none
 
 if s:molokai_original == 1
    hi Normal          guifg=#F8F8F2 guibg=#272822
@@ -266,18 +268,20 @@ if &t_Co > 255
 end
 
 " Setting ctermbg as NONE to ensure parent background is used
-hi Normal           guifg=#e6e1de ctermfg=none gui=none ctermbg=NONE
+" NONE on both sides: text and background come from the terminal profile,
+" keeping the background transparent exactly as the 256-colour config did
+hi Normal           guifg=NONE guibg=NONE ctermfg=none gui=none ctermbg=NONE
 hi Function ctermfg=81 guifg=#5fd7ff
 hi Exception       ctermfg=197 cterm=bold guifg=#ff005f gui=bold
 hi String ctermfg=228 guifg=#ffff87
 hi Comment         ctermfg=244 cterm=bold guifg=#808080 gui=bold
 hi Visual                      ctermbg=238 guibg=#444444
-hi Highlight                   cterm=bold ctermbg=Blue ctermfg=NONE guibg=#0000ff gui=bold
+hi Highlight                   cterm=bold ctermbg=Blue ctermfg=NONE guifg=NONE guibg=#0000bb gui=bold
 hi Search          ctermbg=210 ctermfg=black guifg=#000000 guibg=#ff8787
 hi IncSearch          ctermfg=210 ctermbg=black guifg=#ff8787 guibg=#000000
 set cursorline
 set cursorcolumn
-hi Cursor          guifg=red guibg=#dadada ctermfg=NONE  ctermbg=253
+hi Cursor          guifg=NONE guibg=#dadada ctermfg=NONE  ctermbg=253
 hi PreCondit       ctermfg=197 cterm=bold guifg=#ff005f gui=bold
 hi Directory       ctermfg=81 cterm=bold guifg=#5fd7ff gui=bold
 hi PreProc         ctermfg=197 guifg=#ff005f
