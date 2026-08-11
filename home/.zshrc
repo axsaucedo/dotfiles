@@ -85,6 +85,10 @@ zstyle ':urlglobber' url-other-schema
 ## Loading direnv
 command -v direnv >/dev/null && eval "$(direnv hook zsh)"
 
+## atuin: searchable shell history database on ctrl-r (brew install atuin).
+## Arrow-up is left on zsh's default history so only ctrl-r changes behavior.
+command -v atuin >/dev/null && eval "$(atuin init zsh --disable-up-arrow)"
+
 # Avoid changing folder without cd (ie typing folder name directly)
 setopt noautocd
 
