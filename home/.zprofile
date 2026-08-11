@@ -30,7 +30,7 @@ alias lss="l | peco"
 alias ym="yt-dlp --extract-audio --audio-format mp3 --audio-quality 0 --prefer-ffmpeg" 
 alias vtmux="vim ~/.tmux.conf"
 alias ctagsm="ctags -R --exclude=.git --exclude=log --exclude=node_modules *"
-alias ctagsall='ctags -R --fields=+l --languages=python,java,go --python-kinds=-iv --exclude="*zip" -f ./.tags ./ $JAVA_HOME $CONDA_PREFIX/lib/python3.7/site-packages/' $GOPATH
+alias ctagsall='ctags -R --fields=+l --languages=python,java,go --python-kinds=-iv --exclude="*zip" -f ./.tags ./ $JAVA_HOME $CONDA_PREFIX/lib/python3.7/site-packages/ $GOPATH'
 alias ctagspy='ctags -R --fields=+l --languages=python --python-kinds=-iv --exclude="*zip" -f ./.tags ./'
 # Ascicast 2 gif (to convert .cast to .gif)
 alias asciicast2gif='docker run --rm -v $PWD:/data asciinema/asciicast2gif'
@@ -231,7 +231,6 @@ alias view='vim -c '
 alias viewl="vim -c 'set syntax=log' -c 'set nowrap' - "
 
 # DOCKER ALIASES
-export DOCKER_HOST=
 alias dk='docker'
 alias dc='docker-compose'
 alias dcu='docker-compose up -d'
@@ -581,7 +580,6 @@ source ~/.all_secret_keys
 # Setting PATH
 export PATH=$PATH:~/go/bin
 export PATH=$PATH:~/Programming/bin
-export PATH=$PATH:~/.local/bin/
 export PATH=$PATH:~/.joplin-bin/bin
 
 # Roborev
@@ -607,15 +605,6 @@ export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
 export PYSPARK_PYTHON=/Users/asaucedo/.pyenv/shims/python
 export PYSPARK_DRIVER_PYTHON=jupyter
 export PYSPARK_DRIVER_PYTHON_OPTS='notebook'
-
-# Show prompt type vim mode (insert/visual)
-function zle-line-init zle-keymap-select {
-    RPS1="${${KEYMAP/vicmd/-- NORMAL --}/(main|viins)/-- INSERT --}"
-    RPS2=$RPS1
-    zle reset-prompt
-}
-zle -N zle-line-init
-zle -N zle-keymap-select
 
 # Ensure opt+backspace and opt+keys behave for moving around text
 bindkey -M viins '^[[1;3D' backward-word        # Option+Left
@@ -707,7 +696,6 @@ export PATH="$HOME/.local/bin:$PATH"
 export SBT_CREDENTIALS="$HOME/.ivy2/.credentials"
 
 # Adding main dirs
-export PATH=$PATH:$HOME/Programming/bin
 export PYENV_ROOT="$HOME/.pyenv"
 [[ $_zi/pyenv.zsh -nt ${commands[pyenv]} ]] || pyenv init - --no-rehash >| "$_zi/pyenv.zsh"
 source "$_zi/pyenv.zsh"
