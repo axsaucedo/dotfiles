@@ -29,8 +29,8 @@ return {
   { "tpope/vim-fugitive", cmd = { "Git", "G", "Gdiffsplit", "Gvdiffsplit", "Gread", "Gwrite", "Ggrep" } },
   -- Bulletpoint plug
   { "dkarter/bullets.vim", ft = { "markdown", "text", "gitcommit", "scratch" } },
-  -- COC Autocompllete
-  { "neoclide/coc.nvim", branch = "release", event = { "BufReadPre", "BufNewFile", "InsertEnter" } },
+  -- Native LSP server definitions
+  { "neovim/nvim-lspconfig", lazy = false },
   -- Vim airline status line
   { "vim-airline/vim-airline", event = "VeryLazy", dependencies = { "vim-airline/vim-airline-themes" } },
   { "vim-airline/vim-airline-themes", lazy = true },
