@@ -108,8 +108,8 @@
     Plug 'alvan/vim-closetag'
     " Shortcuts to add/remove quotes/brances on selection
     Plug 'tpope/vim-surround'
-    " Multi-language rich syntax support Syntax
-    Plug 'sheerun/vim-polyglot'
+    " Multi-language syntax support
+    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
     " Advanced syntax support for cpp
     Plug 'octol/vim-cpp-enhanced-highlight'
     " Search and replace
@@ -130,6 +130,12 @@
     call plug#end()
 
     lua vim.filetype.add({ extension = { mdx = 'markdown.mdx' } })
+
+    " Tree-sitter syntax highlighting
+    if !exists('g:treesitter_configured')
+        lua require('nvim-treesitter.configs').setup({ensure_installed = {'python', 'go', 'cpp', 'c', 'lua', 'vim', 'vimdoc', 'javascript', 'typescript', 'json', 'yaml', 'bash', 'markdown', 'markdown_inline', 'cmake', 'html', 'css'}, highlight = {enable = true, disable = {'markdown', 'markdown_inline'}}, auto_install = true})
+        let g:treesitter_configured = 1
+    endif
 
     " Neovim Power Mode
     let g:power_mode_auto_enable = 1
