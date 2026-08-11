@@ -59,7 +59,6 @@ plugins=(
   vi-mode
   fzf-tab # MUST load before widget-wrapping plugins (autosuggestions, syntax-highlighting). git clone https://github.com/Aloxaf/fzf-tab $ZSH_CUSTOM/plugins/fzf-tab
   zsh-autosuggestions # git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
-  kubectl
   docker
   golang
   helm
