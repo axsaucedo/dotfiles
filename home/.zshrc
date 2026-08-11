@@ -1,9 +1,6 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# p10k instant prompt deliberately NOT enabled: it paints a cached prompt
+# immediately and finishes loading behind it, which reads as a glitchy
+# two-stage startup. Startup is fast enough to load in one pass instead.
 
 
 #     8P d8P  dP"8 888 888
@@ -19,6 +16,9 @@ fi
 #######################################################################
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# Collapse past prompts to a minimal line so scrollback stays clean
+POWERLEVEL9K_TRANSIENT_PROMPT=always
 
 # Theme specific options
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
