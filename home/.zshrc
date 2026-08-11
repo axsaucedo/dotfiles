@@ -147,7 +147,7 @@ export PATH="/Users/asaucedo/.pixi/bin:$PATH"
 #######################################################################
 #                     Machine-local & work config
 #######################################################################
-# Untracked (this repo is public). See templates/.zshrc.zalando.example
+# Untracked (this repo is public): work config and per-machine overrides.
 for f in ~/.zshrc.zalando ~/.zshrc.local; do
   [ -r "$f" ] && source "$f"
 done
@@ -159,11 +159,18 @@ done
 # Operate on the dotfiles repo from anywhere: `dots`, `dots diff`, `dots push`
 dots() { git -C ~/Programming/dotfiles "${@:-status}"; }
 
-# Once a day, mention uncommitted dotfiles changes. Auto-commit handles saving;
-# this is about the push, which is deliberately manual on a public repo.
+# Mention uncommitted/unpushed dotfiles changes. Auto-commit handles saving; this
+# is about the push, which is deliberately manual on a public repo.
+#
+# At most weekly, and then only on ~20% of eligible shells (oh-my-zsh's
+# auto-update approach) so it reads as an occasional prompt rather than a fixture
+# you stop seeing. The stamp is only touched when the message actually prints --
+# a lost dice roll leaves the shell eligible, so it still surfaces within a few
+# shells rather than going quiet for another week.
 _dots_nudge() {
   local stamp=~/.cache/dots-nudge
-  [[ -n $(find "$stamp" -maxdepth 0 -mtime -1 2>/dev/null) ]] && return
+  [[ -n $(find "$stamp" -maxdepth 0 -mtime -7 2>/dev/null) ]] && return
+  (( RANDOM % 5 )) && return
   mkdir -p ~/.cache && touch "$stamp"
   local n
   n=$(git -C ~/Programming/dotfiles status --porcelain 2>/dev/null | wc -l | tr -d ' ')
