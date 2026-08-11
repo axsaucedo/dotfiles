@@ -1,7 +1,17 @@
 
-" The original VIMRC file was initially obtained by Amir Salihefendic
-"   for more details read the end of this file.
-"
+"    Y8b Y88888P 888     e   e
+"     Y8b Y888P  888    d8b d8b
+"      Y8b Y8P   888   e Y8b Y8b
+"       Y8b Y    888  d8b Y8b Y8b
+"        Y8P     888 d888b Y8b Y8b
+
+"      e88'Y88   e88 88e   Y88b Y88 888'Y88
+"     d888  'Y  d888 888b   Y88b Y8 888 ,'Y
+"    C8888     C8888 8888D b Y88b Y 888C8
+"     Y888  ,d  Y888 888P  8b Y88b  888 "
+"      '88,d88   '88 88'   88b Y88b 888
+
+
 " Sections:
 "    -> Vim-plug configuration
 "    -> General
@@ -28,7 +38,10 @@
     if empty(glob('~/.vim/autoload/plug.vim'))
       silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
           \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-        autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+        augroup vimrc_plug_bootstrap
+            autocmd!
+            autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+        augroup END
     endif
 
     " Setup vim-plug
@@ -56,8 +69,6 @@
     Plug 'scrooloose/nerdcommenter'
     " Bulletpoint plug
     Plug 'dkarter/bullets.vim'
-    " Enhanced go
-    "Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
     " COC Autocompllete
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
     " Vim airline status line
@@ -65,26 +76,30 @@
     Plug 'vim-airline/vim-airline-themes'
     " Tokynight theme
     Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
+    Plug 'loctvl842/monokai-pro.nvim'
     " Vim Repeat
     Plug 'tpope/vim-repeat'
     " Vim Easyclip (Disable if mac)
     "Plug 'svermeulen/vim-easyclip'
     " Avoid copying on every cut operation instead cut with mm
     Plug 'svermeulen/vim-cutlass'
-    " Markdown preview
-    Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
-    """  Rmarkdown
-    """Plug 'vim-pandoc/vim-rmarkdown'
-    """Plug 'vim-pandoc/vim-pandoc'
-    """Plug 'vim-pandoc/vim-pandoc-syntax'
+    " Syntax for headlines
+    Plug 'lukas-reineke/headlines.nvim'
     " Vim Markdown
     Plug 'godlygeek/tabular'
     Plug 'preservim/vim-markdown'
+    " We use Pandoc instead as more consistent syntax than above
+    Plug 'vim-pandoc/vim-pandoc'
+    Plug 'vim-pandoc/vim-pandoc-syntax'
+    " Markdown preview
+    Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
     " Vim Table Mode (Toggle with :TableModeToggle)
-    Plug 'dhruvasagar/vim-table-mode'
+    "Plug 'dhruvasagar/vim-table-mode'
     " Dim inactive (First plugin is to listen to tmux events, other to dim)
     "Plug 'tmux-plugins/vim-tmux-focus-events'
     "Plug 'blueyed/vim-diminactive' " Linked to plugin above
+    " Colour picker
+    Plug 'KabbAmine/vCoolor.vim'
     " Add colours to hex
     Plug 'etdev/vim-hexcolor'
     "" Sidebar minimap
@@ -103,34 +118,64 @@
     Plug 'pboettch/vim-cmake-syntax'
     " Show the current / previous function
     Plug 'wellle/context.vim'
+    " Animations 
+    Plug 'axsaucedo/neovim-power-mode'
+    Plug 'sphamba/smear-cursor.nvim'
+    Plug 'rachartier/tiny-glimmer.nvim'
+    Plug 'zalando-markets/code-review-plugin'
     " Finishing plugin list
     call plug#end()
+
+    lua vim.filetype.add({ extension = { mdx = 'markdown.mdx' } })
+
+    " Neovim Power Mode
+    let g:power_mode_auto_enable = 1
+    let g:power_mode_particle_preset = 'rightburst'
+    let g:power_mode_particle_cancel_on_new = 1
+    let g:power_mode_shake_mode = 'none'
+    let g:power_mode_fire_wall_enabled = 0
+    let g:power_mode_combo_enabled = 1
+    let g:power_mode_combo_position = 'top-right'
+    let g:power_mode_color_1 = '#FF0000'
+    let g:hud_linter_duration = 2
+
+    " Initialising smear cursor
+    lua require('smear_cursor').enabled = true
+    " Initialised animations on copy tiny-glimmer
+    if !exists('g:tiny_glimmer_configured')
+        lua require('tiny-glimmer').setup({enabled = true})
+        let g:tiny_glimmer_configured = 1
+    endif
+
+    lua require("code-review").setup({})
 
     " Setting grep with rg
     set grepprg=rg\ --vimgrep\ --smart-case\ --follow
 
-    " Activity watch config
-    let g:aw_apiurl_host = system("awk '$1 ~ /nameserver/ { print $2 }' /etc/resolv.conf")
-    let g:aw_apiurl_port = '5600'
-
     " FAR.VIM Config
     set lazyredraw            " improve scrolling performance when navigating through large results
-    set regexpengine=1        " use old regexp engine
     set ignorecase smartcase  " ignore case only when the pattern contains no capital letters
 
-    " shortcut for far.vim find
-    nnoremap <silent> <Find-Shortcut>  :Farf<cr>
-    vnoremap <silent> <Find-Shortcut>  :Farf<cr>
-
-    " shortcut for far.vim replace
-    nnoremap <silent> <Replace-Shortcut>  :Farr<cr>
-    vnoremap <silent> <Replace-Shortcut>  :Farr<cr>
-
     let g:far#source="rgnvim"
+
+    " Plug pandoc for markdown
+     let g:pandoc#syntax#conceal#use = 0
+     let g:pandoc#folding#level = 3
+     let g:pandoc#folding#fdc = 0
+     let g:pandoc#syntax#codeblocks#embeds#use = 1
+     let g:pandoc#syntax#codeblocks#embeds#langs = ["yaml", "bash=sh", "sh", "python", "json", "go"]
+
+    " Removing conceal default not just markdown but laso help doc
+    set conceallevel=0
+    set concealcursor=
 
     " Plug 'preservim/vim-markdown'
     let g:vim_markdown_folding_style_pythonic = 1
     let g:vim_markdown_folding_level = 3
+
+    " iamcco/markdown-preview.nvim
+    let g:mkdp_browser = 'firefox'
+    let g:mkdp_theme = 'dark'
 
     " Needed in order to filter with ignoring files
     let g:far#glob_mode = "rg"
@@ -138,15 +183,8 @@
     " Setup NVIM
     let g:python3_host_prog="~/.pyenv/versions/3.10.5/bin/python"
 
-    " Guten Tags
+    " Tags
     set tags=./.tags,.tags;
-
-    let g:gutentags_ctags_tagfile = '.tags'
-    let g:gutentags_file_list_command = 'rg --files . $CONDA_PREFIX'
-    let g:gutentags_generate_on_new = 1
-
-    " Previm
-    let g:previm_open_cmd = "open -a 'Google Chrome'"
 
     " Easyclip / Now Clutlass.vim https://github.com/svermeulen/vim-cutlass
     set clipboard=unnamedplus
@@ -156,21 +194,27 @@
     nnoremap mm dd
     nnoremap M D
 
+    " With a map leader it's possible to do extra key combinations
+    " like <leader>w saves the current file
+    let mapleader = ","
+    let g:mapleader = ","
+
     " Airline status line
     let g:airline#extensions#tabline#enabled = 1
+    let g:airline#extensions#tabline#buffer_idx_mode = 1
     let g:airline#extensions#tabline#buffer_idx_mode = 1
     let g:airline_powerline_fonts = 1
     let g:airline_theme = "wombat"
 
-    nmap 1 <Plug>AirlineSelectTab1
-    nmap 2 <Plug>AirlineSelectTab2
-    nmap 3 <Plug>AirlineSelectTab3
-    nmap 4 <Plug>AirlineSelectTab4
-    nmap 5 <Plug>AirlineSelectTab5
-    nmap 6 <Plug>AirlineSelectTab6
-    nmap 7 <Plug>AirlineSelectTab7
-    nmap 8 <Plug>AirlineSelectTab8
-    nmap 9 <Plug>AirlineSelectTab9
+    nmap <leader>1 <Plug>AirlineSelectTab1
+    nmap <leader>2 <Plug>AirlineSelectTab2
+    nmap <leader>3 <Plug>AirlineSelectTab3
+    nmap <leader>4 <Plug>AirlineSelectTab4
+    nmap <leader>5 <Plug>AirlineSelectTab5
+    nmap <leader>6 <Plug>AirlineSelectTab6
+    nmap <leader>7 <Plug>AirlineSelectTab7
+    nmap <leader>8 <Plug>AirlineSelectTab8
+    nmap <leader>9 <Plug>AirlineSelectTab9
 
     " Function that displays various different type of details form CoC.vim
     " syntax plugins based on language server
@@ -206,7 +250,10 @@
         let g:airline_section_b = airline#section#create_left(['mode'])
         let g:airline_section_c = airline#section#create(['🔍 ', 'file'])
     endfunction
-    autocmd User AirlineAfterInit call AirlineInit()
+    augroup vimrc_airline
+        autocmd!
+        autocmd User AirlineAfterInit call AirlineInit()
+    augroup END
 
 
     let g:airline#extensions#coc#enabled = 1
@@ -220,44 +267,31 @@
         \ 'scratch'
         \]
 
-    " Minimap
-    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-    let g:minimap_width = 10
-    let g:minimap_auto_start = 1
-    let g:minimap_auto_start_win_enter = 1
-    "let minimap_close_filetypes = ['startify', 'netrw', 'vim-plug', '']
-    let g:minimap_block_filetypes = [ 'fugitive', 'nerdtree', 'context.vim', 'tagbar', 'fzf', 'NvimTree', "startify", "" ]
-    let g:minimap_block_buftypes = ['nowrite', 'quickfix', 'terminal', 'prompt', "nofile"]
-
     " Context.vim
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
     let g:context_enabled = 1
-    let g:context_filetype_blacklist = [ 'fugitive', 'nerdtree', 'minimap', 'tagbar', 'fzf', 'NvimTree', "startify", "json", "", "html" ]
-
-    nnoremap <M-m> :MinimapClose<CR>
-
-    " auto close if only left
-    " autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == '-MINIMAP-' | quit | endif
+    let g:context_filetype_blacklist = [ 'fugitive', 'nerdtree', 'tagbar', 'fzf', 'NvimTree', "startify", "json", "", "html" ]
 
 
     " NERDTree 
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-    autocmd StdinReadPre * let s:std_in=1
+    augroup vimrc_nerdtree
+        autocmd!
+        autocmd StdinReadPre * let s:std_in=1
     " "  Open NARDTree and move to editing area
     " autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | wincmd p | endif
 
     " Close VIM if all windwos are closed even if the NERD TREE automatically
-    autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+        autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
-    " Allow for Ctrl+m to be shortcut to open nerdtree in the working directory
-    nnoremap <S-M> :NERDTreeToggle<CR>
+    " NERDTree previously used <S-M>, which collided with vim-cutlass's M mapping.
+    nnoremap <leader>n :NERDTreeToggle<CR>
 
     " If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
-    autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
-        \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
+        autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
+            \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
 
     " Prevent Tab on NERDTree (breaks everything otherwise)
     " autocmd FileType nerdtree noremap <buffer> <Tab> <nop>
@@ -292,119 +326,15 @@
     call NERDTreeHighlightFile('gitignore', 'Gray', 'none', '#686868', '#151515')
     call NERDTreeHighlightFile('bashrc', 'Gray', 'none', '#686868', '#151515')
     call NERDTreeHighlightFile('bashprofile', 'Gray', 'none', '#686868', '#151515')
+    augroup END
 
-
-    """"  NvimTree
-    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-    """"" Activate nvimtree
-    """"lua require'nvim-tree'.setup()
-
-    """"" Allow for Ctrl+n to be shortcut to open nvimtree in the working directory
-    """"nnoremap <S-M> :NvimTreeToggle<CR>
-
-    """"let g:nvim_tree_git_hl = 1 "0 by default, will enable file highlight for git attributes (can be used without the icons).
-    """"let g:nvim_tree_highlight_opened_files = 1 "0 by default, will enable folder and file icon highlight for opened files/directories.
-    """"let g:nvim_tree_root_folder_modifier = ':~' "This is the default. See :help filename-modifiers for more options
-    """"let g:nvim_tree_add_trailing = 1 "0 by default, append a trailing slash to folder names
-    """"let g:nvim_tree_group_empty = 1 " 0 by default, compact folders that only contain a single folder into one node in the file tree
-    """"let g:nvim_tree_icon_padding = ' ' "one space by default, used for rendering the space between the icon and the filename. Use with caution, it could break rendering if you set an empty string depending on your font.
-    """"let g:nvim_tree_symlink_arrow = ' >> ' " defaults to ' ➛ '. used as a separator between symlinks' source and target.
-    """"let g:nvim_tree_respect_buf_cwd = 1 "0 by default, will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
-    """"let g:nvim_tree_create_in_closed_folder = 1 "0 by default, When creating files, sets the path of a file when cursor is on a closed folder to the parent folder when 0, and inside the folder when 1.
-    """"let g:nvim_tree_special_files = { 'README.md': 1, 'Makefile': 1, 'MAKEFILE': 1 } " List of filenames that gets highlighted with NvimTreeSpecialFile
-    """"let g:nvim_tree_show_icons = {
-    """"    \ 'git': 1,
-    """"    \ 'folders': 0,
-    """"    \ 'files': 0,
-    """"    \ 'folder_arrows': 0,
-    """"    \ }
-    """""If 0, do not show the icons for one of 'git' 'folder' and 'files'
-    """""1 by default, notice that if 'files' is 1, it will only display
-    """""if nvim-web-devicons is installed and on your runtimepath.
-    """""if folder is 1, you can also tell folder_arrows 1 to show small arrows next to the folder icons.
-    """""but this will not work when you set renderer.indent_markers.enable (because of UI conflict)
-
-    """"" default will show icon by default if no icon is provided
-    """"" default shows no icon by default
-    """"renderer.icons.glyphs = {
-    """"    \ 'default': "",
-    """"    \ 'symlink': "",
-    """"    \ 'git': {
-    """"    \   'unstaged': "○",
-    """"    \   'staged': "◉",
-    """"    \   'unmerged': "○",
-    """"    \   'renamed': "○",
-    """"    \   'untracked': "○",
-    """"    \   'deleted': "○",
-    """"    \   'ignored': "▣"
-    """"    \   },
-    """"    \ 'folder': {
-    """"    \   'arrow_open': "▼",
-    """"    \   'arrow_closed': "▶",
-    """"    \   'default': "📪",
-    """"    \   'open': "📬",
-    """"    \   'empty': "📪",
-    """"    \   'empty_open': "📭",
-    """"    \   'symlink': "📁🔗",
-    """"    \   'symlink_open': "📂🔗",
-    """"    \   }
-    """"    \ }
-
-    """""" let g:nvim_tree_show_icons = {
-    """"""     \ 'git': 1,
-    """"""     \ 'folders': 1,
-    """"""     \ 'files': 0,
-    """"""     \ 'folder_arrows': 1,
-    """"""     \ }
-    """""" "If 0, do not show the icons for one of 'git' 'folder' and 'files'
-    """""" "1 by default, notice that if 'files' is 1, it will only display
-    """""" "if nvim-web-devicons is installed and on your runtimepath.
-    """""" "if folder is 1, you can also tell folder_arrows 1 to show small arrows next to the folder icons.
-    """""" "but this will not work when you set renderer.indent_markers.enable (because of UI conflict)
-
-    """""" " default will show icon by default if no icon is provided
-    """""" " default shows no icon by default
-    """""" let g:nvim_tree_icons = {
-    """"""     \ 'default': "",
-    """"""     \ 'symlink': "",
-    """"""     \ 'git': {
-    """"""     \   'unstaged': "🔵",
-    """"""     \   'staged': "🟢",
-    """"""     \   'unmerged': "🟡",
-    """"""     \   'renamed': "🟠",
-    """"""     \   'untracked': "🟣",
-    """"""     \   'deleted': "🔴",
-    """"""     \   'ignored': "⚪"
-    """"""     \   },
-    """"""     \ 'folder': {
-    """"""     \   'arrow_open': "🔻",
-    """"""     \   'arrow_closed': "▶",
-    """"""     \   'default': "",
-    """"""     \   'open': "",
-    """"""     \   'empty': "",
-    """"""     \   'empty_open': "",
-    """"""     \   'symlink': "🔗",
-    """"""     \   'symlink_open': "🔗",
-    """"""     \   }
-    """"""     \ }
-
-    """"let g:nvim_tree_highlight_opened_files = 1
-    """"highlight def link NvimTreeOpenedFolderName NvimTreeOpenedFile
-
-    """"nnoremap <S-M> :NvimTreeToggle<CR>
-    """"nnoremap <leader>r :NvimTreeRefresh<CR>
-    """"nnoremap <leader>n :NvimTreeFindFile<CR>
-
-    """"" auto close if only left
-    """"autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif
 
     " FZF
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     " This function ensures that we use the relevant search depending on whether we
     "   are in a git repo or not
     fun! FzfOmniFiles()
-        let is_git = system('git status')
+        let is_git = system('git rev-parse --is-inside-work-tree 2>/dev/null')
         if v:shell_error
             :Files
         else
@@ -456,53 +386,14 @@
     "  * CocInstall coc-highlight - Introduces overrides for coc diagnostic
     "  syntax highlights such as errors and warnings
     "
-    "  Other expected requirements:
-    "  * Python server expects update of Palantir's Python language server
-    "  * Setup bash language server (node dependent) https://github.com/bash-lsp/bash-language-server
-
     " CocGo config
     " - Ensure files are re-fromatted on save with imports (needed explicit as
     "   formatOnSaveFiletypes seems to only include format but not new imports)
-    autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.organizeImport')
-
-
-    " vim-go SETTINGS:
-    " -------------------------------------------------------------------------------------------------
-
-    " Ensure coc-go doesn't clash with vim-go
-    let g:go_code_completion_enabled = 0
-    let g:go_gopls_enabled = 0
-    let g:go_def_mapping_enabled = 0
-
-    " disable all linters as that is taken care of by coc.nvim
-    let g:lsp_diagnostics_enabled                = 0
-    let g:lsp_diagnostics_signs_enabled          = 0
-    let g:lsp_diagnostics_virtual_text_enabled   = 0
-    let g:lsp_diagnostics_highlights_enabled     = 0
-    let g:lsp_document_code_action_signs_enabled = 0
-    let g:go_metalinter_enabled = []
-
-    " don't jump to errors after metalinter is invoked
-    let g:go_jump_to_error = 0
-
-    " run go imports on file save
-    let g:go_fmt_autosave = 0
-    let g:go_imports_autosave = 0 " This is needed to avoid clash with coc.vim
-
-    " automatically highlight variable your cursor is on
-    let g:go_auto_sameids = 0
-
-    " Highlights
-    let g:go_highlight_types = 1
-    let g:go_highlight_fields = 1
-    let g:go_highlight_functions = 1
-    let g:go_highlight_function_calls = 1
-    let g:go_highlight_operators = 1
-    let g:go_highlight_extra_types = 1
-    let g:go_highlight_build_constraints = 1
-    let g:go_highlight_generate_tags = 1
-    let g:go_highlight_methods = 1
-    let g:go_highlight_structs = 1
+    augroup vimrc_coc
+        autocmd!
+        autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.organizeImport')
+        autocmd CursorHold * silent call CocActionAsync('highlight')
+    augroup END
 
     " TextEdit might fail if hidden is not set.
     set hidden
@@ -510,9 +401,6 @@
     " Some servers have issues with backup files, see #649.
     set nobackup
     set nowritebackup
-
-    " Give more space for displaying messages.
-    set cmdheight=2
 
     " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
     " delays and poor user experience.
@@ -598,7 +486,6 @@
     endfunction
 
     " Highlight the symbol and its references when holding the cursor.
-    autocmd CursorHold * silent call CocActionAsync('highlight')
     nnoremap <M-i> :call CocActionAsync('highlight')<CR>
 
     " Formatting selected code.
@@ -705,25 +592,16 @@
     "let g:cpp_posix_standard = 1
     "let g:cpp_experimental_simple_template_highlight = 1
     "let g:cpp_experimental_template_highlight = 1
-    au BufRead,BufNewFile *.tpp set filetype=cpp
-
-    " a.vim override to work with cpp with h files
-    " With this and the cppgenplugin you can generate cpp
-    " body by using the :GenDefinition or :GenDeclaration cmds
-    let g:alternateExtensions_CPP = "inc,h,H,HPP,hpp"
-    let g:alternateExtensions_cpp = "inc,h,H,HPP,hpp"
-    let g:alternateExtensions_h = "cpp"
-    let g:alternateExtensions_H = "cpp"
-
-    let g:clang_format#command = "/home/alejandro/Programming/lib/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin/clang-format"
-    let g:clang_format#code_style = "mozilla"
+    augroup vimrc_cpp_filetype
+        autocmd!
+        autocmd BufRead,BufNewFile *.tpp set filetype=cpp
+    augroup END
 
 
     """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     " => General
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    " Sets how many lines of history VIM has to remember
-    set history=700
+    " Use Neovim's default history of 10000 entries.
 
     " Enable filetype plugins
     filetype plugin on
@@ -731,11 +609,6 @@
 
     " Set to auto read when a file is changed from the outside
     set autoread
-
-    " With a map leader it's possible to do extra key combinations
-    " like <leader>w saves the current file
-    let mapleader = ","
-    let g:mapleader = ","
 
     " Mapping WQ to w q 
     cab W w
@@ -750,7 +623,7 @@
     " => VIM user interface
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     " Set 7 lines to the cursor - when moving vertically using j/k
-    set so=7
+    set scrolloff=7
 
     " Turn on the WiLd menu
     set wildmenu
@@ -767,27 +640,15 @@
     " Height of the command bar
     set cmdheight=1
 
-    " A buffer becomes hidden when it is abandoned
-    set hid
-
     " Configure backspace so it acts as it should act
     set backspace=eol,start,indent
     set whichwrap+=<,>,h,l
-
-    " Ignore case when searching
-    set ignorecase
-
-    " When searching try to be smart about cases
-    set smartcase
 
     " Highlight search results
     set hlsearch
 
     " Makes search act like search in modern browsers
     set incsearch
-
-    " Don't redraw while executing macros (good performance config)
-    set lazyredraw
 
     " For regular expressions turn magic on
     set magic
@@ -808,7 +669,7 @@
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     " Enable syntax highlighting
     syntax enable
-    syntax sync minlines=10000
+    syntax sync minlines=256
     set background=dark
     colorscheme molokai_custom
     "colorscheme molokai_dark
@@ -816,6 +677,7 @@
     " Other popular colors
     " colorscheme monokai-phoenix
     set notermguicolors " IMPORTANT FOR CUSTOM MOLOKAI TO WORK"
+    "hi Normal guibg=NONE ctermbg=NONE " Setting transparent background force
 
     " Set extra options when running in GUI mode
     if has("gui_running")
@@ -832,14 +694,15 @@
     set ffs=unix,dos,mac
 
     " Setting syntax for Jenkinsfile
-    au BufNewFile,BufRead Jenkinsfile setf groovy " < activate it with Jenkinsfile
+    augroup vimrc_jenkins_filetype
+        autocmd!
+        autocmd BufNewFile,BufRead Jenkinsfile setf groovy " < activate it with Jenkinsfile
+    augroup END
 
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     " => Files, backups and undo
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    " Turn backup off, since most stuff is in SVN, git et.c anyway...
-    set nobackup
-    set nowb
+    " Turn swap files off.
     set noswapfile
 
     " Put plugins and dictionaries in this dir (also on Windows)
@@ -849,17 +712,24 @@
     " Keep undo history across sessions by storing it in a file
     if has('persistent_undo')
         let myUndoDir = expand(vimDir . '/undodir')
-        " Create dirs
-        call system('mkdir ' . vimDir)
-        call system('mkdir ' . myUndoDir)
+        if !isdirectory(myUndoDir)
+            call mkdir(myUndoDir, 'p')
+        endif
         let &undodir = myUndoDir
-    set undofile
+        set undofile
+        set undolevels=1000
+        set undoreload=10000
     endif
+    " Prune undo files older than 90 days:
+    "   find ~/.vim/undodir -type f -mtime +90 -delete
 
     " Ensure if vim is opened without params the last buffer is opened
-    if argc() == 0
-        autocmd VimEnter * nested :edit #<1
-    endif
+    augroup vimrc_last_buffer
+        autocmd!
+        if argc() == 0
+            autocmd VimEnter * nested :edit #<1
+        endif
+    augroup END
 
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     " => Text, tab and indent related
@@ -880,6 +750,7 @@
     set listchars=tab:⍿\ ,trail:·,extends:\#,nbsp:⎵
 
     augroup golang
+        autocmd!
         autocmd BufRead *.go set nolist
     augroup END
     
@@ -889,8 +760,11 @@
     " set nowrap "I don't want wrapping
 
     " Fix for yaml file
-    autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
-    autocmd FileType yml setlocal ts=2 sts=2 sw=2 expandtab
+    augroup vimrc_yaml_filetype
+        autocmd!
+        autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+        autocmd FileType yml setlocal ts=2 sts=2 sw=2 expandtab
+    augroup END
     
 
     """"""""""""""""""""""""""""""
@@ -908,10 +782,6 @@
     " Treat long lines as break lines (useful when moving around in them)
     map j gj
     map k gk
-
-    " Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
-    map <space> /
-    map <c-space> ?
 
     " Disable highlight when <leader><cr> is pressed
     map <silent> <leader><cr> :noh<cr>
@@ -933,8 +803,8 @@
     map <leader>ba :1,1000 bd!<cr>
 
     " Move to next and previous buffer
-    map <tab> :bn<cr><cr>
-    map <S-tab> :bp<cr>
+    nnoremap ]b :bn<cr>
+    nnoremap [b :bp<cr>
     map <C-q> :Bclose<cr>
 
 
@@ -963,10 +833,13 @@
 
 
     " Return to last edit position when opening files (You want this!)
-    autocmd BufReadPost *
-         \ if line("'\"") > 0 && line("'\"") <= line("$") |
-         \   exe "normal! g`\"" |
-         \ endif
+    augroup vimrc_restore_cursor
+        autocmd!
+        autocmd BufReadPost *
+             \ if line("'\"") > 0 && line("'\"") <= line("$") |
+             \   exe "normal! g`\"" |
+             \ endif
+    augroup END
     " Remember info about open buffers on close
     set viminfo^=%
 
@@ -983,9 +856,6 @@
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     " => Editing mappings
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    " Remap VIM 0 to first non-blank character
-    map 0 ^
-
     " Move a line of text using ALT+[jk] or Comamnd+[jk] on mac
     "map <C-j> :move +1<CR>
     "map <C-k> :move -2<CR>
@@ -1185,11 +1055,8 @@ $", "", "")
     "     au BufWritePost .vimrc,_vimrc,vimrc,.gvimrc,_gvimrc,gvimrc so $MYVIMRC | if has('gui_running') | so $MYVIMRC | endif
     " augroup END
      
-    " Set reload vimrc 
-    noremap <S-R> :source $MYVIMRC<CR>
-
-    " Set Scroll
-    set scrolloff=3
+    " Set reload vimrc
+    noremap <leader>rv :source $MYVIMRC<CR>
     " Add space between end of file
     " nnoremap j jzz
     " nnoremap k kzz
@@ -1198,4 +1065,3 @@ $", "", "")
 
     " Set new line to linux instead of windows
     set ff=unix
-
