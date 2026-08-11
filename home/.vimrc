@@ -122,7 +122,10 @@
     Plug 'axsaucedo/neovim-power-mode'
     Plug 'sphamba/smear-cursor.nvim'
     Plug 'rachartier/tiny-glimmer.nvim'
-    Plug 'zalando-markets/code-review-plugin'
+    " Machine-local plugins (untracked; e.g. work-internal plugins)
+    if filereadable(expand('~/.vim/plug.local.vim'))
+        source ~/.vim/plug.local.vim
+    endif
     " Finishing plugin list
     call plug#end()
 
@@ -147,7 +150,10 @@
         let g:tiny_glimmer_configured = 1
     endif
 
-    lua require("code-review").setup({})
+    " Machine-local plugin setup (untracked; pairs with ~/.vim/plug.local.vim)
+    if filereadable(expand('~/.vimrc.local'))
+        source ~/.vimrc.local
+    endif
 
     " Setting grep with rg
     set grepprg=rg\ --vimgrep\ --smart-case\ --follow
