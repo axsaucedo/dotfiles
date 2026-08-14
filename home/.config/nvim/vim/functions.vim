@@ -61,71 +61,7 @@ $", "", "")
 
 
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    " Configuration for extra visualisation in FZF.vim
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    " Command for git grep
-    " - fzf#vim#grep(command, with_column, [options], [fullscreen])
-    " command! -bang -nargs=* GGrep
-    "  \ call fzf#vim#grep('git grep --line-number '.shellescape(<q-args>), 0, <bang>0)
-    "
-    command! -bang -nargs=* GGrep
-      \ call fzf#vim#grep(
-      \   'git grep --line-number '.shellescape(<q-args>), 1,
-      \   <bang>0 ? fzf#vim#with_preview('up:60%')
-      \           : fzf#vim#with_preview(),
-      \   <bang>0)
-
-    " Override Colors command. You can safely do this in your .vimrc as fzf.vim
-    " will not override existing commands.
-    command! -bang Colors
-      \ call fzf#vim#colors({'left': '15%', 'options': '--reverse --margin 30%,0'}, <bang>0)
-
-    " Augmenting Ag command using fzf#vim#with_preview function
-    "     * For syntax-highlighting, Ruby and any of the following tools are required:
-    "       - Highlight: http://www.andre-simon.de/doku/highlight/en/highlight.php
-    "       - CodeRay: http://coderay.rubychan.de/
-    "       - Rouge: https://github.com/jneen/rouge
-    command! -bang -nargs=* Ag
-      \ call fzf#vim#ag(<q-args>,
-      \                 <bang>0 ? fzf#vim#with_preview({'options': '-i --delimiter : --nth 4..'}, 'up:60%')
-      \                         : fzf#vim#with_preview({'options': '-i --delimiter : --nth 4..'}),
-      \                 <bang>0)
-
-    " Likewise, Files command with preview window
-    command! -bang -nargs=? -complete=dir Files
-      \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
-
-    " Likewise, GFiles command with preview window
-    command! -bang -nargs=? -complete=dir GFiles
-      \ call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(), <bang>0)
-
-    function! s:tags_sink(line)
-      let parts = split(a:line, '	\zs')
-      let excmd = matchstr(parts[2:], '^.*\ze;"	')
-      execute 'silent e' parts[1][:-2]
-      let [magic, &magic] = [&magic, 0]
-      execute excmd
-      let &magic = magic
-    endfunction
-
-    function! s:tags()
-      if empty(tagfiles())
-        echohl WarningMsg
-        echom 'Preparing tags'
-        echohl None
-        call system('ctags -R')
-      endif
-
-      call fzf#run({
-      \ 'source':  'cat '.join(map(tagfiles(), 'fnamemodify(v:val, ":S")')).
-      \            '| grep -v -a ^!',
-      \ 'options': '+m -d "	" --with-nth 1,4,2,3.. -n 1 --tiebreak=index',
-      \ 'down':    '40%',
-      \ 'sink':    function('s:tags_sink')})
-    endfunction
-
-    command! Tags call fzf#vim#tags(expand('<cword>'), {'options': '--exact --select-1'})
-
     " " Reload vimrc file automatically
     " augroup myvimrc
     "     au!

@@ -7,9 +7,15 @@ return {
   },
   -- NERDTree git plugin
   { "Xuyuanp/nerdtree-git-plugin", lazy = true },
-  -- fuzzy search
-  { "junegunn/fzf", build = ":call fzf#install()" },
-  { "junegunn/fzf.vim" },
+  -- Fuzzy search
+  {
+    "ibhagwan/fzf-lua",
+    cmd = "FzfLua",
+    init = function()
+      require("fzf_config").setup()
+    end,
+    opts = {},
+  },
   -- Colour parentheses
   { "luochen1990/rainbow", event = { "BufReadPost", "BufNewFile" } },
   -- Multiple cursors
