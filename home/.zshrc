@@ -193,8 +193,9 @@ _dots_nudge
 #                           Tips
 #######################################################################
 
-# The less-used goodies are easy to forget: `tips` lists them all, and
-# ~1 in 5 shells opens with one at random (same idea as the dots nudge).
+# The less-used goodies are easy to forget: `tips` lists them all, every
+# new terminal opens with one at random in a box, and another surfaces
+# every ~15 commands.
 _TIPS=(
   "ctrl+a Tab -- extrakto: fzf-pick any path/URL/hash from the visible pane"
   "ctrl+a g -- popup scratchpad shell in the current path"
@@ -206,7 +207,21 @@ _TIPS=(
   "git-stash-apply / gb / gl -- fzf pickers for stashes, branches, commits"
 )
 tips() { printf '%s\n' "${_TIPS[@]}" }
-(( RANDOM % 5 )) || print -P "%F{cyan}tip:%f ${_TIPS[$((RANDOM % ${#_TIPS[@]} + 1))]}"
+
+_tip_show() {
+  local t="${_TIPS[$((RANDOM % ${#_TIPS[@]} + 1))]}"
+  local line="${(l:${#t}+2::─:)}"
+  print -P "%F{cyan}╭${line}╮%f"
+  print -P "%F{cyan}│%f %F{yellow}${t}%f %F{cyan}│%f"
+  print -P "%F{cyan}╰${line}╯%f"
+}
+_tip_show
+
+# ...and again every ~15 commands (precmd runs once per prompt)
+_tip_count=0
+_tip_precmd() { (( ++_tip_count % 15 )) || _tip_show }
+autoload -U add-zsh-hook
+add-zsh-hook precmd _tip_precmd
 
 #######################################################################
 #                           Wrap Up
