@@ -57,6 +57,8 @@ return {
       return require("conform_config")
     end,
   },
+  -- Keymap help
+  { "folke/which-key.nvim", event = "VeryLazy", opts = {} },
   -- Vim airline status line
   { "vim-airline/vim-airline", event = "VeryLazy", dependencies = { "vim-airline/vim-airline-themes" } },
   { "vim-airline/vim-airline-themes", lazy = true },
