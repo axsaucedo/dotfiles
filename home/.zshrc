@@ -190,6 +190,25 @@ _dots_nudge() {
 _dots_nudge
 
 #######################################################################
+#                           Tips
+#######################################################################
+
+# The less-used goodies are easy to forget: `tips` lists them all, and
+# ~1 in 5 shells opens with one at random (same idea as the dots nudge).
+_TIPS=(
+  "ctrl+a Tab -- extrakto: fzf-pick any path/URL/hash from the visible pane"
+  "ctrl+a g -- popup scratchpad shell in the current path"
+  "ctrl+a h/j/k/l (or arrows) -- resize panes, repeatable"
+  "ctrl+r -- atuin history: shows exit status + duration of every past command"
+  "cd <tab> -- fzf picker with directory preview; , and . switch groups"
+  "lt / tree -- eza tree view (-L 4 for deeper); la/l show a git column"
+  "duh -- dust disk usage, dotfiles included; duhh for full depth"
+  "git-stash-apply / gb / gl -- fzf pickers for stashes, branches, commits"
+)
+tips() { printf '%s\n' "${_TIPS[@]}" }
+(( RANDOM % 5 )) || print -P "%F{cyan}tip:%f ${_TIPS[$((RANDOM % ${#_TIPS[@]} + 1))]}"
+
+#######################################################################
 #                           Wrap Up
 #######################################################################
 
