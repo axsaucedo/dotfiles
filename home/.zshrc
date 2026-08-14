@@ -117,6 +117,7 @@ mkdir -p "$_zc"
 if command -v kubectl >/dev/null; then
   [[ $_zc/kubectl.zsh -nt ${commands[kubectl]} ]] || kubectl completion zsh > "$_zc/kubectl.zsh"
   source "$_zc/kubectl.zsh"
+  command -v kubecolor >/dev/null && compdef kubecolor=kubectl
 fi
 if command -v uv >/dev/null; then
   [[ $_zc/uv.zsh -nt ${commands[uv]} ]] || uv generate-shell-completion zsh > "$_zc/uv.zsh"

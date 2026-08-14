@@ -234,6 +234,7 @@ dtags() {
 
 alias kdash='kubectl -n kube-system describe secret default && echo "Website at http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/overview?namespace=default" && kubectl proxy'
 # This command is used a LOT both below and in daily life
+command -v kubecolor >/dev/null && alias kubectl=kubecolor
 alias k=kubectl
 # Execute a kubectl command against all namespaces
 alias kca='f(){ kubectl "$@" --all-namespaces;  unset -f f; }; f'
