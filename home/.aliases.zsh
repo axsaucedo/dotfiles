@@ -19,6 +19,8 @@ alias vzsh="vim ~/.zshrc"
 alias szsh="source ~/.zshrc"
 alias yd="yt-dlp --add-metadata --write-all-thumbnails --embed-thumbnail --write-info-json --embed-subs --all-subs --external-downloader aria2c --external-downloader-args '-c -j 3 -x 3 -s 3 -k 1M'"
 alias ydm='yt-dlp --extract-audio --audio-format mp3 --prefer-ffmpeg -o "%(title)s.%(ext)s" --ignore-errors ' 
+command -v eza >/dev/null && alias l='eza -lah --git'
+command -v eza >/dev/null && alias lt='eza -T -L 2'
 alias lss="l | peco"
 # Download MP3 From Youtube
 alias ym="yt-dlp --extract-audio --audio-format mp3 --audio-quality 0 --prefer-ffmpeg" 
