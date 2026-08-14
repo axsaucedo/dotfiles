@@ -104,6 +104,7 @@ export VK_ICD_FILENAMES="${VULKAN_SDK}/share/vulkan/icd.d/MoltenVK_icd.json"
 # Set PATH, MANPATH, etc., for Homebrew.
 [[ $_zi/brew.zsh -nt /opt/homebrew/bin/brew ]] || /opt/homebrew/bin/brew shellenv >| "$_zi/brew.zsh"
 source "$_zi/brew.zsh"
+command -v bat >/dev/null && export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 
 # Adding asdf
 export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
