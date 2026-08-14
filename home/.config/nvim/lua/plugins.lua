@@ -59,6 +59,8 @@ return {
   },
   -- Keymap help
   { "folke/which-key.nvim", event = "VeryLazy", opts = {} },
+  -- Diagnostics panel
+  { "folke/trouble.nvim", cmd = "Trouble", opts = {} },
   -- Vim airline status line
   { "vim-airline/vim-airline", event = "VeryLazy", dependencies = { "vim-airline/vim-airline-themes" } },
   { "vim-airline/vim-airline-themes", lazy = true },

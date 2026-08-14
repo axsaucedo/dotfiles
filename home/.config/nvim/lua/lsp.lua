@@ -45,7 +45,7 @@ vim.keymap.set("n", "]e", function()
   vim.diagnostic.jump({ count = 1, severity = vim.diagnostic.severity.ERROR })
 end)
 
-vim.keymap.set("n", "<space>a", vim.diagnostic.setqflist)
+vim.keymap.set("n", "<space>a", "<cmd>Trouble diagnostics toggle<cr>")
 vim.keymap.set("n", "<space>s", function()
   require("fzf-lua").lsp_document_symbols()
 end)
