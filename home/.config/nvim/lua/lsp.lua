@@ -33,7 +33,11 @@ vim.keymap.set("n", "<M-k>", function()
   vim.lsp.buf.hover()
   vim.lsp.buf.signature_help()
 end)
-vim.keymap.set({ "n", "x" }, "<leader>f", vim.lsp.buf.format)
+local function format()
+  require("conform").format({ lsp_format = "fallback" })
+end
+
+vim.keymap.set({ "n", "x" }, "<leader>f", format)
 vim.keymap.set("n", "[e", function()
   vim.diagnostic.jump({ count = -1, severity = vim.diagnostic.severity.ERROR })
 end)
@@ -50,7 +54,7 @@ vim.keymap.set("n", "<space>o", function()
 end)
 
 vim.api.nvim_create_user_command("Format", function()
-  vim.lsp.buf.format()
+  format()
 end, {})
 vim.api.nvim_create_user_command("OR", organize_imports, {})
 vim.api.nvim_create_autocmd("BufWritePre", {

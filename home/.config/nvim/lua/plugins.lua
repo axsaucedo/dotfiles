@@ -48,6 +48,15 @@ return {
       completion = { documentation = { auto_show = true } },
     },
   },
+  -- Formatting
+  {
+    "stevearc/conform.nvim",
+    event = "BufWritePre",
+    cmd = "ConformInfo",
+    opts = function()
+      return require("conform_config")
+    end,
+  },
   -- Vim airline status line
   { "vim-airline/vim-airline", event = "VeryLazy", dependencies = { "vim-airline/vim-airline-themes" } },
   { "vim-airline/vim-airline-themes", lazy = true },
