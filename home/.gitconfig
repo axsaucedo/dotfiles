@@ -1,0 +1,44 @@
+[user]
+	name = Alejandro Saucedo
+	email = axsauze@gmail.com
+[core]
+	editor = nvim
+
+
+################# Syntax Highlighting #################
+# Note: Requires git-delta to be installed
+[core]
+    pager = /Users/asaucedo/Programming/external/delta/target/release/delta
+
+[delta]
+    side-by-side = 140
+    line-numbers = true
+    navigate = true  # use n and N to move between diff sections
+
+    # Custom stles for dark terminal
+    syntax-theme = Monokai Extended Bright
+    file-style = cyan
+
+[interactive]
+    diffFilter = delta-smart
+
+[merge]
+    conflictStyle = zdiff3
+
+
+################# SSH MULTIPLE REPOS #################
+# This is overridden by machine-local repo rules when present
+[core]
+    sshCommand = ssh -i ~/.ssh/id_rsa -o IdentitiesOnly=yes
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+
+[credential "https://github.com"]
+	helper =
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !/opt/homebrew/bin/gh auth git-credential
+
+[include]
+    path = ~/.gitconfig.local
