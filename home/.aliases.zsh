@@ -32,8 +32,13 @@ alias ctagspy='ctags -R --fields=+l --languages=python --python-kinds=-iv --excl
 alias asciicast2gif='docker run --rm -v $PWD:/data asciinema/asciicast2gif'
 alias xdg-open="open"
 # Get size of directory sorted
-alias duh="du -hs ./* | sort -h"
-alias duhh="du -hs ./.* * | sort -h"
+if command -v dust >/dev/null; then
+    alias duh='dust -d 1'
+    alias duhh='dust'
+else
+    alias duh="du -hs ./* | sort -h"
+    alias duhh="du -hs ./.* * | sort -h"
+fi
 # Speed test
 alias speedtest=librespeed-cli
 alias p='python3'
