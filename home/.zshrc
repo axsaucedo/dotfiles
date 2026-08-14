@@ -74,6 +74,13 @@ plugins=(
 export ZSH="$HOME/.oh-my-zsh"
 source $ZSH/oh-my-zsh.sh
 
+# fzf-tab previews and group navigation
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls -1 --color=always $realpath 2>/dev/null || ls -1G $realpath'
+zstyle ':fzf-tab:complete:(vim|nvim|cat|bat):*' fzf-preview 'bat --style plain --color=always $realpath 2>/dev/null || ls $realpath'
+zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview 'git log --oneline -20 --color=always $word'
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':fzf-tab:*' switch-group ',' '.'
+
 #######################################################################
 #                           Utility Load & Config
 #######################################################################
