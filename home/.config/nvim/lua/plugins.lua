@@ -31,6 +31,17 @@ return {
   { "dkarter/bullets.vim", ft = { "markdown", "text", "gitcommit", "scratch" } },
   -- Native LSP server definitions
   { "neovim/nvim-lspconfig", lazy = false },
+  -- Completion
+  {
+    "saghen/blink.cmp",
+    version = "1.*",
+    event = "InsertEnter",
+    opts = {
+      keymap = { preset = "default" },
+      sources = { default = { "lsp", "path", "snippets", "buffer" } },
+      completion = { documentation = { auto_show = true } },
+    },
+  },
   -- Vim airline status line
   { "vim-airline/vim-airline", event = "VeryLazy", dependencies = { "vim-airline/vim-airline-themes" } },
   { "vim-airline/vim-airline-themes", lazy = true },
