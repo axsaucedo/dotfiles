@@ -17,6 +17,10 @@ return {
       },
       window = {
         mappings = {
+          -- H must stay the global resize key inside the tree too; hidden
+          -- files toggle moves to gh
+          ["H"] = "noop",
+          ["gh"] = "toggle_hidden",
           -- curated cheatsheet instead of the auto-generated mapping dump
           ["?"] = function()
             local lines = {
@@ -27,7 +31,7 @@ return {
               " r          rename          d  delete ",
               " x / y / p  cut / copy / paste ",
               " s / S      open in vsplit / split ",
-              " H          toggle hidden   R  refresh ",
+              " gh         toggle hidden   R  refresh ",
               " /          filter tree (Esc clears) ",
               " q          close sidebar ",
             }
