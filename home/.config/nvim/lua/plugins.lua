@@ -31,6 +31,12 @@ return {
               " /          filter tree (Esc clears) ",
               " q          close sidebar ",
             }
+            -- pressing ? again closes an open cheatsheet (toggle)
+            if vim.g.neotree_help_win and vim.api.nvim_win_is_valid(vim.g.neotree_help_win) then
+              vim.api.nvim_win_close(vim.g.neotree_help_win, true)
+              vim.g.neotree_help_win = nil
+              return
+            end
             local buf = vim.api.nvim_create_buf(false, true)
             vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
             local win = vim.api.nvim_open_win(buf, false, {
@@ -42,11 +48,17 @@ return {
               style = "minimal",
               border = "rounded",
             })
-            vim.defer_fn(function()
-              if vim.api.nvim_win_is_valid(win) then
-                vim.api.nvim_win_close(win, true)
-              end
-            end, 15000)
+            vim.g.neotree_help_win = win
+            -- any movement or action in the tree dismisses it
+            vim.api.nvim_create_autocmd({ "CursorMoved", "ModeChanged", "BufLeave", "WinLeave" }, {
+              once = true,
+              callback = function()
+                if vim.api.nvim_win_is_valid(win) then
+                  vim.api.nvim_win_close(win, true)
+                end
+                vim.g.neotree_help_win = nil
+              end,
+            })
           end,
         },
       },
