@@ -10,7 +10,9 @@ return {
   -- Trial alternative to NERDTree: edit directories as text buffers
   {
     "stevearc/oil.nvim",
-    cmd = "Oil",
+    -- must load eagerly to take over directory buffers (nvim .); lazy
+    -- loading left those to netrw, which broke the whole flow
+    lazy = false,
     keys = {
       -- open the current file's directory in place (oil's idiomatic entry)
       { "-", "<cmd>Oil<cr>" },
