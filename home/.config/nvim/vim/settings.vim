@@ -72,12 +72,13 @@
     syntax enable
     syntax sync minlines=256
     set background=dark
-    colorscheme molokai_custom
-    "colorscheme molokai_dark
+    " Released standalone as https://github.com/axsaucedo/molokai-modern.nvim
+    " (installed via plugins.lua)
+    colorscheme molokai-modern
     let g:molokai_original = 1
     " Other popular colors
     " colorscheme monokai-phoenix
-    set termguicolors " molokai_custom now carries true gui colors
+    set termguicolors " molokai-modern carries true gui colors
     "hi Normal guibg=NONE ctermbg=NONE " Setting transparent background force
 
     " Set extra options when running in GUI mode
