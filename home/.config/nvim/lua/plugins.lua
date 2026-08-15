@@ -16,6 +16,7 @@ return {
         hijack_netrw_behavior = "open_default",
       },
       window = {
+        width = 20,
         mappings = {
           -- H must stay the global resize key inside the tree too; hidden
           -- files toggle moves to gh
