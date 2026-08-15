@@ -7,6 +7,27 @@ return {
   },
   -- NERDTree git plugin
   { "Xuyuanp/nerdtree-git-plugin", lazy = true },
+  -- Trial alternative to NERDTree: edit directories as text buffers
+  {
+    "stevearc/oil.nvim",
+    cmd = "Oil",
+    keys = {
+      -- open the current file's directory in place (oil's idiomatic entry)
+      { "-", "<cmd>Oil<cr>" },
+      -- sidebar-style: project root in a fixed-width left split
+      {
+        "<leader>to",
+        function()
+          vim.cmd("topleft 30vsplit")
+          require("oil").open(vim.fn.getcwd())
+        end,
+      },
+    },
+    opts = {
+      view_options = { show_hidden = true },
+      delete_to_trash = true,
+    },
+  },
   -- Fuzzy search
   {
     "ibhagwan/fzf-lua",
