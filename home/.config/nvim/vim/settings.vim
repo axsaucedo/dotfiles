@@ -73,7 +73,9 @@
     syntax sync minlines=256
     set background=dark
     " Released standalone as https://github.com/axsaucedo/molokai-modern.nvim
-    " (installed via plugins.lua)
+    " (installed via plugins.lua). Theme defaults to a black background;
+    " we keep the terminal transparency
+    let g:molokai_modern_transparent = 1
     colorscheme molokai-modern
     let g:molokai_original = 1
     " Other popular colors

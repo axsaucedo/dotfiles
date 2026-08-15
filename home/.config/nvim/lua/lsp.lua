@@ -6,7 +6,25 @@ vim.lsp.enable(servers)
 
 -- nvim 0.11 turned inline diagnostic text off by default; coc always showed it.
 -- No prefix glyph: the default '■' renders as boxes in the terminal font.
-vim.diagnostic.config({ virtual_text = { prefix = "" } })
+-- Errors-only by default (warnings are too noisy); :Warnings or <space>w toggles
+local function diagnostics_config(min_severity)
+  local sev = { min = min_severity }
+  vim.diagnostic.config({
+    virtual_text = { prefix = "", severity = sev },
+    signs = { severity = sev },
+    underline = { severity = sev },
+  })
+end
+diagnostics_config(vim.diagnostic.severity.ERROR)
+
+local warnings_shown = false
+local function toggle_warnings()
+  warnings_shown = not warnings_shown
+  diagnostics_config(warnings_shown and vim.diagnostic.severity.HINT or vim.diagnostic.severity.ERROR)
+  vim.notify(warnings_shown and "Diagnostics: all severities" or "Diagnostics: errors only")
+end
+vim.api.nvim_create_user_command("Warnings", toggle_warnings, {})
+vim.keymap.set("n", "<space>w", toggle_warnings)
 
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)

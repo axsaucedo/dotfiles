@@ -142,7 +142,9 @@ return {
   { "vim-airline/vim-airline", event = "VeryLazy", dependencies = { "vim-airline/vim-airline-themes" } },
   { "vim-airline/vim-airline-themes", lazy = true },
   -- Main colorscheme (extracted from this repo's old molokai_custom.vim)
-  { "axsaucedo/molokai-modern.nvim", lazy = false, priority = 1000 },
+  -- TEMP: pointed at the local checkout to iterate on the ethical.institute
+  -- palette; revert to "axsaucedo/molokai-modern.nvim" once published
+  { dir = "~/Programming/molokai-modern.nvim", name = "molokai-modern.nvim", lazy = false, priority = 1000 },
   -- Tokynight theme
   { "folke/tokyonight.nvim", branch = "main", lazy = true },
   { "loctvl842/monokai-pro.nvim", lazy = true },

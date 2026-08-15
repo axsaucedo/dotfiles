@@ -4,6 +4,7 @@ local TIPS = {
   "gd / grr -- LSP definition / references         K -- hover docs",
   "grn -- LSP rename          gra -- code action",
   "[e ]e -- jump between errors    <space>a -- Trouble diagnostics panel",
+  "<space>w / :Warnings -- toggle warnings (editor shows errors only by default)",
   ",f / :Format -- format buffer (black, gofmt, LSP fallback)",
   "<space>s / <space>o -- fuzzy document / workspace symbols",
   "ctrl+p ctrl+f -- live grep project    ctrl+p ctrl+g -- git grep",
