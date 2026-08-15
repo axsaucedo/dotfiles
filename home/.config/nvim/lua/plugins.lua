@@ -1,72 +1,54 @@
 return {
-  -- Nerd tree side directory
-  {
-    "scrooloose/nerdtree",
-    cmd = { "NERDTree", "NERDTreeToggle", "NERDTreeFind" },
-    dependencies = { "Xuyuanp/nerdtree-git-plugin" },
-  },
-  -- NERDTree git plugin
-  { "Xuyuanp/nerdtree-git-plugin", lazy = true },
-  -- Trial alternative to NERDTree: modern sidebar tree (git + diagnostics)
+  -- File explorer sidebar (won the trial against NERDTree and oil.nvim)
   {
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v3.x",
     dependencies = { "nvim-lua/plenary.nvim", "MunifTanjim/nui.nvim", "nvim-tree/nvim-web-devicons" },
     cmd = "Neotree",
-    -- ,e ("explorer"): the ,t prefix is taken by the tab maps in mappings.vim
-    keys = { { "<leader>e", "<cmd>Neotree toggle<cr>" } },
+    keys = {
+      { "M", "<cmd>Neotree toggle<cr>" },
+      { "<leader>e", "<cmd>Neotree toggle<cr>" },
+    },
     opts = {
       filesystem = {
         filtered_items = { visible = true },
         follow_current_file = { enabled = true },
-        -- oil owns directory buffers; don't fight over nvim .
-        hijack_netrw_behavior = "disabled",
+        hijack_netrw_behavior = "open_default",
       },
-    },
-  },
-  -- Trial alternative to NERDTree: edit directories as text buffers
-  {
-    "stevearc/oil.nvim",
-    -- must load eagerly to take over directory buffers (nvim .); lazy
-    -- loading left those to netrw, which broke the whole flow
-    lazy = false,
-    keys = {
-      -- open the current file's directory in place (oil's idiomatic entry)
-      { "-", "<cmd>Oil<cr>" },
-      -- open the project root (cwd) in place, vinegar-style counterpart
-      {
-        "_",
-        function()
-          require("oil").open(vim.fn.getcwd())
-        end,
-      },
-      -- sidebar-style toggle: project root in a fixed-width left split;
-      -- pressing again closes it, like the NERDTree toggle
-      -- (,o not ,to: the tab maps own the ,t prefix and ,to is :tabonly)
-      {
-        "<leader>o",
-        function()
-          for _, w in ipairs(vim.api.nvim_list_wins()) do
-            if vim.bo[vim.api.nvim_win_get_buf(w)].filetype == "oil" then
-              if #vim.api.nvim_list_wins() > 1 then
-                vim.api.nvim_win_close(w, true)
+      window = {
+        mappings = {
+          -- curated cheatsheet instead of the auto-generated mapping dump
+          ["?"] = function()
+            local lines = {
+              " Enter      open file / expand-collapse folder ",
+              " Backspace  go up: parent becomes the root ",
+              " .          make selected folder the root ",
+              " a / A      add file / add directory ",
+              " r          rename          d  delete ",
+              " x / y / p  cut / copy / paste ",
+              " s / S      open in vsplit / split ",
+              " H          toggle hidden   R  refresh ",
+              " /          filter tree (Esc clears) ",
+              " q          close sidebar ",
+            }
+            local buf = vim.api.nvim_create_buf(false, true)
+            vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+            local win = vim.api.nvim_open_win(buf, false, {
+              relative = "cursor",
+              row = 1,
+              col = 0,
+              width = 44,
+              height = #lines,
+              style = "minimal",
+              border = "rounded",
+            })
+            vim.defer_fn(function()
+              if vim.api.nvim_win_is_valid(win) then
+                vim.api.nvim_win_close(win, true)
               end
-              return
-            end
-          end
-          vim.cmd("topleft 30vsplit")
-          require("oil").open(vim.fn.getcwd())
-        end,
-      },
-    },
-    opts = {
-      view_options = { show_hidden = true },
-      delete_to_trash = true,
-      -- C-h/C-l belong to tmux pane navigation; oil's split/refresh
-      -- defaults on them shadowed that inside oil buffers
-      keymaps = {
-        ["<C-h>"] = false,
-        ["<C-l>"] = false,
+            end, 15000)
+          end,
+        },
       },
     },
   },
