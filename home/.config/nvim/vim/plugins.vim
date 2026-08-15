@@ -169,28 +169,7 @@
     augroup END
 
 
-    " FZF
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    " This function ensures that we use the relevant search depending on whether we
-    "   are in a git repo or not
-    fun! FzfOmniFiles()
-        let is_git = system('git rev-parse --is-inside-work-tree 2>/dev/null')
-        if v:shell_error
-            :Files
-        else
-            :GFiles
-        endif
-    endfun
-    noremap <C-p><C-p> :call FzfOmniFiles()<CR>
-    noremap <C-p><C-a> :Files<CR>
-    noremap <C-p><C-b> :Buffers<CR>
-    noremap <C-p><C-f> :Ag<CR>
-    noremap <C-p><C-g> :GGrep<CR>
-    noremap <C-p><C-t> :Tags<CR>
-    " noremap <C-p><C-g> :GFiles?<CR>
-    noremap <C-p><C-l> :BLines<CR>
-    noremap <C-p><C-c> :Commits<CR>
-
     " rainbow parentheses
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     let g:rainbow_active = 1

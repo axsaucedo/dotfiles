@@ -4,13 +4,12 @@ if #vim.api.nvim_get_runtime_file("lsp/ty.lua", false) > 0 then
 end
 vim.lsp.enable(servers)
 
+-- nvim 0.11 turned inline diagnostic text off by default; coc always showed it
+vim.diagnostic.config({ virtual_text = true })
+
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
     vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = args.buf })
-    local client = vim.lsp.get_client_by_id(args.data.client_id)
-    if client and client:supports_method("textDocument/completion") then
-      vim.lsp.completion.enable(true, client.id, args.buf, { autotrigger = true })
-    end
   end,
 })
 
@@ -37,7 +36,11 @@ vim.keymap.set("n", "<M-k>", function()
   vim.lsp.buf.hover()
   vim.lsp.buf.signature_help()
 end)
-vim.keymap.set({ "n", "x" }, "<leader>f", vim.lsp.buf.format)
+local function format()
+  require("conform").format({ lsp_format = "fallback" })
+end
+
+vim.keymap.set({ "n", "x" }, "<leader>f", format)
 vim.keymap.set("n", "[e", function()
   vim.diagnostic.jump({ count = -1, severity = vim.diagnostic.severity.ERROR })
 end)
@@ -45,12 +48,16 @@ vim.keymap.set("n", "]e", function()
   vim.diagnostic.jump({ count = 1, severity = vim.diagnostic.severity.ERROR })
 end)
 
-vim.keymap.set("n", "<space>a", vim.diagnostic.setqflist)
-vim.keymap.set("n", "<space>s", vim.lsp.buf.document_symbol)
-vim.keymap.set("n", "<space>o", vim.lsp.buf.workspace_symbol)
+vim.keymap.set("n", "<space>a", "<cmd>Trouble diagnostics toggle<cr>")
+vim.keymap.set("n", "<space>s", function()
+  require("fzf-lua").lsp_document_symbols()
+end)
+vim.keymap.set("n", "<space>o", function()
+  require("fzf-lua").lsp_workspace_symbols()
+end)
 
 vim.api.nvim_create_user_command("Format", function()
-  vim.lsp.buf.format()
+  format()
 end, {})
 vim.api.nvim_create_user_command("OR", organize_imports, {})
 vim.api.nvim_create_autocmd("BufWritePre", {

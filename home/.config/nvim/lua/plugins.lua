@@ -7,9 +7,15 @@ return {
   },
   -- NERDTree git plugin
   { "Xuyuanp/nerdtree-git-plugin", lazy = true },
-  -- fuzzy search
-  { "junegunn/fzf", build = ":call fzf#install()" },
-  { "junegunn/fzf.vim" },
+  -- Fuzzy search
+  {
+    "ibhagwan/fzf-lua",
+    cmd = "FzfLua",
+    init = function()
+      require("fzf_config").setup()
+    end,
+    opts = {},
+  },
   -- Colour parentheses
   { "luochen1990/rainbow", event = { "BufReadPost", "BufNewFile" } },
   -- Multiple cursors
@@ -39,6 +45,37 @@ return {
   { "dkarter/bullets.vim", ft = { "markdown", "text", "gitcommit", "scratch" } },
   -- Native LSP server definitions
   { "neovim/nvim-lspconfig", lazy = false },
+  -- Completion
+  {
+    "saghen/blink.cmp",
+    version = "1.*",
+    event = "InsertEnter",
+    opts = {
+      -- super-tab: Tab accepts/cycles like coc did
+      keymap = { preset = "super-tab" },
+      sources = {
+        default = { "lsp", "path", "snippets", "buffer" },
+        -- keep buffer words from flooding the menu
+        providers = {
+          buffer = { max_items = 4, score_offset = -5 },
+        },
+      },
+      completion = { documentation = { auto_show = true } },
+    },
+  },
+  -- Formatting
+  {
+    "stevearc/conform.nvim",
+    event = "BufWritePre",
+    cmd = "ConformInfo",
+    opts = function()
+      return require("conform_config")
+    end,
+  },
+  -- Keymap help
+  { "folke/which-key.nvim", event = "VeryLazy", opts = {} },
+  -- Diagnostics panel
+  { "folke/trouble.nvim", cmd = "Trouble", opts = {} },
   -- Vim airline status line
   { "vim-airline/vim-airline", event = "VeryLazy", dependencies = { "vim-airline/vim-airline-themes" } },
   { "vim-airline/vim-airline-themes", lazy = true },
