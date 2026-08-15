@@ -40,11 +40,20 @@ return {
           require("oil").open(vim.fn.getcwd())
         end,
       },
-      -- sidebar-style: project root in a fixed-width left split
+      -- sidebar-style toggle: project root in a fixed-width left split;
+      -- pressing again closes it, like the NERDTree toggle
       -- (,o not ,to: the tab maps own the ,t prefix and ,to is :tabonly)
       {
         "<leader>o",
         function()
+          for _, w in ipairs(vim.api.nvim_list_wins()) do
+            if vim.bo[vim.api.nvim_win_get_buf(w)].filetype == "oil" then
+              if #vim.api.nvim_list_wins() > 1 then
+                vim.api.nvim_win_close(w, true)
+              end
+              return
+            end
+          end
           vim.cmd("topleft 30vsplit")
           require("oil").open(vim.fn.getcwd())
         end,
