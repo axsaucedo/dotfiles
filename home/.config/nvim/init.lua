@@ -1,3 +1,7 @@
+-- Leader must be set BEFORE lazy.setup: lazy resolves <leader> in plugin
+-- `keys` specs at registration time (plugins.vim sets it too, but too late)
+vim.g.mapleader = ","
+
 -- Bootstrap lazy.nvim
 local config_dir = vim.fn.stdpath("config")
 local vim_dir = vim.fs.normalize(config_dir .. "/../../.vim")

@@ -13,7 +13,8 @@ return {
     branch = "v3.x",
     dependencies = { "nvim-lua/plenary.nvim", "MunifTanjim/nui.nvim", "nvim-tree/nvim-web-devicons" },
     cmd = "Neotree",
-    keys = { { "<leader>tt", "<cmd>Neotree toggle<cr>" } },
+    -- ,e ("explorer"): the ,t prefix is taken by the tab maps in mappings.vim
+    keys = { { "<leader>e", "<cmd>Neotree toggle<cr>" } },
     opts = {
       filesystem = {
         filtered_items = { visible = true },
@@ -40,8 +41,9 @@ return {
         end,
       },
       -- sidebar-style: project root in a fixed-width left split
+      -- (,o not ,to: the tab maps own the ,t prefix and ,to is :tabonly)
       {
-        "<leader>to",
+        "<leader>o",
         function()
           vim.cmd("topleft 30vsplit")
           require("oil").open(vim.fn.getcwd())
