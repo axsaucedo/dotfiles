@@ -24,6 +24,14 @@ return {
       "TmuxNavigateRight",
       "TmuxNavigatePrevious",
     },
+    -- cmd-only lazy loading meant the plugin's <C-hjkl> maps never got
+    -- created; declare them here so the keys work and trigger the load
+    keys = {
+      { "<C-h>", "<cmd>TmuxNavigateLeft<cr>" },
+      { "<C-j>", "<cmd>TmuxNavigateDown<cr>" },
+      { "<C-k>", "<cmd>TmuxNavigateUp<cr>" },
+      { "<C-l>", "<cmd>TmuxNavigateRight<cr>" },
+    },
   },
   -- Fugitive plugin
   { "tpope/vim-fugitive", cmd = { "Git", "G", "Gdiffsplit", "Gvdiffsplit", "Gread", "Gwrite", "Ggrep" } },
