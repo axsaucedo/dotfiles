@@ -77,7 +77,9 @@ hi Question        guifg=#66D9EF
 hi Repeat          guifg=#F92672               gui=bold
 hi Search          guifg=#000000 guibg=#FFE792
 " marks
-hi SignColumn      guifg=#A6E22E guibg=#232526
+" NONE bg: blend with the (transparent) editor background instead of a
+" distinct gray strip now that signcolumn is always visible
+hi SignColumn      guifg=#A6E22E guibg=NONE
 hi SpecialChar     guifg=#F92672               gui=bold
 hi SpecialComment  guifg=#7E8E91               gui=bold
 " guibg=bg would error once Normal guibg is NONE; NONE matches the old
@@ -188,7 +190,7 @@ if &t_Co > 255
    hi Search          ctermfg=0   ctermbg=222   cterm=NONE guifg=#000000 guibg=#ffd787 gui=NONE
 
    " marks column
-   hi SignColumn      ctermfg=118 ctermbg=235 guifg=#87ff00 guibg=#262626
+   hi SignColumn      ctermfg=118 ctermbg=NONE guifg=#87ff00 guibg=NONE
    hi SpecialChar     ctermfg=161               cterm=bold guifg=#d7005f gui=bold
    hi SpecialComment  ctermfg=245               cterm=bold guifg=#8a8a8a gui=bold
    hi Special         ctermfg=81 guifg=#5fd7ff

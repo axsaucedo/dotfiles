@@ -29,6 +29,9 @@
     " Turn on numberin
     set number
 
+    " Keep the sign column always visible so diagnostics don't shift the text
+    set signcolumn=yes
+
     " Ignore compiled files
     set wildignore=*.o,*~,*.pyc
 

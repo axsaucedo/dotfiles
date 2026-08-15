@@ -4,8 +4,9 @@ if #vim.api.nvim_get_runtime_file("lsp/ty.lua", false) > 0 then
 end
 vim.lsp.enable(servers)
 
--- nvim 0.11 turned inline diagnostic text off by default; coc always showed it
-vim.diagnostic.config({ virtual_text = true })
+-- nvim 0.11 turned inline diagnostic text off by default; coc always showed it.
+-- No prefix glyph: the default '■' renders as boxes in the terminal font.
+vim.diagnostic.config({ virtual_text = { prefix = "" } })
 
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
