@@ -13,7 +13,7 @@
 
 
 " Sections:
-"    -> Vim-plug configuration
+"    -> Plugin configuration
 "    -> General
 "    -> VIM user interface
 "    -> Colors and Fonts
@@ -94,35 +94,6 @@
     nmap <leader>8 <Plug>AirlineSelectTab8
     nmap <leader>9 <Plug>AirlineSelectTab9
 
-    " Function that displays various different type of details form CoC.vim
-    " syntax plugins based on language server
-    function! ErrorsDiagnostic() abort
-      let info = get(b:, 'coc_diagnostic_info', {})
-      if empty(info) | return '' | endif
-      let msgs = []
-      if get(info, 'error', 0)
-        call add(msgs, '💀' . info['error'] . ' ')
-      endif
-      return join(msgs, ' ')
-    endfunction
-
-    function! WarningsDiagnostic() abort
-      let info = get(b:, 'coc_diagnostic_info', {})
-      if empty(info) | return '' | endif
-      let msgs = []
-      if get(info, 'warning', 0)
-        call add(msgs, ' ⚠️' . info['warning'] . '')
-      endif
-      return join(msgs, ' ')
-    endfunction
-
-    function! CoCDiagnostic() abort
-      let info = get(b:, 'coc_diagnostic_info', {})
-      if empty(info) | return '' | endif
-      let msgs = []
-      return get(g:, 'coc_status', '')
-    endfunction
-
     function! AirlineInit()
         let g:airline_section_a = airline#section#create(['😈 ', 'branch', '%{&paste?"📋✔":"📋⚪"}'])
         let g:airline_section_b = airline#section#create_left(['mode'])
@@ -132,9 +103,7 @@
         autocmd!
         autocmd User AirlineAfterInit call AirlineInit()
     augroup END
-
-
-    let g:airline#extensions#coc#enabled = 1
+    let g:airline#extensions#nvimlsp#enabled = 1
 
     " Bullets.vim
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

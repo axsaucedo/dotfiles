@@ -46,10 +46,11 @@ end
 
 for _, module in ipairs({
   "plugins.vim",
-  "coc.vim",
   "settings.vim",
   "mappings.vim",
   "functions.vim",
 }) do
   vim.cmd.source(vim.fn.fnameescape(config_dir .. "/vim/" .. module))
 end
+
+require("lsp")

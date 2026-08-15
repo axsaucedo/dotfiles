@@ -37,8 +37,8 @@ return {
   { "tpope/vim-fugitive", cmd = { "Git", "G", "Gdiffsplit", "Gvdiffsplit", "Gread", "Gwrite", "Ggrep" } },
   -- Bulletpoint plug
   { "dkarter/bullets.vim", ft = { "markdown", "text", "gitcommit", "scratch" } },
-  -- COC Autocompllete
-  { "neoclide/coc.nvim", branch = "release", event = { "BufReadPre", "BufNewFile", "InsertEnter" } },
+  -- Native LSP server definitions
+  { "neovim/nvim-lspconfig", lazy = false },
   -- Vim airline status line
   { "vim-airline/vim-airline", event = "VeryLazy", dependencies = { "vim-airline/vim-airline-themes" } },
   { "vim-airline/vim-airline-themes", lazy = true },
@@ -85,36 +85,67 @@ return {
   -- Multi-language syntax support
   {
     "nvim-treesitter/nvim-treesitter",
-    branch = "master",
+    branch = "main",
     build = ":TSUpdate",
     event = { "BufReadPost", "BufNewFile" },
+    init = function()
+      vim.list = vim.list or {
+        unique = function(items)
+          local seen = {}
+          return vim.tbl_filter(function(item)
+            local new = not seen[item]
+            seen[item] = true
+            return new
+          end, items)
+        end,
+      }
+    end,
     config = function()
-      require("nvim-treesitter.configs").setup({
-        ensure_installed = {
-          "python",
-          "go",
-          "cpp",
-          "c",
-          "lua",
-          "vim",
-          "vimdoc",
-          "javascript",
-          "typescript",
-          "json",
-          "yaml",
-          "bash",
-          "markdown",
-          "markdown_inline",
-          "cmake",
-          "html",
-          "css",
-        },
-        highlight = {
-          enable = true,
-          disable = { "markdown", "markdown_inline" },
-        },
-        auto_install = true,
+      require("nvim-treesitter").install({
+        "python",
+        "go",
+        "cpp",
+        "c",
+        "lua",
+        "vim",
+        "vimdoc",
+        "javascript",
+        "typescript",
+        "json",
+        "yaml",
+        "bash",
+        "markdown",
+        "markdown_inline",
+        "cmake",
+        "html",
+        "css",
       })
+      local filetypes = {
+        "python",
+        "go",
+        "cpp",
+        "c",
+        "lua",
+        "vim",
+        "vimdoc",
+        "javascript",
+        "typescript",
+        "json",
+        "yaml",
+        "sh",
+        "cmake",
+        "html",
+        "css",
+      }
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = filetypes,
+        callback = function()
+          vim.treesitter.start()
+        end,
+      })
+      if vim.list_contains(filetypes, vim.bo.filetype) then
+        vim.treesitter.start()
+      end
     end,
   },
   -- Advanced syntax support for cpp
