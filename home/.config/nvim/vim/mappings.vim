@@ -20,11 +20,8 @@
     " Disable highlight when <leader><cr> is pressed
     map <silent> <leader><cr> :noh<cr>
 
-    " Smart way to move between windows
-    map <C-j> <C-W>j
-    map <C-k> <C-W>k
-    map <C-h> <C-W>h
-    map <C-l> <C-W>l
+    " Window movement on <C-hjkl> is owned by vim-tmux-navigator (see
+    " plugins.lua) so it also crosses tmux panes; these old maps clobbered it
     map <M-j> <C-W>j
     map <M-k> <C-W>k
     map <M-h> <C-W>h

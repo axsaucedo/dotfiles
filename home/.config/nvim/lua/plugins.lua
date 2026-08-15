@@ -30,6 +30,14 @@ return {
       "TmuxNavigateRight",
       "TmuxNavigatePrevious",
     },
+    -- cmd-only lazy loading meant the plugin's <C-hjkl> maps never got
+    -- created; declare them here so the keys work and trigger the load
+    keys = {
+      { "<C-h>", "<cmd>TmuxNavigateLeft<cr>" },
+      { "<C-j>", "<cmd>TmuxNavigateDown<cr>" },
+      { "<C-k>", "<cmd>TmuxNavigateUp<cr>" },
+      { "<C-l>", "<cmd>TmuxNavigateRight<cr>" },
+    },
   },
   -- Fugitive plugin
   { "tpope/vim-fugitive", cmd = { "Git", "G", "Gdiffsplit", "Gvdiffsplit", "Gread", "Gwrite", "Ggrep" } },
@@ -43,8 +51,15 @@ return {
     version = "1.*",
     event = "InsertEnter",
     opts = {
-      keymap = { preset = "default" },
-      sources = { default = { "lsp", "path", "snippets", "buffer" } },
+      -- super-tab: Tab accepts/cycles like coc did
+      keymap = { preset = "super-tab" },
+      sources = {
+        default = { "lsp", "path", "snippets", "buffer" },
+        -- keep buffer words from flooding the menu
+        providers = {
+          buffer = { max_items = 4, score_offset = -5 },
+        },
+      },
       completion = { documentation = { auto_show = true } },
     },
   },
