@@ -68,7 +68,7 @@
     xnoremap m d
 
     nnoremap mm dd
-    nnoremap M D
+    " M belongs to NERDTree (see NERDTree section); cut-to-eol is m$
 
     " With a map leader it's possible to do extra key combinations
     " like <leader>w saves the current file
@@ -118,7 +118,9 @@
     " Close VIM if all windwos are closed even if the NERD TREE automatically
         autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
-    " NERDTree previously used <S-M>, which collided with vim-cutlass's M mapping.
+    " M (Shift-m) toggles NERDTree as it always did; cutlass's M cut-to-eol
+    " was given up for it (m$ does the same)
+    nnoremap M :NERDTreeToggle<CR>
     nnoremap <leader>n :NERDTreeToggle<CR>
 
     " If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
