@@ -7,6 +7,22 @@ return {
   },
   -- NERDTree git plugin
   { "Xuyuanp/nerdtree-git-plugin", lazy = true },
+  -- Trial alternative to NERDTree: modern sidebar tree (git + diagnostics)
+  {
+    "nvim-neo-tree/neo-tree.nvim",
+    branch = "v3.x",
+    dependencies = { "nvim-lua/plenary.nvim", "MunifTanjim/nui.nvim", "nvim-tree/nvim-web-devicons" },
+    cmd = "Neotree",
+    keys = { { "<leader>tt", "<cmd>Neotree toggle<cr>" } },
+    opts = {
+      filesystem = {
+        filtered_items = { visible = true },
+        follow_current_file = { enabled = true },
+        -- oil owns directory buffers; don't fight over nvim .
+        hijack_netrw_behavior = "disabled",
+      },
+    },
+  },
   -- Trial alternative to NERDTree: edit directories as text buffers
   {
     "stevearc/oil.nvim",
