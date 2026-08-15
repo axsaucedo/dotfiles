@@ -54,3 +54,4 @@ for _, module in ipairs({
 end
 
 require("lsp")
+require("tips")
