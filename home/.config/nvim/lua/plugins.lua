@@ -35,6 +35,12 @@ return {
     opts = {
       view_options = { show_hidden = true },
       delete_to_trash = true,
+      -- C-h/C-l belong to tmux pane navigation; oil's split/refresh
+      -- defaults on them shadowed that inside oil buffers
+      keymaps = {
+        ["<C-h>"] = false,
+        ["<C-l>"] = false,
+      },
     },
   },
   -- Fuzzy search
