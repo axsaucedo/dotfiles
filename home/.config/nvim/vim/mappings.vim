@@ -78,8 +78,12 @@
     map <C-\> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
     " Resize the window with bindings
-    " Previously on <S-H/J/K/L>, which shadowed the native H/L (screen top/
-    " bottom), J (join lines) and K — <S-J> IS J. Moved to Shift+arrows.
+    " Window resize on Shift-hjkl (and Shift-arrows). Deliberately shadows
+    " the native H/L (screen top/bottom) and J (join lines — use :join)
+    noremap H <C-W>5<
+    noremap L <C-W>5>
+    noremap J <C-W>2+
+    noremap K <C-W>2-
     noremap <S-Left> <C-W>5<
     noremap <S-Right> <C-W>5>
     noremap <S-Down> <C-W>2+
