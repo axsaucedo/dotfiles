@@ -72,15 +72,15 @@
     syntax enable
     syntax sync minlines=256
     set background=dark
-    " Released standalone as https://github.com/axsaucedo/molokai-modern.nvim
+    " Released standalone as https://github.com/axsaucedo/monokai-institute.nvim
     " (installed via plugins.lua). Theme defaults to a black background;
     " we keep the terminal transparency
-    let g:molokai_modern_transparent = 1
-    colorscheme molokai-modern
+    let g:monokai_institute_transparent = 1
+    colorscheme monokai-institute
     let g:molokai_original = 1
     " Other popular colors
     " colorscheme monokai-phoenix
-    set termguicolors " molokai-modern carries true gui colors
+    set termguicolors " monokai-institute carries true gui colors
     "hi Normal guibg=NONE ctermbg=NONE " Setting transparent background force
 
     " Set extra options when running in GUI mode
