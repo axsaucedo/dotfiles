@@ -69,6 +69,7 @@ alias cdss="cd ~/Programming/kubernetes/seldon/seldon-core"
 cdtmp() { mkdir /tmp/$(date +'%Y-%m-%dT%H-%M-%S') && cd $_ }
 alias cleantmp="rm -rf ~/Programming/tmp/*"
 alias cdvk="cd ~/Programming/vk/kompute"
+alias cdv="cd ~/Programming/vk/"
 alias cdak="cd ~/Programming/agentic/kaos"
 alias cdaa=cdak
 alias cdau="cd ~/Programming/agentic/kaos-ui"
