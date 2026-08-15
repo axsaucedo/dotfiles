@@ -14,6 +14,13 @@ return {
     keys = {
       -- open the current file's directory in place (oil's idiomatic entry)
       { "-", "<cmd>Oil<cr>" },
+      -- open the project root (cwd) in place, vinegar-style counterpart
+      {
+        "_",
+        function()
+          require("oil").open(vim.fn.getcwd())
+        end,
+      },
       -- sidebar-style: project root in a fixed-width left split
       {
         "<leader>to",
