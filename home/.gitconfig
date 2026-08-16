@@ -42,3 +42,5 @@
 
 [include]
     path = ~/.gitconfig.local
+[beads]
+	role = maintainer
