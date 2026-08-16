@@ -20,7 +20,7 @@ export COPILOT_OTEL_EXPORTER_TYPE=file
 export COPILOT_OTEL_FILE_EXPORTER_PATH="$HOME/.copilot/otel/copilot-otel-$(date +%Y%m%d-%H%M%S).jsonl"
 
 # BEADS task management
-export BEADS_DIR=~/.beads-planning
+export BEADS_DIR=~/.beads-planning/.beads
 
 
 ### Joplin export
