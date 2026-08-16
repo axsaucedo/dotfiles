@@ -79,11 +79,6 @@ alias cda="cd ~/Programming/agentic/"
 # Mac Specific
 alias mergepdf='"/System/Library/Automator/Combine PDF Pages.action/Contents/Resources/join.py" -o ./merged.pdf'
 
-# Brightness
-alias b="xrandr --output DP-0 --brightness"
-alias bu="xrandr --output DP-0 --brightness 1"
-alias bd="xrandr --output DP-0 --brightness 0.25"
-
 # Compress pdf
 cpdf() {
     /usr/bin/gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile=SMALL-$1 $1
