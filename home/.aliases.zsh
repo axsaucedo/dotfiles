@@ -565,3 +565,6 @@ fkill() {
     echo $pid | xargs kill -${1:-9}
   fi
 }
+
+# gog is gogcli (Google Workspace CLI), not `go get` — drop the oh-my-zsh golang plugin alias
+unalias gog 2>/dev/null
