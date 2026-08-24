@@ -124,3 +124,6 @@ unset _zi
 
 # Obsidian
 export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
+
+# PATHTEST-TMP
+export PATH="/tmp/marker-zprofile:$PATH"
