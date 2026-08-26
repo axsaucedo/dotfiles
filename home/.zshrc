@@ -193,10 +193,15 @@ _dots_nudge
 #                           Dotfile navigators
 #######################################################################
 
-# Pick a known dotfile and open it. Missing machine-local files stay listed.
+# Pick a known dotfile and open it. Only the basename is shown -- the names are
+# distinct and a narrow pane has no room for twelve copies of $HOME. The full
+# path rides along in a trailing tab-delimited field that fzf never displays.
 z() {
-  local selected
-  local -a files=(
+  # NOT `path`: that name is tied to $PATH in zsh, and a local scalar of that
+  # name empties PATH inside the function -- fzf itself stops resolving.
+  local selected entry target desc name colour
+  local -a files rows
+  files=(
     "$HOME/.zshenv"$'\t'"every zsh, including non-interactive agent shells"
     "$HOME/.zprofile"$'\t'"login shells only"
     "$HOME/.zshrc"$'\t'"interactive shells only"
@@ -211,8 +216,18 @@ z() {
     "$HOME/Programming/dotfiles/AGENTS.md"$'\t'"repository guidance, read before dotfile edits"
   )
 
-  selected=$(printf '%s\n' "${files[@]}" | fzf --delimiter=$'\t' --with-nth=1,2 --no-preview) || return
-  "$EDITOR" "${selected%%$'\t'*}"
+  for entry in "${files[@]}"; do
+    target=${entry%%$'\t'*}
+    desc=${entry#*$'\t'}
+    name=${target:t}
+    # Cyan when the file is there, red when it is not: the machine-local ones
+    # are listed either way, and their absence is the useful signal.
+    if [ -e "$target" ]; then colour=$'\e[36m'; else colour=$'\e[31m'; desc="$desc -- absent"; fi
+    rows+=( "${colour}${(r:24:)name}"$'\e[0m'$'\t'$'\e[90m'"${desc}"$'\e[0m'$'\t'"${target}" )
+  done
+
+  selected=$(printf '%s\n' "${rows[@]}" | fzf --ansi --delimiter=$'\t' --with-nth=1,2 --no-preview) || return
+  "$EDITOR" "${selected##*$'\t'}"
 }
 
 # Search tracked and machine-local dotfiles, re-running rg on every keystroke.
@@ -221,6 +236,11 @@ z() {
 # The colon form (`--bind=start:reload:CMD,change:reload:CMD`) silently breaks:
 # reload: consumes the rest of the string, so the change binding is swallowed
 # into the start command and typing never re-runs the search.
+#
+# awk rewrites rg's `path:line:text` into `basename:line:text<TAB>path`, so a
+# narrow pane shows the filename rather than 40 columns of $HOME, while the
+# preview and the editor still get the real path from the trailing field. The
+# delimiter regex splits on both, making {2} the line number and {-1} the path.
 zz() {
   local selected file line rg_cmd
   local -a roots=("$HOME/Programming/dotfiles/home")
@@ -233,14 +253,16 @@ zz() {
     [ -f "$candidate" ] && roots+=("$candidate")
   done
 
-  rg_cmd="rg --line-number --no-heading --color=always --smart-case --hidden -- {q} ${(j: :)${(@q)roots}} || true"
-  selected=$(fzf --ansi --disabled --delimiter=: --query="${1:-}" \
+  rg_cmd="rg --line-number --no-heading --color=always --colors=path:none --colors=line:none --smart-case --hidden -- {q} ${(j: :)${(@q)roots}} 2>/dev/null"
+  rg_cmd+=" | awk -F: -v OFS=: '{ p=\$1; n=p; sub(/.*\//, \"\", n); \$1=\"\033[35m\" n \"\033[0m\"; gsub(/\t/, \" \"); print \$0 \"\t\" p }' || true"
+
+  selected=$(fzf --ansi --disabled --delimiter='[:\t]' --query="${1:-}" \
     --bind "start:reload($rg_cmd)" \
     --bind "change:reload($rg_cmd)" \
-    --preview 'bat --color=always --style=plain --highlight-line {2} -- {1} 2>/dev/null || sed -n "{2}p" {1}' \
+    --preview 'bat --color=always --style=numbers --highlight-line {2} -- {-1}' \
     --preview-window '+{2}/2') || return
 
-  file=${selected%%:*}
+  file=${selected##*$'\t'}
   line=${${selected#*:}%%:*}
   [ -n "$file" ] && "$EDITOR" "+$line" "$file"
 }
