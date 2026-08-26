@@ -190,6 +190,58 @@ _dots_nudge() {
 _dots_nudge
 
 #######################################################################
+#                           Dotfile navigators
+#######################################################################
+
+# Pick a known dotfile and open it. Missing machine-local files remain visible.
+z() {
+  local selected
+  local -a files=(
+    "$HOME/.zshenv"$'\t'"every zsh, including non-interactive agent shells"
+    "$HOME/.zprofile"$'\t'"login shells only"
+    "$HOME/.zshrc"$'\t'"interactive shells only"
+    "$HOME/.aliases.zsh"$'\t'"interactive aliases, read by .zshrc"
+    "$HOME/.zshrc.zalando"$'\t'"untracked work config, read by .zshrc"
+    "$HOME/.zshrc.local"$'\t'"untracked machine overrides, read by .zshrc"
+    "$HOME/.all_secret_keys"$'\t'"untracked credentials, read by every zsh"
+    "$HOME/.config/dotfiles/internal-patterns"$'\t'"untracked pre-commit patterns, read on commit"
+    "$HOME/.gitconfig"$'\t'"Git configuration, read by Git"
+    "$HOME/.tmux.conf"$'\t'"tmux configuration, read when tmux starts"
+    "$HOME/.config/nvim/init.lua"$'\t'"Neovim configuration, read when Neovim starts"
+    "$HOME/Programming/dotfiles/AGENTS.md"$'\t'"repository guidance, read before dotfile edits"
+  )
+
+  selected=$(printf '%s\n' "${files[@]}" | fzf \
+    --delimiter=$'\t' \
+    --with-nth=1,2 \
+    --preview='if [ -r {1} ]; then bat --color=always --style=plain -- {1} 2>/dev/null || cat -- {1}; fi') || return
+  "$EDITOR" "${selected%%$'\t'*}"
+}
+
+# Search tracked and machine-local dotfiles, re-running rg on every keystroke.
+zz() {
+  local selected file line reload
+  local -a roots=("$HOME/Programming/dotfiles/home")
+  local candidate
+  for candidate in \
+    "$HOME/.zshrc.zalando" \
+    "$HOME/.zshrc.local" \
+    "$HOME/.all_secret_keys" \
+    "$HOME/.config/dotfiles/internal-patterns"; do
+    [ -f "$candidate" ] && roots+=("$candidate")
+  done
+
+  reload="rg --line-number --no-heading --color=always --colors=path:none --colors=line:none --hidden -- {q} ${(j: :)${(@q)roots}} || true"
+  selected=$(fzf --ansi --disabled --delimiter=: --query="${1:-}" \
+    --bind="start:reload:$reload,change:reload:$reload" \
+    --preview='bat --color=always --style=plain --highlight-line {2} --line-range "$(({2} > 10 ? {2} - 10 : 1)):$(({2} + 10))" -- {1} 2>/dev/null') || return
+
+  file=${selected%%:*}
+  line=${${selected#*:}%%:*}
+  "$EDITOR" "+$line" "$file"
+}
+
+#######################################################################
 #                           Tips
 #######################################################################
 
@@ -205,6 +257,8 @@ _TIPS=(
   "lt / tree -- eza tree view (-L 4 for deeper); la/l show a git column"
   "duh -- dust disk usage, dotfiles included; duhh for full depth"
   "git-stash-apply / gb / gl -- fzf pickers for stashes, branches, commits"
+  "z -- fzf list of every key dotfile, what it is and when zsh reads it"
+  "zz -- live rg across all dotfiles (incl. untracked ones); enter opens at the line"
 )
 tips() { printf '%s\n' "${_TIPS[@]}" }
 

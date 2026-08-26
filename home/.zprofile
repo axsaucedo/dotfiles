@@ -11,26 +11,14 @@ typeset -U path PATH
 
 # AI Agents
 
-# claude code
-export PATH=$PATH:~/.claude/bin
-
 # Copilot telemetry usage
 export COPILOT_OTEL_ENABLED=true
 export COPILOT_OTEL_EXPORTER_TYPE=file
 export COPILOT_OTEL_FILE_EXPORTER_PATH="$HOME/.copilot/otel/copilot-otel-$(date +%Y%m%d-%H%M%S).jsonl"
 
-# BEADS task management
-export BEADS_DIR=~/.beads-planning/.beads
-
-
-### Joplin export
-export PATH=$PATH:~/Programming/lib/joplin-export
-
 # LANGUAGES
 
 ### RUBY
-export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
-export HOMEBREW_AUTO_UPDATE_SECS=604800
 
 
 
@@ -49,22 +37,8 @@ PERL_MM_OPT="INSTALL_BASE=/Users/asaucedo/perl5"; export PERL_MM_OPT;
 export GPG_TTY=$(tty)
 
 
-# Load cargo envs
-. "$HOME/.cargo/env"
-
-source ~/.all_secret_keys
-
 # Setting PATH
-export PATH=$PATH:~/go/bin
-export PATH=$PATH:~/Programming/bin
 export PATH=$PATH:~/.joplin-bin/bin
-
-# Roborev
-export PATH=$PATH:/Users/asaucedo/Programming/external/roborev/bin
-
-
-# GOLang
-export GOPATH=$HOME/go
 
 # JAVA
 # Mac brew installed
@@ -89,10 +63,6 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 
 
-# Ensure editor is vim
-export VISUAL=nvim
-export EDITOR="$VISUAL"
-
 # Vulkan
 export VULKAN_SDK_VERSION=1.3.275.0
 export VULKAN_SDK="$HOME/VulkanSDK/${VULKAN_SDK_VERSION}/macOS"
@@ -108,22 +78,13 @@ export VK_ICD_FILENAMES="${VULKAN_SDK}/share/vulkan/icd.d/MoltenVK_icd.json"
 source "$_zi/brew.zsh"
 command -v bat >/dev/null && export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 
-# Adding asdf
-export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
-
-export PATH="$HOME/.local/bin:$PATH"
-
 # SBT Config
 export SBT_CREDENTIALS="$HOME/.ivy2/.credentials"
 
 # Adding main dirs
-export PYENV_ROOT="$HOME/.pyenv"
 [[ $_zi/pyenv.zsh -nt ${commands[pyenv]} ]] || pyenv init - --no-rehash >| "$_zi/pyenv.zsh"
 source "$_zi/pyenv.zsh"
 unset _zi
 
 # Obsidian
 export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
-
-# PATHTEST-TMP
-export PATH="/tmp/marker-zprofile:$PATH"
