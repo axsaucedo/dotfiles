@@ -193,7 +193,7 @@ _dots_nudge
 #                           Dotfile navigators
 #######################################################################
 
-# Pick a known dotfile and open it. Missing machine-local files remain visible.
+# Pick a known dotfile and open it. Missing machine-local files stay listed.
 z() {
   local selected
   local -a files=(
@@ -211,16 +211,18 @@ z() {
     "$HOME/Programming/dotfiles/AGENTS.md"$'\t'"repository guidance, read before dotfile edits"
   )
 
-  selected=$(printf '%s\n' "${files[@]}" | fzf \
-    --delimiter=$'\t' \
-    --with-nth=1,2 \
-    --preview='if [ -r {1} ]; then bat --color=always --style=plain -- {1} 2>/dev/null || cat -- {1}; fi') || return
+  selected=$(printf '%s\n' "${files[@]}" | fzf --delimiter=$'\t' --with-nth=1,2 --no-preview) || return
   "$EDITOR" "${selected%%$'\t'*}"
 }
 
 # Search tracked and machine-local dotfiles, re-running rg on every keystroke.
+#
+# Both binds use the reload(...) parenthesised form and separate --bind flags.
+# The colon form (`--bind=start:reload:CMD,change:reload:CMD`) silently breaks:
+# reload: consumes the rest of the string, so the change binding is swallowed
+# into the start command and typing never re-runs the search.
 zz() {
-  local selected file line reload
+  local selected file line rg_cmd
   local -a roots=("$HOME/Programming/dotfiles/home")
   local candidate
   for candidate in \
@@ -231,14 +233,16 @@ zz() {
     [ -f "$candidate" ] && roots+=("$candidate")
   done
 
-  reload="rg --line-number --no-heading --color=always --colors=path:none --colors=line:none --hidden -- {q} ${(j: :)${(@q)roots}} || true"
+  rg_cmd="rg --line-number --no-heading --color=always --smart-case --hidden -- {q} ${(j: :)${(@q)roots}} || true"
   selected=$(fzf --ansi --disabled --delimiter=: --query="${1:-}" \
-    --bind="start:reload:$reload,change:reload:$reload" \
-    --preview='bat --color=always --style=plain --highlight-line {2} --line-range "$(({2} > 10 ? {2} - 10 : 1)):$(({2} + 10))" -- {1} 2>/dev/null') || return
+    --bind "start:reload($rg_cmd)" \
+    --bind "change:reload($rg_cmd)" \
+    --preview 'bat --color=always --style=plain --highlight-line {2} -- {1} 2>/dev/null || sed -n "{2}p" {1}' \
+    --preview-window '+{2}/2') || return
 
   file=${selected%%:*}
   line=${${selected#*:}%%:*}
-  "$EDITOR" "+$line" "$file"
+  [ -n "$file" ] && "$EDITOR" "+$line" "$file"
 }
 
 #######################################################################
