@@ -256,10 +256,23 @@ zz() {
   rg_cmd="rg --line-number --no-heading --color=always --colors=path:none --colors=line:none --smart-case --hidden -- {q} ${(j: :)${(@q)roots}} 2>/dev/null"
   rg_cmd+=" | awk -F: -v OFS=: '{ p=\$1; n=p; sub(/.*\//, \"\", n); \$1=\"\033[35m\" n \"\033[0m\"; gsub(/\t/, \" \"); print \$0 \"\t\" p }' || true"
 
-  selected=$(fzf --ansi --disabled --delimiter='[:\t]' --query="${1:-}" \
+  # bat resolves a syntax from the filename, and four of the files searched here
+  # -- the machine-local ones and .tmux.conf -- match nothing it knows, so their
+  # previews came out as flat white text. Since every one of them is shell, map
+  # them explicitly; searching for a credential lands in exactly these files.
+  local bat_cmd="bat --color=always --style=numbers --highlight-line {2}"
+  bat_cmd+=" --map-syntax '.all_secret_keys:Bourne Again Shell (bash)'"
+  bat_cmd+=" --map-syntax '.zshrc.*:Bourne Again Shell (bash)'"
+  bat_cmd+=" --map-syntax 'internal-patterns:Bourne Again Shell (bash)'"
+  bat_cmd+=" --map-syntax '.tmux.conf:Bourne Again Shell (bash)'"
+  bat_cmd+=" -- {-1}"
+
+  # --with-nth drops the trailing path field from the display only; {-1} still
+  # resolves to it for the preview and the editor.
+  selected=$(fzf --ansi --disabled --delimiter='[:\t]' --with-nth='1..-2' --query="${1:-}" \
     --bind "start:reload($rg_cmd)" \
     --bind "change:reload($rg_cmd)" \
-    --preview 'bat --color=always --style=numbers --highlight-line {2} -- {-1}' \
+    --preview "$bat_cmd" \
     --preview-window '+{2}/2') || return
 
   file=${selected##*$'\t'}
