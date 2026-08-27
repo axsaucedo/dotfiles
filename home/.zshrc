@@ -254,7 +254,26 @@ zz() {
   done
 
   rg_cmd="rg --line-number --no-heading --color=always --colors=path:none --colors=line:none --smart-case --hidden -- {q} ${(j: :)${(@q)roots}} 2>/dev/null"
-  rg_cmd+=" | awk -F: -v OFS=: '{ p=\$1; n=p; sub(/.*\//, \"\", n); \$1=\"\033[35m\" n \"\033[0m\"; gsub(/\t/, \" \"); print \$0 \"\t\" p }' || true"
+
+  # awk does three things: rewrites rg's `path:line:text` into
+  # `basename:line:text<TAB>path`, colours the basename magenta as rg would, and
+  # floats definitions of the searched name to the top -- `foo() {`, `function
+  # foo`, `alias foo=`, `export foo=`, `local/typeset foo` -- so searching a name
+  # lands on where it is defined rather than the first place it happens to be
+  # used. fzf's own sorting is off (--disabled), so input order is final order.
+  #
+  # q is only trusted as a regex when it is plain identifier characters;
+  # anything else disables the reordering rather than risking an awk regex error
+  # that would empty the whole result list.
+  rg_cmd+=" | awk -F: -v OFS=: -v q={q} '"
+  rg_cmd+='BEGIN { if (q !~ /^[A-Za-z0-9_.-]+$/) q = "" }'
+  rg_cmd+='{ p = $1; n = p; sub(/.*\//, "", n);'
+  rg_cmd+='  t = $0; sub(/^[^:]*:[0-9]*:/, "", t); gsub(/\033\[[0-9;]*m/, "", t);'
+  rg_cmd+='  $1 = "\033[35m" n "\033[0m"; gsub(/\t/, " ");'
+  rg_cmd+='  if (q != "" && (t ~ "(alias|function|local|typeset|export)[ \t]+[^ \t=]*" q || t ~ q "[ \t]*(\\(\\)|=)"))'
+  rg_cmd+='    defs[++d] = $0 "\t" p; else rest[++r] = $0 "\t" p }'
+  rg_cmd+='END { for (i = 1; i <= d; i++) print defs[i]; for (i = 1; i <= r; i++) print rest[i] }'
+  rg_cmd+="' || true"
 
   # bat resolves a syntax from the filename, and four of the files searched here
   # -- the machine-local ones and .tmux.conf -- match nothing it knows, so their
