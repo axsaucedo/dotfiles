@@ -194,9 +194,9 @@ copilot-sessions() {
 }
 
 # Approx token count + input cost of a file (chars/4 heuristic)
-# Usage: tokencost FILE [PRICE_PER_1M]  (default $5/1M = Claude Opus 5 input)
-tokencost() {
-  local file="${1:?usage: tokencost FILE [PRICE_PER_1M]}"
+# Usage: tokens FILE [PRICE_PER_1M]  (default $5/1M = Claude Opus 5 input)
+tokens() {
+  local file="${1:?usage: tokens FILE [PRICE_PER_1M]}"
   local price="${2:-5}"
   local chars=$(wc -c < "$file" | tr -d ' ')
   awk -v c="$chars" -v p="$price" 'BEGIN {
