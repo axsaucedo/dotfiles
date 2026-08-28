@@ -193,6 +193,20 @@ copilot-sessions() {
   copilot --resume="${id%% |*}" "$@"
 }
 
+# Approx token count + input cost of a file (chars/4 heuristic)
+# Usage: tokencost FILE [PRICE_PER_1M]  (default $5/1M = Claude Opus 5 input)
+tokencost() {
+  local file="${1:?usage: tokencost FILE [PRICE_PER_1M]}"
+  local price="${2:-5}"
+  local chars=$(wc -c < "$file" | tr -d ' ')
+  awk -v c="$chars" -v p="$price" 'BEGIN {
+    t = c / 4
+    printf "chars:  %s\n", c
+    printf "tokens: ~%d\n", t
+    printf "cost:   ~$%.4f  (at $%s / 1M input tokens)\n", t * p / 1000000, p
+  }'
+}
+
 # Github pages
 alias gh-pages="bundle exec jekyll serve"
 # View file
