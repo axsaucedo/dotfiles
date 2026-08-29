@@ -341,4 +341,4 @@ add-zsh-hook precmd _tip_precmd
 
 # Attach to an existing tmux session (or start one) -- last, so everything
 # above is loaded even in the outer shell. No-op inside tmux.
-[[ -z $TMUX ]] && { tmux attach 2>/dev/null || tmux new; }
+[[ -z $TMUX ]] && { tmux attach 2>/dev/null || tmux new -c ~; }
