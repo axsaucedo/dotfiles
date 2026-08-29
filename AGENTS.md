@@ -89,6 +89,25 @@ install.sh            idempotent: symlinks, hooks, launchd, permissions
 
 Their absence must always be harmless — guard with `[ -r "$f" ]`, never assume they exist.
 
+## Keybindings that macOS does not deliver to tmux
+
+The terminal is **iTerm2**. Cmd-based shortcuts never reach tmux: macOS keeps Cmd for the app, so no escape sequence is sent. A binding like "Cmd+Left moves the current tab left" is therefore two halves, and only one of them lives in this repo.
+
+Repo half — `home/.tmux.conf` listens for a private escape sequence via `user-keys`:
+
+```
+set -s user-keys[0] "\e[9000~"
+set -s user-keys[1] "\e[9001~"
+bind -n User0 swap-window -t -1
+bind -n User1 swap-window -t +1
+```
+
+Machine half — iTerm2 → Settings → Keys → Key Bindings → **+**, shortcut `⌘←`, action **Send Escape Sequence**, Esc+ `[9000~` (and `[9001~` for `⌘→`).
+
+Do this in the GUI. iTerm2 holds its preferences in memory and rewrites `~/Library/Preferences/com.googlecode.iterm2.plist` on quit, so a plist edited under a running app is silently discarded. That file is machine-local and untracked, which means **the repo alone cannot reproduce these bindings on a new machine** — document each one here when adding it.
+
+Pick sequences in a range nothing else uses (`\e[90NN~`). Reusing a real terminfo sequence (`\e[1;6D` and friends) collides with the existing pane-resize bindings.
+
 ## Conventions
 
 - **Radical simplicity.** Prefer the smallest change that works. Do not introduce frameworks, abstraction layers, or config systems for one-off needs.
