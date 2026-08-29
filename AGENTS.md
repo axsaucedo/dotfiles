@@ -102,7 +102,9 @@ bind -n User0 swap-window -t -1
 bind -n User1 swap-window -t +1
 ```
 
-Machine half — iTerm2 → Settings → Keys → Key Bindings → **+**, shortcut `⌘←`, action **Send Escape Sequence**, Esc+ `[9000~` (and `[9001~` for `⌘→`).
+Machine half — iTerm2 → Settings → Keys → Key Bindings → **+**, shortcut `⌘←`, action **Send Hex Code**, value `0x1b 0x5b 0x39 0x30 0x30 0x30 0x7e` (and `...0x31 0x7e` for `⌘→`). That is `\e[9000~` / `\e[9001~` byte by byte.
+
+Current iTerm2 has no **Send Escape Sequence** action; older docs and forum answers still name it. The equivalents are **Send Hex Code** or **Send Text with "vim" Special Chars** (which does accept `\e`). **Send tmux Command** is unrelated — it only applies to tmux integration mode (`tmux -CC`).
 
 Do this in the GUI. iTerm2 holds its preferences in memory and rewrites `~/Library/Preferences/com.googlecode.iterm2.plist` on quit, so a plist edited under a running app is silently discarded. That file is machine-local and untracked, which means **the repo alone cannot reproduce these bindings on a new machine** — document each one here when adding it.
 
