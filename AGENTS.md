@@ -86,6 +86,7 @@ install.sh            idempotent: symlinks, hooks, launchd, permissions
 | `~/.all_secret_keys` | credentials, mode 600 |
 | `~/.config/dotfiles/internal-patterns` | pre-commit denylist |
 | `~/.config/dotfiles/notify.env` | notification sender/recipient |
+| `~/Library/Preferences/com.googlecode.iterm2.plist` | iTerm2 prefs, incl. the key bindings below |
 
 Their absence must always be harmless — guard with `[ -r "$f" ]`, never assume they exist.
 
@@ -98,8 +99,16 @@ Repo half — `home/.tmux.conf` listens for a private escape sequence via `user-
 ```
 set -s user-keys[0] "\e[9000~"
 set -s user-keys[1] "\e[9001~"
-bind -n User0 swap-window -t -1
-bind -n User1 swap-window -t +1
+bind -n User0 swap-window -d -t -1
+bind -n User1 swap-window -d -t +1
+```
+
+`-d` is load-bearing and its name misleads. The manual calls it "the new window does not become the current window," which reads like it stops you following the window — it does the opposite. Without `-d`, tmux re-selects **by index** after the swap, so moving tab 3 leftwards leaves you looking at whatever swapped into slot 3. With `-d` you stay on the window you moved. Do not "fix" this by appending `select-window -t -1`; that overshoots by one. Verified on tmux 3.4:
+
+```
+before   active=3:w3   order= 1:w1 2:w2 3:w3 4:w4
+swap-window -d -t -1
+after    active=2:w3   order= 1:w1 2:w3 3:w2 4:w4
 ```
 
 Machine half — iTerm2 → Settings → Keys → Key Bindings → **+**, shortcut `⌘←`, action **Send Hex Code**, value `0x1b 0x5b 0x39 0x30 0x30 0x30 0x7e` (and `...0x31 0x7e` for `⌘→`). That is `\e[9000~` / `\e[9001~` byte by byte.
@@ -109,6 +118,16 @@ Current iTerm2 has no **Send Escape Sequence** action; older docs and forum answ
 Do this in the GUI. iTerm2 holds its preferences in memory and rewrites `~/Library/Preferences/com.googlecode.iterm2.plist` on quit, so a plist edited under a running app is silently discarded. That file is machine-local and untracked, which means **the repo alone cannot reproduce these bindings on a new machine** — document each one here when adding it.
 
 Pick sequences in a range nothing else uses (`\e[90NN~`). Reusing a real terminfo sequence (`\e[1;6D` and friends) collides with the existing pane-resize bindings.
+
+To check which half is broken, run `cat -v` **outside** tmux and press the key: `^[[9000~` means iTerm2 is doing its job and the fault is in tmux; a bare `^[[D` means the binding never took and the key is still falling through as a plain arrow.
+
+### Manual steps this repo cannot perform
+
+`install.sh` sets up a machine except for the following, which have to be done by hand after a fresh clone:
+
+| Setting | Where | Why not scripted |
+|---|---|---|
+| `⌘←` / `⌘→` → Send Hex Code `\e[9000~` / `\e[9001~` | iTerm2 → Settings → Keys → Key Bindings | iTerm2 rewrites its plist on quit, discarding external edits |
 
 ## Conventions
 
