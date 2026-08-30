@@ -11,6 +11,7 @@ typeset -U path PATH
 # in a bare non-interactive env the asdf binary (~/.asdf/bin) is not yet on PATH,
 # so the binary check silently dropped the shims for exactly the agent shells this
 # file exists to serve. An empty shims dir means a dead asdf install; skip that.
+[ -x "$HOME/.asdf/bin/asdf" ] && path=("$HOME/.asdf/bin" $path)
 _asdf_dir="${ASDF_DATA_DIR:-$HOME/.asdf}/shims"
 _asdf_shims=($_asdf_dir/*(N))
 (( $#_asdf_shims )) && path=("$_asdf_dir" $path)
