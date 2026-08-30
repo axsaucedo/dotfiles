@@ -46,5 +46,7 @@
 	role = maintainer
 [credential "https://github.com/zalando-slt"]
 	username = alejandro-saucedo_zse
+	helper = "!f() { echo username=alejandro-saucedo_zse; echo \"password=$(gh auth token --user alejandro-saucedo_zse)\"; }; f"
 [credential "https://github.com/alejandro-saucedo_zse"]
 	username = alejandro-saucedo_zse
+	helper = "!f() { echo username=alejandro-saucedo_zse; echo \"password=$(gh auth token --user alejandro-saucedo_zse)\"; }; f"
