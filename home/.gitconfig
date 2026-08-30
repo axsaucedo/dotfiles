@@ -34,13 +34,17 @@
 	insteadOf = https://github.com/
 
 [credential "https://github.com"]
-	helper =
+	helper = 
 	helper = !/opt/homebrew/bin/gh auth git-credential
 [credential "https://gist.github.com"]
-	helper =
+	helper = 
 	helper = !/opt/homebrew/bin/gh auth git-credential
 
 [include]
     path = ~/.gitconfig.local
 [beads]
 	role = maintainer
+[credential "https://github.com/zalando-slt"]
+	username = alejandro-saucedo_zse
+[credential "https://github.com/alejandro-saucedo_zse"]
+	username = alejandro-saucedo_zse
