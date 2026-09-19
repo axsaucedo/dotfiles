@@ -79,6 +79,8 @@ alias cda="cd ~/Programming/agentic/"
 # Mac Specific
 alias mergepdf='"/System/Library/Automator/Combine PDF Pages.action/Contents/Resources/join.py" -o ./merged.pdf'
 
+alias say="say -v 'Zoe (Premium)'"
+
 # Compress pdf
 cpdf() {
     /usr/bin/gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile=SMALL-$1 $1
