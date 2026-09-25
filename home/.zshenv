@@ -22,6 +22,8 @@ path=("$HOME/.local/bin" $path)
 
 # pixi global tools
 [ -d "$HOME/.pixi/bin" ] && path=("$HOME/.pixi/bin" $path)
+# npm -g binaries from the pixi nodejs env
+[ -d "$HOME/.pixi/envs/nodejs/bin" ] && path=($path "$HOME/.pixi/envs/nodejs/bin")
 
 # Tools needed by non-interactive shells
 export VISUAL=nvim
