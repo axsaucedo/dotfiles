@@ -17,7 +17,7 @@ alias hprof="cat ~/.zprofile | peco"
 alias vvim="vim ~/.vimrc"
 alias vzsh="vim ~/.zshrc"
 alias szsh="source ~/.zshrc"
-alias yd="yt-dlp --add-metadata --embed-thumbnail --embed-subs --all-subs --extractor-args 'youtube:player_client=web_embedded' "
+alias yd="yt-dlp --no-playlist -S 'res:1080,vcodec:h264,acodec:m4a' --merge-output-format mp4 --add-metadata --embed-thumbnail --embed-chapters --embed-subs --write-auto-subs --sub-langs 'en.*,es.*' -N 4 "
 alias ydm='yt-dlp --extract-audio --audio-format mp3 --prefer-ffmpeg -o "%(title)s.%(ext)s" --ignore-errors ' 
 if command -v eza >/dev/null; then
     alias l='eza -lah --git'
