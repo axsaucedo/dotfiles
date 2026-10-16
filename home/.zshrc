@@ -84,6 +84,7 @@ zstyle ':fzf-tab:complete:(vim|nvim|cat|bat):*' fzf-preview 'bat --style plain -
 zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview 'git log --oneline -20 --color=always $word'
 zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':fzf-tab:*' switch-group ',' '.'
+zstyle ':fzf-tab:*' prefix ''   # no leading · on entries
 
 #######################################################################
 #                           Utility Load & Config
