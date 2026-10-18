@@ -335,6 +335,9 @@ _tip_count=0
 _tip_precmd() { (( ++_tip_count % 15 )) || _tip_show }
 autoload -U add-zsh-hook
 add-zsh-hook precmd _tip_precmd
+# Record each pane's last command for the tmux navigator (~/.tmux/agent-nav.sh).
+_tmux_last_cmd() { [[ -n $TMUX ]] && tmux set -p @last_cmd "${1[1,60]}" 2>/dev/null }
+add-zsh-hook preexec _tmux_last_cmd
 
 #######################################################################
 #                           Wrap Up
